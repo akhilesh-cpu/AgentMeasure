@@ -29,8 +29,9 @@ jobs:
 
       - name: Resolve tag
         run: |
-          if [[ -n "${{ inputs.tag }}" ]]; then
-            echo "TAG=${{ inputs.tag }}" >> "$GITHUB_ENV"
+          INPUT_TAG="${{ inputs.tag }}${{ github.event.inputs.tag }}"
+          if [[ -n "$INPUT_TAG" ]]; then
+            echo "TAG=$INPUT_TAG" >> "$GITHUB_ENV"
           elif [[ "$GITHUB_REF_NAME" == v* ]]; then
             echo "TAG=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
           else
@@ -136,7 +137,9 @@ jobs:
       - name: Skip if this version is already live on PyPI (idempotent re-runs)
         run: |
           VER=$(python3 -c "import tomllib; print(tomllib.load(open('healthcheck/pyproject.toml','rb'))['project']['version'])" 2>/dev/null || echo unknown)
-          if curl -sf "https://pypi.org/pypi/agentmeasure/json" | python3 -c "import json,sys,os; sys.exit(0 if json.load(sys.stdin)['info']['version']==os.environ['VER'] else 1)" 2>/dev/null; then
+          LIVE=$(curl -sf "https://pypi.org/pypi/agentmeasure/json" | python3 -c "import json,sys; print(json.load(sys.stdin)['info']['version'])" 2>/dev/null || echo none)
+          echo "local=$VER live=$LIVE"
+          if [[ "$VER" != "unknown" && "$VER" == "$LIVE" ]]; then
             echo "agentmeasure $VER already live on PyPI — skipping publish"
             echo "pypi_skip=true" >> "$GITHUB_ENV"
           else
