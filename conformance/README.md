@@ -83,7 +83,9 @@ python3 conformance/runners/run_delegation.py        # 多 Agent 委托（DELEGA
   per-crossing `meter_event_id` 不塌缩，estimate 面永远 unsigned）。来自
   BerriAI/litellm#39057 交付序列；映射与六层 claim boundary（Stage 1-6） 见各目录
   MAPPING 文档。**外部独立验证路径**（stranger verification）：
-  `scripts/verify_receipt.py --base <gateway>` 对 Metrecept 公网 JWKS。
+  `python scripts/verify_receipt.py <jws> --base https://api.metrecept.co.uk`
+  （公网 JWKS 目录：`https://api.metrecept.co.uk/.well-known/http-message-signatures-directory`；
+  OKP/Ed25519，kid=RFC 7638 摘要；站点 https://metrecept.co.uk）。
   署名归 Metrecept；本仓只作投影与守卫，非 endorsement。
 
 提交新 fixture：PR 附 events + expected + mapping（或 sidecar）三件套，
