@@ -166,7 +166,7 @@ jobs:
           python -m build --sdist --wheel --outdir dist/ healthcheck/
           ls -l dist/
       - name: Publish agentmeasure to PyPI
-        if: ${{ steps.gate.outputs.ready == 'true' }}
+        if: ${{ steps.gate.outputs.ready == 'true' && env.pypi_skip != 'true' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
