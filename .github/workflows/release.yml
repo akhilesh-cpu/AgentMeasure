@@ -117,7 +117,13 @@ jobs:
           npm ci
           npm run build
           npm test
-          npm publish --access public
+          # idempotent: a re-run of the same tag must not 409 on npm
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "@agentmeasure/mcp@${PKG_VERSION}" version >/dev/null 2>&1; then
+            echo "@agentmeasure/mcp@${PKG_VERSION} already on npm — skipping publish"
+          else
+            npm publish --access public
+          fi
 
   # ── PyPI: `pipx install agentmeasure` ──
   # Uses PyPI trusted publishing (OIDC): NO API token to store or leak.

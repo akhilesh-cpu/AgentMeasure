@@ -3,6 +3,13 @@
 All notable changes to AgentMeasure (standard, SDK, and reference product) are
 documented here. Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [v0.6.0] - 2026-10-11
+
+### Added
+
+- **External conformance growth**: iwasinnam-003 (Metrecept session-aggregate receipt vector, litellm#39057 — 1 MISS + 2 HIT with per-crossing meter_event_id that never collapses, estimates forever unsigned), the rksharma-001 external-contribution card (PR #27 cross-file replay enforcement), and **chenhz01-001 — the first availability-certification vector, contributed via PR #32** (gunjanjaswal) with an airtight empty-events guard and documented real-trace boundaries. Metrecept public verification URLs pinned per iwasinnam2's 10/10 review.
+- **Release plumbing, now proven live**: PyPI trusted publishing works (0.5.0 shipped on the re-run), npm works (@agentmeasure/mcp 0.1.1 live); the release workflow gained workflow_dispatch tag input and idempotent PyPI + npm steps so re-runs never fail on already-published versions.
+
 ## [Unreleased]
 
 ### Added
