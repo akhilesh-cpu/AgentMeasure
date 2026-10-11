@@ -25,3 +25,18 @@ AgentMeasure 是一个 measurement 标准项目。**问题定义和测量严谨�
 - PR 必须通过 `conformance.py` 与 CI（.github/workflows/conformance.yml）
 - 新增 adapter 必须附 capability matrix 更新（docs/adapters.md）
 - 隐私相关改动必须附泄漏测试
+
+## AI 协作贡献（AI-assisted contributions）
+
+欢迎用 AI 辅助贡献，但规则如下（与项目证据纪律同源）：
+
+1. **披露**：PR 描述里写明 `AI-assisted: yes/no`；用了吗、用在哪些部分。
+2. **人对每行负责**：人类作者必须能解释并背书 PR 的每一行——"AI 写的我没细看"是拒收理由。
+3. **不收批量 slop**：一次一个论证完整的报告，胜过十条泛泛的自动 issue/PR；模式化批量提交会被直接关闭。
+4. **断言可复现**：每个测量/行为断言附 fixture、命令与期望输出；无法复现的断言按项目纪律标 UNPROVABLE，不合并不猜测。
+5. 新增 conformance 向量请用脚手架：`agentmeasure conformance --new-vector <name>`，生成即过 CI 校验。
+
+## 响应时效（维护者对自己的承诺）
+
+- issue / PR **首次响应目标 ≤48 小时**（确认收到即可，不必立即解决）；实质性 review 一周内给出。
+- 维护者目前是单人 + agent 协作，如果超时了，直接在帖子里 ping——催一下完全合理。
