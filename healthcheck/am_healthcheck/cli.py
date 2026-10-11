@@ -55,6 +55,7 @@ from . import benchmark as bench_mod
 from . import console as console_mod
 from . import drilldown as drilldown_mod
 from . import decisions as decisions_mod
+from . import scaffold as scaffold_mod
 # Conformance pack loaded lazily in cmd_conformance
 
 DEFAULT_DAYS = 7
@@ -537,12 +538,37 @@ def cmd_validate(args) -> int:
     return 0 if problems == 0 else 2
 
 
+def cmd_new_vector(args) -> int:
+    """Scaffold a CI-valid external conformance vector directory (C1)."""
+    try:
+        paths = scaffold_mod.scaffold(args.new_vector,
+                                      out_root=args.out,
+                                      contributed_by=args.by or "")
+    except (ValueError, OSError) as exc:
+        print("error: %s" % exc, file=sys.stderr)
+        return 2
+    print("Vector scaffold created:")
+    for key, path in paths.items():
+        print("  %-10s %s" % (key, path))
+    print()
+    print("Validate the generated fixture (should pass as-is):")
+    print("  agentmeasure conformance --fixture %s --metadata %s"
+          % (paths["fixture"], paths["metadata"]))
+    return 0
+
+
 def cmd_conformance(args) -> int:
     """Run the conformance pack on a caller-provided telemetry fixture.
 
     Delegates to the bundled AgentMeasure Conformance Pack
     (PASS / FAIL / UNPROVABLE invariant checks).
     """
+    if args.new_vector:
+        args.out = args.out or os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(
+                os.path.abspath(__file__)))), "conformance", "vectors",
+            "external")
+        return cmd_new_vector(args)
     try:
         from . import pack as pack_mod
     except ImportError as e:
@@ -1307,6 +1333,12 @@ def cmd_certify(args) -> int:
     except (ValueError, OSError) as exc:
         print("error: %s" % exc, file=sys.stderr)
         return 2
+    if args.emit_reproduction:
+        print("Paste this into the artifact's \"reproductions\" array to "
+              "promote it to stage-2:")
+        print(certify_mod.emit_reproduction(
+            doc, reproduced_by=args.emit_reproduction))
+        return 0
     print(certify_mod.certification_report(result))
     if args.digest_out:
         try:
@@ -1540,10 +1572,11 @@ def cmd_console(args) -> int:
     def _doc(path):
         return dashboard_mod.load_document(path) if path else None
     try:
-        page = console_mod.build_console(
+        ledgers = [_doc(p) for p in (args.ledger or [])]
+        page = console_mod.build_console_multi(
             meta={"title": args.title, "vendor": args.vendor,
                   "period": args.period, "buyer": args.buyer},
-            ledger=_doc(args.ledger),
+            ledgers=[d for d in ledgers if d is not None],
             receipt=_doc(args.receipt),
             margin=_doc(args.margin),
             channel_audit=_doc(args.channel_audit),
@@ -1680,8 +1713,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_conf = sub.add_parser("conformance",
                              help="verify a telemetry fixture against measurement invariants "
-                                  "(PASS / FAIL / UNPROVABLE)")
-    p_conf.add_argument("--fixture", required=True,
+                                  "(PASS / FAIL / UNPROVABLE); --new-vector scaffolds "
+                                  "a CI-valid external vector directory instead")
+    p_conf.add_argument("--fixture", default=None,
                         help="FMT-002 funnel-event JSONL (caller's telemetry data)")
     p_conf.add_argument("--metadata", default=None,
                         help="optional sidecar metadata JSON (source, time_window, etc.)")
@@ -1691,6 +1725,15 @@ def build_parser() -> argparse.ArgumentParser:
                         help="write machine-readable JSON results here")
     p_conf.add_argument("--require", default="",
                         help="comma-separated invariant ids that must be PROVEN")
+    p_conf.add_argument("--new-vector", metavar="NAME", default=None,
+                        dest="new_vector",
+                        help="scaffold a new external vector directory under "
+                             "--out (default conformance/vectors/external/); "
+                             "valid FMT-002 as generated")
+    p_conf.add_argument("--out", default=None,
+                        help="output root for --new-vector")
+    p_conf.add_argument("--by", default=None,
+                        help="contributor credit for the scaffolded README")
     p_conf.set_defaults(func=cmd_conformance)
 
     p_settle = sub.add_parser("settle",
@@ -1945,6 +1988,11 @@ def build_parser() -> argparse.ArgumentParser:
                         dest="digest_out",
                         help="write the deterministic digest here (for your "
                              "own signing tool)")
+    p_cert.add_argument("--emit-reproduction", metavar="WHO",
+                        default=None, dest="emit_reproduction",
+                        help="print the reproductions block to paste into the "
+                             "artifact for a Stage-2 promotion (argument = "
+                             "who re-ran it)")
     p_cert.set_defaults(func=cmd_certify)
 
     p_inc = sub.add_parser(
@@ -2072,8 +2120,11 @@ def build_parser() -> argparse.ArgumentParser:
         "console",
         help="compose the user-facing console page (one integrated, "
              "plain-language page) from verification documents")
-    p_con.add_argument("--ledger", metavar="JSON", default=None,
-                       help="verified-ledger.json (drives the billing flow)")
+    p_con.add_argument("--ledger", metavar="JSON", action="append",
+                       default=None,
+                       help="verified-ledger.json (drives the billing flow); "
+                            "repeat once per vendor for a multi-vendor "
+                            "console (pool §七 B1)")
     p_con.add_argument("--receipt", metavar="JSON", default=None,
                        help="commerce measurement receipt")
     p_con.add_argument("--margin", metavar="JSON", default=None,

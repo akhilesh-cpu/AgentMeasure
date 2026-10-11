@@ -1,0 +1,19 @@
+{
+  "_comment": "Adapter freshness canary (pool §七 H1). One pinned 'current generation' sample per runtime; the canary fails when an adapter stops parsing its pinned generation. Refresh ritual documented in scripts/adapter_canary.py.",
+  "canaries": {
+    "codex": {
+      "sample": "codex.jsonl",
+      "captured_cli_version": "0.153.0",
+      "captured_on": "2026-09-01",
+      "max_corrupt": 0,
+      "format_markers": ["0.153.0", "Codex Desktop"]
+    },
+    "claude": {
+      "sample": "claude.jsonl",
+      "captured_cli_version": "claude-code (see sample)",
+      "captured_on": "2026-09-01",
+      "max_corrupt": 0,
+      "format_markers": []
+    }
+  }
+}

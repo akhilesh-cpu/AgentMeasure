@@ -47,6 +47,28 @@ Full runnable examples (v1 + v2): `sdk/examples/mcp-integration.js` and
 `mcp-integration-v2.js` — each emits **42 calls → 84 canonical observations**
 (attempt_started + attempt_completed only).
 
+## Declaring tool annotations (do as we say, and as we do)
+
+Agents and registries reason about your tools from their annotations before
+ever calling them. Declare them on every tool — we do, in our own examples:
+
+```js
+server.registerTool("get_weather", {
+  inputSchema: z.object({ city: z.string() }),
+  annotations: {
+    readOnlyHint: true,       // no state changes
+    destructiveHint: false,   // explicit even when it is the default
+    idempotentHint: true,     // Optional in the spec — set it when true
+    openWorldHint: true,      // reaches outside the server
+  },
+}, handler);
+```
+
+`readOnlyHint`, `destructiveHint` and `openWorldHint` should always be
+declared; `idempotentHint` is Optional in the current spec. A tool that
+writes should say so (`readOnlyHint: false, destructiveHint: true`) — a
+wrong annotation is worse than none, and registries increasingly check.
+
 ## What you get (local, no cloud)
 
 ```bash
@@ -117,6 +139,9 @@ node examples/mcp-integration-v2.js   # v2 path (primary) → local JSONL
 ```
 
 ## Status
+
+v0.2.0 — annotations guidance in examples + README (the metering standard's
+own SDK declares what it preaches). Event schema unchanged from 0.1.x.
 
 v0.1.1 — External-Ready. Standard (Draft 0.4.3), reference collector, conformance
 suite and canonical pipeline gates are stable; hosted ingestion and dashboard are

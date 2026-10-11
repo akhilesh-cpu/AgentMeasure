@@ -218,3 +218,51 @@ class TestDecisions(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestAdapterCanary(unittest.TestCase):
+    """H1: the canary must go RED when an adapter stops parsing its pinned
+    generation — that red names the adapter, before users see zero-session
+    reports."""
+
+    def _import_canary(self):
+        import importlib.util
+        from _support import REPO_ROOT
+        from pathlib import Path as _P
+        spec = importlib.util.spec_from_file_location(
+            "adapter_canary", _P(REPO_ROOT) / "scripts" / "adapter_canary.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def _manifest(self, sample_name):
+        return {"canaries": {"codex": {
+            "sample": sample_name,
+            "captured_cli_version": "0.153.0",
+            "captured_on": "2026-09-01",
+            "max_corrupt": 0,
+            "format_markers": ["0.153.0"]}}}
+
+    def test_pinned_generation_parses_green(self):
+        mod = self._import_canary()
+        results = mod.run_canaries()
+        self.assertTrue(results, "no canaries ran")
+        for r in results:
+            self.assertTrue(r["ok"], r)
+
+    def test_tampered_sample_goes_red_and_names_the_problem(self):
+        import shutil
+        import tempfile
+        from pathlib import Path
+        mod = self._import_canary()
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp, True)
+        # corrupt: strip the session_meta line so the adapter parses nothing
+        from _support import REPO_ROOT as _R
+        src = (Path(_R) / "healthcheck" / "fixtures" / "canary" /
+               "codex.jsonl").read_text(encoding="utf-8").splitlines()
+        tampered = "\n".join(l for l in src if '"session_meta"' not in l) + "\n"
+        (tmp / "codex.jsonl").write_text(tampered, encoding="utf-8")
+        results = mod.run_canaries(self._manifest("codex.jsonl"), canary_dir=tmp)
+        self.assertFalse(results[0]["ok"])
+        self.assertTrue(results[0]["problems"])

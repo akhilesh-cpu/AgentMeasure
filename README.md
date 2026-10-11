@@ -7,14 +7,18 @@ vendor export and buyer records together. It produces reviewable findings in bot
 directions and keeps missing evidence **UNPROVABLE**. Billing-rule differences,
 stricter buyer outcome standards and actual credits are separate lanes.
 
-**Two entrances, one engine.**
+**Five entrances, one engine** — pick the row that is yours:
 
-- **For CX / finance / procurement** — see [what a $990 first-look covers](website/first-look.html),
-  or start in 30 seconds: [drop a vendor export into the local recount page](website/recount.html)
-  (runs in your browser, nothing uploaded).
-- **For developers and tool authors** — [open-source tools](healthcheck/README.md),
-  [conformance vectors](conformance/), the [AMS-1 settlement standard](standard/SETTLEMENT.md),
-  and the [metering audit report](campaigns/audit-report-2026-09.md) (110 tools, 23 fixes merged upstream).
+| Entrance | For | What you get |
+|---|---|---|
+| [Buyer reconciliation](website/first-look.html) · [browser recount](website/recount.html) | CX / finance / procurement reviewing AI support bills | recount by the vendor's own rules, dispute packs, recovery ledger, drill-down of any single finding |
+| [Conformance & AMS-1](conformance/) | framework and tool maintainers | vectors, the settlement standard, the Stage 0–3 evidence ladder ([badges](https://roy-tong.github.io/AgentMeasure/badges.html)), contribute one via `agentmeasure conformance --new-vector` |
+| [MCP Provider SDK](sdk/) | MCP / API service providers | observe how agents call your tools (npm `@agentmeasure/mcp`), pair with `agentmeasure check --sdk-events` |
+| [AgentMeasure Lab](lab/) | agent product R&D teams | preregistered experiments, honest statistics, per-variant funnels — plan with power, read nulls as nulls |
+| [Healthcheck](healthcheck/README.md) | agent developers on Codex / Claude Code | duplicate records, retry chains, token anomalies in your own sessions, locally |
+
+The metering audit report (110 tools, 23 fixes merged upstream) is
+[here](campaigns/audit-report-2026-09.md).
 
 The current commercial focus is AI support outcome billing; developer conformance remains an open-source route.
 

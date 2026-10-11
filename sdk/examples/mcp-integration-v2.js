@@ -56,7 +56,19 @@ const server = new McpServer({ name: "acme-weather", version: "1.0.0" });
 // context carries the request (`ctx.mcpReq`) with per-request `_meta`.
 server.registerTool(
   "get_weather",
-  { inputSchema: z.object({ city: z.string() }) },
+  {
+    inputSchema: z.object({ city: z.string() }),
+    // Tool annotations let agents reason about safety BEFORE calling:
+    // this tool only reads, is safe to retry, and reaches the outside world.
+    // readOnlyHint/destructiveHint/openWorldHint should always be declared;
+    // idempotentHint is Optional in the current spec — we set it when true.
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: true,
+    },
+  },
   mw.wrapTool("get_weather", async ({ city }) => {
     const n = callIndex++;
     await new Promise((r) => setTimeout(r, 20 + ((n * 37) % 280)));

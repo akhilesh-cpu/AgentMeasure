@@ -138,3 +138,20 @@ def certification_report(result: Dict[str, Any]) -> str:
 
 def load_artifact(path: str) -> Dict[str, Any]:
     return dash.load_document(path)
+
+
+def emit_reproduction(doc: Dict[str, Any], reproduced_by: str,
+                       date: str = "") -> str:
+    """The exact block to paste into the artifact for a Stage-2 promotion.
+
+    The digest excludes `reproductions` by construction (annotations
+    reference the digest, never the other way round), so pasting this block
+    into the document promotes it to stage-2 without changing what was
+    reproduced. One command, no hand-written JSON.
+    """
+    digest = deterministic_digest(doc)
+    import json as _json
+    entry = {"by": reproduced_by or "(who re-ran it)",
+             "digest": digest,
+             "date": date or __import__("datetime").date.today().isoformat()}
+    return _json.dumps([entry], ensure_ascii=True, indent=2)

@@ -250,3 +250,57 @@ class TestJourneyModel(unittest.TestCase):
         # the monthly re-run has no view of its own; its info state lives
         # in the stepper, not the sidebar
         self.assertIn("stage-chip info", self.page)
+
+
+class TestMultiVendorConsole(unittest.TestCase):
+    """B1: several vendors in one console — per-vendor journeys, prefixed
+    ids, shared commerce part, and nothing summed across vendors."""
+
+    def _two_ledgers(self):
+        a, pa = build_ledger()
+        for p in pa:
+            self.addCleanup(lambda p=p: os.path.exists(p) and os.unlink(p))
+        b, pb = build_ledger()
+        for p in pb:
+            self.addCleanup(lambda p=p: os.path.exists(p) and os.unlink(p))
+        b = json.loads(json.dumps(b))
+        b["vendor"]["name"] = "Zendesk AI Agents"
+        return a, b
+
+    def test_multi_renders_per_vendor_groups_and_prefixed_ids(self):
+        a, b = self._two_ledgers()
+        page = console_mod.build_console_multi(
+            meta={"title": "Vendor bills review", "buyer": "ACME",
+                  "period": "October 2026"}, ledgers=[a, b])
+        self.assertIn("2 vendors in this review", page)
+        self.assertIn("Intercom Fin", page)
+        self.assertIn("Zendesk AI Agents", page)
+        # per-vendor prefixed view ids exist and are unique
+        self.assertIn('id="view-intercom-fin-recount"', page)
+        self.assertIn('id="view-zendesk-ai-agents-recount"', page)
+        self.assertNotIn('id="view-recount"', page)
+        self.assertIn("nothing is summed across vendors", page)
+        # overview carries per-vendor rows
+        self.assertIn("<th>Vendor</th>", page)
+
+    def test_single_ledger_path_unchanged(self):
+        a, _ = self._two_ledgers()
+        via_multi = console_mod.build_console_multi(
+            meta={"title": "t"}, ledgers=[a])
+        direct = console_mod.build_console(meta={"title": "t"}, ledger=a)
+        self.assertEqual(via_multi, direct)
+
+    def test_same_name_vendors_get_unique_slugs(self):
+        a, _ = self._two_ledgers()
+        b = json.loads(json.dumps(a))
+        page = console_mod.build_console_multi(meta={"title": "t"},
+                                               ledgers=[a, b])
+        self.assertIn('id="view-intercom-fin-recount"', page)
+        self.assertIn('id="view-intercom-fin-2-recount"', page)
+
+    def test_draft_markers_still_banned(self):
+        a, b = self._two_ledgers()
+        page = console_mod.build_console_multi(meta={"title": "t"},
+                                               ledgers=[a, b])
+        for marker in console_mod.BANNED_MARKERS:
+            self.assertNotIn(marker, page)

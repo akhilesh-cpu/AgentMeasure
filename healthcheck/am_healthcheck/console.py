@@ -923,6 +923,168 @@ def build_console(meta: Dict[str, Any],
     return page
 
 
+def _slug(text: str) -> str:
+    import re as _re
+    return _re.sub(r"[^a-z0-9]+", "-", str(text).lower()).strip("-") or "vendor"
+
+
+def build_console_multi(meta: Dict[str, Any],
+                        ledgers: List[Dict[str, Any]],
+                        receipt: Optional[Dict[str, Any]] = None,
+                        margin: Optional[Dict[str, Any]] = None,
+                        channel_audit: Optional[Dict[str, Any]] = None,
+                        decisions: Optional[Dict[str, Any]] = None) -> str:
+    """One console across several vendors (pool §七 B1).
+
+    Each vendor keeps its own bill-review journey (prefixed view ids,
+    one sidebar group per vendor); commerce documents render once as the
+    shared Part two. Hash routing is unchanged — ids stay unique via the
+    per-vendor prefix.
+    """
+    if len(ledgers) == 1:
+        return build_console(meta, ledger=ledgers[0], receipt=receipt,
+                             margin=margin, channel_audit=channel_audit,
+                             decisions=decisions)
+
+    # Per-vendor billing views with prefixed ids.
+    vendor_views: List[Tuple[str, List[View]]] = []
+    all_billing: List[View] = []
+    used_slugs: Dict[str, int] = {}
+    for ledger in ledgers:
+        name = (ledger.get("vendor") or {}).get("name") or "vendor"
+        slug = _slug(name)
+        if slug in used_slugs:
+            used_slugs[slug] += 1
+            slug = "%s-%d" % (slug, used_slugs[slug])
+        else:
+            used_slugs[slug] = 1
+        views = _billing_views(ledger)
+        stages = {s["id"]: s for s in _billing_stages(ledger)}
+        for v in views:
+            s = stages.get(v["id"])
+            if s:
+                v["state"] = s["state"]
+                v["state_text"] = s["label"] + ": " + s["detail"]
+            v["id"] = "%s-%s" % (slug, v["id"])
+            v["group"] = "vendor:%s" % slug
+            v["group_label"] = name
+        vendor_views.append((name, views))
+        all_billing.extend(views)
+
+    # Shared commerce part, unprefixed.
+    channel = _channel_views(receipt, margin, channel_audit, decisions)
+    c_stages = {s["id"]: s for s in _channel_stages(receipt, margin,
+                                                    channel_audit, decisions)}
+    for v in channel:
+        s = c_stages.get(v["id"])
+        if s:
+            v["state"] = s["state"]
+            v["state_text"] = s["label"] + ": " + s["detail"]
+
+    # Overview: per-vendor summaries + every vendor's recommended actions.
+    import html as _html
+    summary_rows = []
+    actions_html = []
+    for ledger in ledgers:
+        name = (ledger.get("vendor") or {}).get("name") or "vendor"
+        slug = _slug(name)
+        t1 = ledger.get("tier1", {})
+        c = t1.get("counts", {})
+        variance = t1.get("variance")
+        rec = ledger.get("recovery") or {}
+        outstanding = (rec.get("totals", {}) or {}).get("outstanding") or 0
+        summary_rows.append([name,
+                             c.get("billed_but_not_billable", 0),
+                             variance if variance is not None else "—",
+                             outstanding])
+        if c.get("billed_but_not_billable", 0):
+            actions_html.append(
+                '<li>%s<a href="#/%s-recount"><span class="what">Review the '
+                '%d conversation(s) %s charged against its own rulebook</span>'
+                '</a><a class="go" href="#/%s-recount">Open →</a></li>'
+                % (_icon("recount"), slug,
+                   c["billed_but_not_billable"], _e(name), slug))
+        actions_html.append(
+            "<li>%s<a href=\"#/%s-pack\"><span class=\"what\">Send %s evidence "
+            "pack to the account team</span></a><a class=\"go\" href=\"#/%s-pack\">Open</a></li>"
+            % (_icon("pack"), slug, _e(name), slug))
+        if outstanding:
+            actions_html.append(
+                '<li>%s<a href="#/%s-recovery"><span class="what">Follow up '
+                '%s still outstanding with %s</span></a>'
+                '<a class="go" href="#/%s-recovery">Open →</a></li>'
+                % (_icon("recovery"), slug, outstanding, _e(name), slug))
+    body = ('<p class="intro">%d vendors in this review. Each keeps its own '
+            'journey and its own money; nothing is summed across '
+            'vendors.</p>'
+            % len(ledgers))
+    body += _table(["Vendor", "Findings", "Net variance", "Outstanding"],
+                   summary_rows, numeric=[1, 2, 3])
+    if actions_html:
+        body += _card("Recommended next steps, by vendor",
+                      '<ul class="actions">%s</ul>' % "".join(actions_html))
+    overview = {"id": "overview", "label": "Overview", "icon": "overview",
+                "title": "Overview", "group": None,
+                "description": " · ".join(
+                    x for x in (meta.get("buyer"), meta.get("period")) if x),
+                "body": body, "note": None}
+
+    all_views = [overview] + all_billing + channel
+
+    out = ["<!doctype html><html lang='en'><head><meta charset='utf-8'>",
+           "<meta name='viewport' content='width=device-width,initial-scale=1'>",
+           "<title>%s — AgentMeasure</title><style>%s</style></head><body>"
+           % (_e(meta.get("title") or "Vendor bills review"), _CSS)]
+    out.append("<div class='app'>")
+    out.append("<aside class='side'><div class='mark'>AgentMeasure</div>")
+    current_group = None
+    for v in all_views:
+        if v.get("group") != current_group:
+            current_group = v.get("group")
+            if current_group:
+                label = (v.get("group_label") if
+                         str(current_group).startswith("vendor:") else
+                         ("Bill verification" if current_group == "billing"
+                          else "Agent channel"))
+                out.append("<div class='grp'>%s</div>"
+                           % _e(label or str(current_group)))
+        dot = ""
+        if v.get("state"):
+            dot = "<span class='st-dot %s' title='%s'></span>" % (
+                _e(v["state"]), _e(v.get("state_text") or ""))
+        out.append("<a class='nav-item' data-view='%s' href='#/%s'>%s"
+                   "<span>%s</span>%s</a>"
+                   % (_e(v["id"]), _e(v["id"]), _icon(v["icon"]),
+                      _e(v["label"]), dot))
+    out.append("<div class='foot'>Computed locally.<br>Nothing uploaded, "
+               "nothing tracked.</div></aside>")
+    out.append("<div class='frame'><header class='bar'>"
+               "<div><h1 id='view-title'></h1>"
+               "<div class='sub' id='view-sub'></div></div>"
+               "<div class='chip'>Offline · no upload</div>"
+               "</header><main>")
+    for v in all_views:
+        body_html = v["body"]
+        if v.get("note"):
+            body_html += ('<div class="card"><div class="note">%s</div>'
+                          '</div>' % _e(v["note"]))
+        out.append(_view(v["id"], v["title"],
+                         v.get("description") or "", body_html))
+    out.append("</main>")
+    out.append("<footer>AgentMeasure · verification you can re-run · "
+               "generated locally with no analytics, trackers, or network "
+               "calls</footer>")
+    out.append("</div></div>")
+    out.append("<script>%s</script>" % _JS)
+    out.append("</body></html>")
+    page = "\n".join(out)
+    for marker in BANNED_MARKERS:
+        if marker in page:
+            raise ValueError("console copy contains a draft marker: %r"
+                             % marker)
+    return page
+
+
 def write_console(page: str, out_path: str) -> str:
     with open(out_path, "w", encoding="utf-8") as fh:
         fh.write(page + "\n")

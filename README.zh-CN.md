@@ -4,10 +4,17 @@
 
 AgentMeasure 把有效条款、invoice、厂商导出和买方业务事实对到一起，支持 CX、财务与采购复核收费。差异双向列示，缺证据保留 **UNPROVABLE**；合同计费差异、买方更严格结果标准和实际退款／抵扣分开记录。
 
-**两个入口，同一套引擎。**
+**五个入口，同一套引擎** —— 对号入座：
 
-- **给 CX／财务／采购** — 看 [$990 首查覆盖什么](website/first-look.html)，或 30 秒开始：[把厂商导出拖进本地对账页](website/recount.html)（浏览器内运行，不上传任何数据）。
-- **给开发者与工具作者** — [开源工具](healthcheck/README.md)、[conformance 向量](conformance/)、[AMS-1 结算标准](standard/SETTLEMENT.md)、[计量审计报告](campaigns/audit-report-2026-09.md)（110 个工具、23 项上游合并修复）。
+| 入口 | 给谁 | 你得到什么 |
+|---|---|---|
+| [买方核账](website/first-look.html) · [浏览器重算](website/recount.html) | 复核 AI 客服账单的 CX／财务／采购 | 按厂商自己的规则重算、争议包、兑现台账、任一条差异可当场复核 |
+| [Conformance 与 AMS-1](conformance/) | 框架与工具维护者 | 向量、结算标准、Stage 0–3 证据阶梯（[徽章](https://roy-tong.github.io/AgentMeasure/badges.html)），一条命令贡献向量：`agentmeasure conformance --new-vector` |
+| [MCP Provider SDK](sdk/) | MCP／API 服务提供商 | 观测 Agent 如何调用你的工具（npm `@agentmeasure/mcp`），与 `agentmeasure check --sdk-events` 配对 |
+| [AgentMeasure Lab](lab/) | Agent 产品研发团队 | 预注册实验、诚实统计、逐变体漏斗——按功效规划，把 null 读作 null |
+| [Healthcheck](healthcheck/README.md) | Codex／Claude Code 开发者 | 本地会话里的重复记录、重试链、Token 异常 |
+
+计量审计报告（110 个工具、23 项上游合并修复）在[这里](campaigns/audit-report-2026-09.md)。
 
 近期商业验证聚焦 AI 客服 outcome 账单；开发者 conformance 继续作为开源路线。
 

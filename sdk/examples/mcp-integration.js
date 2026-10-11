@@ -87,6 +87,13 @@ function makeServer() {
 
   // Third-party style tool handler: takes args, returns results; zero content
   // captured by the middleware.
+  // Tool annotations: declare safety BEFORE the agent calls you. The v2
+  // example shows the registerTool form; on v1 servers pass them through
+  // your server's tool metadata (when supported) so registries and agents
+  // can see: readOnly / not destructive / retryable / reaches the open world.
+  //   annotations: { readOnlyHint: true, destructiveHint: false,
+  //                  idempotentHint: true, openWorldHint: true }
+  // (idempotentHint is Optional in the current spec — set it when true.)
   server.tool("get_weather", { city: z.string() }, async ({ city }) => {
     const n = callIndex++;
     await new Promise((r) => setTimeout(r, 20 + ((n * 37) % 280)));
