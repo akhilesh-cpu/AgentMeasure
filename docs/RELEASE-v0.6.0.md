@@ -1,5 +1,21 @@
 # v0.6.0 — distribution assets, drill-down, and the three value books
 
+## Who this is for
+
+- **CX & support operations** reviewing per-resolution AI support bills (Intercom Fin, Zendesk AI Agents…) — before paying, disputing or renewing.
+- **Finance & procurement** who need the evidence behind a number, one finding at a time, in a form they can hand to the vendor.
+- **Brands running agent channels** measuring agent-driven orders, margin and guardrails from the merchant side.
+- **Tool builders & maintainers** shipping conformance vectors, fixtures and corrections into the open standard.
+
+## What you can do with this release
+
+- Re-check any single finding with `agentmeasure drilldown` — the row, the rule steps in plain language, the verdict, the repro command.
+- Keep three separate value books: recovered cash (`recovery`), hours saved (`delivery`), decisions made differently (`decisions` — new).
+- Send a link, not a PDF: public vendor rule cards (versioned, sourced) and AMS-1 badges (a four-stage evidence ladder — no composite scores).
+- Install from PyPI, npm or GitHub; CI smoke-tests the packaged wheel in a fresh environment on every push.
+
+Public release-notes page (kept current with the site): https://roy-tong.github.io/AgentMeasure/releases.html
+
 Since v0.5.0: the verification system gained its public distribution layer
 and closed the two product gaps BP r32 named. Both package channels are now
 live — this release ships to GitHub, PyPI, and npm in one push.

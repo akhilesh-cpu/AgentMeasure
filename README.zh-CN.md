@@ -11,21 +11,31 @@ AgentMeasure 把有效条款、invoice、厂商导出和买方业务事实对到
 
 近期商业验证聚焦 AI 客服 outcome 账单；开发者 conformance 继续作为开源路线。
 
+## v0.6.0 更新了什么
+
+- **任一条差异可当场复核** — `agentmeasure drilldown` 单条全回放：导出的那一行、每一步规则的人话解释、判决、以及你自己重跑的命令。
+- **三本价值账** — 追回现金（`recovery`）、节省工时（`delivery`）、决策改变（`decisions`）分开记账，永不混算。
+- **公开规则层** — 可链接的[厂商规则卡](https://roy-tong.github.io/AgentMeasure/rules/index.html)（版本化、每条事实带出处）与 [AMS-1 徽章](https://roy-tong.github.io/AgentMeasure/badges.html)（四级证据阶梯——明确不做复合评分）。
+- **安装通道全通** — PyPI、npm、GitHub 均提供当前版本；CI 每次推送前在新环境中冒烟测试安装包。
+- 新增三个外部 conformance 向量，含首个经 PR 贡献的可用性认证向量。
+
+完整说明：[v0.6.0 Release](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.6.0) · [全部版本](https://roy-tong.github.io/AgentMeasure/releases.html)
+
 ## 安装当前版本
 
 ```bash
-# Python 3.9+。自 v0.5.0（2026-10-10 验证）起 PyPI 与 GitHub 同步。
+# Python 3.9+。自 v0.6.0（2026-10-11 验证）起 PyPI、npm 与 GitHub 同步。
 pip install agentmeasure
 agentmeasure demo                          # 合成开发者示例
 agentmeasure check                         # 本地 Codex / Claude Code 会话
 agentmeasure conformance                   # 内置证据检查
 ```
 
-截至 **2026-10-10**，GitHub 与 [PyPI](https://pypi.org/project/agentmeasure/) 均为 v0.5.0（干净环境安装与 `demo` 已验证）。备用固定安装：`pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.5.0#subdirectory=healthcheck"`。分析本地运行，无运行时网络调用。
+截至 **2026-10-11**，GitHub、[PyPI](https://pypi.org/project/agentmeasure/) 与 [npm](https://www.npmjs.com/package/@agentmeasure/mcp) 均为当前版本（干净环境安装与 `demo`/`drilldown` 已验证）。备用固定安装：`pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.6.0#subdirectory=healthcheck"`。分析本地运行，无运行时网络调用。
 
 ## 买方核验流程
 
-`prepare` 映射原生 Intercom／Zendesk 导出并显示缺字段；hint 不自动变成已确认事实。`recount` 使用已支持规则；`--contract` 为更严格买方标准提供独立 lane，不能自动当退款请求。`crosscheck`、`crm-join`、`verify` 关联输入并产出核验账本；`dispute`、`recovery`、`period-compare` 和离线 `console` 支持交付与后续记录。见[发布说明](docs/RELEASE-v0.5.0.md)。
+`prepare` 映射原生 Intercom／Zendesk 导出并显示缺字段；hint 不自动变成已确认事实。`recount` 使用已支持规则；`--contract` 为更严格买方标准提供独立 lane，不能自动当退款请求。`crosscheck`、`crm-join`、`verify` 关联输入并产出核验账本；`dispute`、`recovery`、`period-compare` 和离线 `console` 支持交付与后续记录。见[发布说明](docs/RELEASE-v0.6.0.md)。
 
 解读差异前，先确认 **有效条款、账期和 outcome 类型**。公开默认规则不覆盖全部定制合同或 Procedure／handoff 情况。原生导出可能需要人工补证据；首查可行性检查决定支持范围。未知或冲突证据不构成确定退款金额。
 

@@ -18,19 +18,30 @@ stricter buyer outcome standards and actual credits are separate lanes.
 
 The current commercial focus is AI support outcome billing; developer conformance remains an open-source route.
 
+## What's new in v0.6.0
+
+- **Re-check any single finding** — `agentmeasure drilldown` replays one conversation end to end: the exported row, every vendor-rule step in plain language, the verdict, and the command to reproduce it.
+- **Three value books** — recovered cash (`recovery`), hours saved (`delivery`), and now decisions made differently (`decisions`) are recorded separately, never blended.
+- **Public rule layer** — linkable [vendor rule cards](https://roy-tong.github.io/AgentMeasure/rules/index.html) (versioned, every fact sourced) and [AMS-1 badges](https://roy-tong.github.io/AgentMeasure/badges.html) (a four-stage evidence ladder — explicitly no composite scores).
+- **All install channels live** — PyPI, npm and GitHub serve the current release; CI now smoke-tests the packaged wheel in a fresh environment before every push.
+- Three new external conformance vectors, including the first availability-certification vector contributed via PR.
+
+Full notes: [v0.6.0 release](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.6.0) · [all releases](https://roy-tong.github.io/AgentMeasure/releases.html)
+
 ## Install the current release
 
 ```bash
-# Python 3.9+. PyPI is current as of v0.5.0 (verified 2026-10-10).
+# Python 3.9+. PyPI is current as of v0.6.0 (verified 2026-10-11).
 pip install agentmeasure
 agentmeasure demo                          # synthetic developer example
 agentmeasure check                         # local Codex / Claude Code sessions
 agentmeasure conformance                   # bundled evidence checks
 ```
 
-As checked on **2026-10-10**, both GitHub and [PyPI](https://pypi.org/project/agentmeasure/)
-serve v0.5.0 (clean-environment install + `demo` verified). Pinned Git install as
-fallback: `pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.5.0#subdirectory=healthcheck"`.
+As checked on **2026-10-11**, GitHub, [PyPI](https://pypi.org/project/agentmeasure/) and
+[npm](https://www.npmjs.com/package/@agentmeasure/mcp) all serve the current release
+(clean-environment install + `demo` + `drilldown` verified). Pinned Git install as
+fallback: `pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.6.0#subdirectory=healthcheck"`.
 Analysis runs locally without runtime network calls.
 
 ## Buyer review workflow
@@ -40,7 +51,7 @@ distinct from facts requiring review. `recount` applies supported rules; `--cont
 adds a stricter buyer-standard lane, which is not automatically a billing claim.
 `crosscheck`, `crm-join` and `verify` join evidence and produce the review ledger.
 `dispute`, `recovery`, `period-compare` and the offline `console` support handoff
-and follow-up. See the [release notes](docs/RELEASE-v0.5.0.md).
+and follow-up. See the [release notes](docs/RELEASE-v0.6.0.md).
 
 Confirm the **effective terms, billing period and outcome type** before interpreting
 findings. Public vendor defaults do not cover every negotiated contract or Procedure
@@ -50,8 +61,8 @@ supported scope. Unknown or conflicting evidence does not establish a refund.
 ## Technical evidence
 
 The [audit report](campaigns/audit-report-2026-09.md) records 110 tools reviewed,
-45+ accounting bugs and 23 fixes merged or accepted upstream. v0.5.0 has **450
-Healthcheck tests**, verified on 2026-10-03. These are engineering results, not
+45+ accounting bugs and 23 fixes merged or accepted upstream. v0.6.0 has **466
+Healthcheck tests**, verified on 2026-10-11. These are engineering results, not
 customer payment, billing accuracy or recovered-money metrics.
 
 An external maintainer reviewed 136,145 events in their own corpus and challenged
