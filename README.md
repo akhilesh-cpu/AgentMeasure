@@ -76,6 +76,9 @@ not a claim that AgentMeasure verified that many customer bill lines.
 
 ## Why billing review needs business evidence
 
+Outcome-based pricing is winning the pricing page; who can verify a billed
+outcome is the layer still missing. That layer is what this repository builds.
+
 [Intercom currently charges per outcome](https://www.intercom.com/pricing), with
 several qualifying outcome types. A buyer's applicable terms and business records
 determine which conditions can be checked for a given period. AgentMeasure connects
