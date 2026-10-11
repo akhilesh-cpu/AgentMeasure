@@ -1,130 +1,90 @@
 # AgentMeasure
 
-**Find repeated failures and retries in your Codex and Claude Code sessions, with local evidence.**
+**Review AI support billing records against the applicable rules and business evidence.**
 
-Healthcheck reads existing **Codex rollout logs** and **Claude Code session logs**
-and produces a terminal summary and a local HTML report. It checks duplicate
-records, retry chains, and consecutive tool failures (HC-01..03), plus audit
-checks for operation-resolution coverage, cache accounting, and token stability
-(HC-04..06, `--audit`). Missing evidence is **UNPROVABLE**, never silently zero.
+AgentMeasure helps CX, finance and procurement put the effective terms, invoice,
+vendor export and buyer records together. It produces reviewable findings in both
+directions and keeps missing evidence **UNPROVABLE**. Billing-rule differences,
+stricter buyer outcome standards and actual credits are separate lanes.
+
+**Two entrances, one engine.**
+
+- **For CX / finance / procurement** — see [what a $990 first-look covers](website/first-look.html),
+  or start in 30 seconds: [drop a vendor export into the local recount page](website/recount.html)
+  (runs in your browser, nothing uploaded).
+- **For developers and tool authors** — [open-source tools](healthcheck/README.md),
+  [conformance vectors](conformance/), the [AMS-1 settlement standard](standard/SETTLEMENT.md),
+  and the [metering audit report](campaigns/audit-report-2026-09.md) (110 tools, 23 fixes merged upstream).
+
+The current commercial focus is AI support outcome billing; developer conformance remains an open-source route.
+
+## Install the current release
 
 ```bash
-# Python 3.9+. NOTE: PyPI still serves 0.4.0, which crashes on the first
-# command (NameError on demo/check/compare). The 0.4.1 fix is on GitHub but
-# not yet on the index — install from git until it lands.
-pipx install "git+https://github.com/roy-tong/AgentMeasure#subdirectory=healthcheck"
-agentmeasure demo                          # synthetic example; no personal logs needed
-agentmeasure check                         # your local sessions, last 7 days
-agentmeasure check --runtime claude        # force the Claude Code adapter
+# Python 3.9+. PyPI is current as of v0.5.0 (verified 2026-10-10).
+pip install agentmeasure
+agentmeasure demo                          # synthetic developer example
+agentmeasure check                         # local Codex / Claude Code sessions
+agentmeasure conformance                   # bundled evidence checks
 ```
 
-Analysis runs locally with no runtime network calls. Shipped in v0.4.0/v0.4.1:
-Claude Code adapter v1, embedded conformance pack
-(`agentmeasure conformance`, also a [GitHub Action](action.yml)), OTel /
-Prometheus exports, run trends (`agentmeasure trend`), and settlement
-statements for outcome-based billing — `agentmeasure settle --format md|html`
-generates an [AMS-1](standard/SETTLEMENT.md) one-pager (two lines, both
-directions, cannot-settle removals, third-party reproduction block) plus the
-dispute-bundle JSON. For per-resolution vendors there is a full buyer-side
-pipeline: `agentmeasure prepare` maps a native Intercom/Zendesk export onto
-the canonical columns (judgement columns stay empty for human review, every
-value carries provenance); `recount` applies the vendor's own published rules
-line by line, with an optional `--contract` overlay that lists outcome-standard
-findings as a separate lane, never netted into the claim; `dispute` builds the
-negotiable pack; `recovery` records what the vendor actually conceded, counted
-separately from the claim. `verify` composes all lanes into one Verified
-Ledger (json + md), `crosscheck` puts your billing ledger beside the export,
-`dashboard` renders the whole story as an offline single-file HTML page,
-`rules-diff` gates a material vendor-rule change (exit 1), `narrative`
-drafts the settlement letter in two steps where the model's draft is refused
-if any number does not come from the pack, and `delivery` logs engagements
-to report the appendix-E reuse metrics.
+As checked on **2026-10-10**, both GitHub and [PyPI](https://pypi.org/project/agentmeasure/)
+serve v0.5.0 (clean-environment install + `demo` verified). Pinned Git install as
+fallback: `pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.5.0#subdirectory=healthcheck"`.
+Analysis runs locally without runtime network calls.
 
-[**Quick start and supported formats**](healthcheck/README.md) ·
-[**AMS-1: open settlement-statement standard**](standard/SETTLEMENT.md) ·
-[**Try it and share feedback safely**](campaigns/healthcheck-first-run.md) ·
-[**What our contributions changed**](campaigns/measurement-casebook.md) · [**The Token-Accounting Bug Report — ~110 tools audited, 45+ verified bugs, 23 fixes merged or accepted upstream (openlit, langfuse, codeburn and more)**](campaigns/audit-report-2026-09.md) · [**Maintain a usage tool? Audit it in 10 minutes**](campaigns/tool-authors.md) ·
-[中文](README.zh-CN.md)
+## Buyer review workflow
 
-Found a useful result? Keep a snapshot and compare your next run. Feedback is
-optional: you can use the tool without opening an issue or uploading logs.
+`prepare` maps native Intercom/Zendesk exports and exposes field gaps; hints remain
+distinct from facts requiring review. `recount` applies supported rules; `--contract`
+adds a stricter buyer-standard lane, which is not automatically a billing claim.
+`crosscheck`, `crm-join` and `verify` join evidence and produce the review ledger.
+`dispute`, `recovery`, `period-compare` and the offline `console` support handoff
+and follow-up. See the [release notes](docs/RELEASE-v0.5.0.md).
 
-## Measurement infrastructure
+Confirm the **effective terms, billing period and outcome type** before interpreting
+findings. Public vendor defaults do not cover every negotiated contract or Procedure
+handoff. Native fields may need human review; first-look feasibility determines the
+supported scope. Unknown or conflicting evidence does not establish a refund.
 
-**The open yardstick for agent usage and AI outcomes.**
-**Test whether your agent metrics mean what their labels claim.**
+## Technical evidence
 
-Conformance checks for AI-agent telemetry — a retry is one logical operation, not two requests; a reasoning-token subset must not be added into totals; a cache hit is not a new measurement. Every check reports **PASS / FAIL / UNPROVABLE**, and UNPROVABLE is a first-class result: when the evidence to decide is absent, it is disclosed, never zeroed.
+The [audit report](campaigns/audit-report-2026-09.md) records 110 tools reviewed,
+45+ accounting bugs and 23 fixes merged or accepted upstream. v0.5.0 has **450
+Healthcheck tests**, verified on 2026-10-03. These are engineering results, not
+customer payment, billing accuracy or recovered-money metrics.
 
-External evidence keeps arriving: one dedup fix survived a maintainer's
-136k-event corpus re-review ([codeburn #1264](https://github.com/getagentseal/codeburn/pull/1264)),
-and the first externally surfaced real-world case — a public 436k → 54,154-token
-miscount where a replayed cache prefix was read as fresh per-spawn overhead —
-is now a [conformance evidence case](conformance/evidence/rulestack-cache-prefix-overhead/README.md)
-with cited sources.
+An external maintainer reviewed 136,145 events in their own corpus and challenged
+an initial codeburn finding, leading to a correction. This is [public review and
+correction](https://github.com/getagentseal/codeburn/pull/1264#pullrequestreview-5215770517),
+not a claim that AgentMeasure verified that many customer bill lines.
 
-```yaml
-# .github/workflows/conformance.yml — turn measurement assumptions into CI checks
-- uses: roy-tong/AgentMeasure@2cf476d6f7d0fc45401db5a822e1f12de009ac74
-  with:
-    fixture: fixtures/telemetry.jsonl   # your FMT-002 event fixture
-```
+## Why billing review needs business evidence
 
-[**Run conformance locally**](conformance/pack/README.md) · [**See real failures**](#external-provider-trials) · [Read the spec](standard/CORE.md) · [中文](README.zh-CN.md)
-
-[![CI: conformance](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml/badge.svg)](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)
-[![Spec](https://img.shields.io/badge/spec-Draft_0.4-blue)](standard/CORE.md)
-[![Release](https://img.shields.io/github/v/release/roy-tong/AgentMeasure?include_prereleases)](https://github.com/roy-tong/AgentMeasure/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-informational.svg)](LICENSE)
-[![Discussions](https://img.shields.io/github/discussions/roy-tong/AgentMeasure)](https://github.com/roy-tong/AgentMeasure/discussions)
-
-> **AgentMeasure separates execution facts from logical operations, evidence
-> from inference, and economic settlement from value** — an open measurement
-> layer for the Agent Capability Economy. One number for your dashboards
-> (logical operations), the evidence for what each number counts, and explicit
-> disclosure for what it cannot prove.
-
-> **When machine execution produces charges, execution facts and billing facts
-> live in different systems.** AgentMeasure is the independent verification
-> layer between them: what actually happened, what the declared policy says,
-> whether the two agree — and what cannot be proven. It measures and checks
-> conformance to declared rules; it does not adjudicate (no "should have been
-> billed" verdicts, no liability). Payment receipts prove money moved;
-> **[AMS-1 settlement statements](standard/SETTLEMENT.md)** prove what the
-> money was for. Verdicts come only from named rules with tests behind them —
-> models, where used at all, sort and summarize but never judge — so the same
-> inputs re-run to the same statement on any machine.
-
-**Today:** measure agent-facing capability usage — attempts, operations, retry
-inflation, success rates with numerators you can audit.
-**Next:** make capabilities comparable and meterable — including the outcome units
-now being billed (what counts as one resolution, one completed task).
-**Long term:** provide the measurement foundation for Capability as a Service (CaaS).
-
-**Reach → Choice → Use → Utility → Value**
-
-> AgentMeasure is **not** a payment protocol, marketplace, or universal ranking system.
-> It standardizes the facts and measurement semantics those systems can build on.
-
-## Why now
-
-AI services have started charging by the outcome: [Zendesk at $1.50–2.00 per automated resolution](https://www.zendesk.com/newsroom/articles/zendesk-outcome-based-pricing/) since Aug 2024, [Intercom Fin at $0.99 per resolution](https://www.intercom.com/pricing/fin) with a money-back guarantee, [Salesforce Agentforce at $2 per conversation](https://www.salesforce.com/agentforce/pricing/), plus Sierra, Ada, and Decagon. In two years, per-outcome pricing went from differentiator to industry default. In May 2026 Zendesk went a step further and began billing only "Verified Resolutions" — vendors are now competing to define what one outcome is.
-
-The buyer still has no checker. The rules are written by the seller and the bill is computed by the seller; Intercom's own documentation says "We cannot guarantee the limit will be 100% accurate." We checked 20 vendors' public docs — none publishes a dispute or refund process for miscounts. So we are building the buyer's side of the bill: re-run it on your own machine and get an [AMS-1 settlement statement](standard/SETTLEMENT.md) — what was charged, what the vendor's own rules would charge, and what the evidence cannot prove. Per resolution, per task, or per usage: one settlement semantics for all three billing units.
-
-When money rides on a measured unit, someone has to define the unit. That is what we build. → [Read the note](https://roy-tong.github.io/AgentMeasure/blog/outcome-yardstick.html)
+[Intercom currently charges per outcome](https://www.intercom.com/pricing), with
+several qualifying outcome types. A buyer's applicable terms and business records
+determine which conditions can be checked for a given period. AgentMeasure connects
+those inputs to named rules, provenance and reproducible statements. It supports
+review and negotiation; acceptance and actual credits remain separate records.
 
 ## Pricing
 
-The standard and the local tooling are open source and free, permanently. What we sell is reconciliation work on top of them — every fee below maps to a countable unit, the way we think all AI billing should work.
-
-| Tier | Price | What you get |
+| Service | Price | Scope |
 |---|---|---|
-| Open source | **$0, forever** | CLI checker, conformance pack, CI action, self-serve AMS-1 statements — [run it yourself](healthcheck/README.md) |
-| First-Look reconciliation | **$990 one-time**, per vendor export | You send the export (Intercom Fin / Zendesk / Decagon); we return the AMS-1 one-pager — confirmed vs assumed resolutions, the dollar delta, a named rule behind every figure — plus flagged dispute lines, the dispute bundle, and a 30-minute walkthrough. Processed locally. |
-| Monthly reconciliation | **from $490/month** | The same statement every month, rule updates when a vendor changes how it counts, dispute-line watch, quarterly review. Tiers: ≤10k resolutions/mo **$490** · 10k–50k **$990** · larger or multi-vendor stacks quoted as enterprise. |
+| Open source | **$0** | Local tools, conformance pack, CI action and AMS-1 standard |
+| First-look review | **$990 one-time pilot quote** | One vendor, one complete billing period; feasibility checked before scope is agreed; a finance one-pager, findings, evidence bundle and 30-minute walkthrough |
+| Recurring or renewal review | **Quoted by scope** | Frequency, vendor count, records and manual review are agreed after the first review establishes the need |
 
-No accuracy SLAs — every deliverable ships a coverage block instead (what entered the computation, what stayed UNPROVABLE). No recovery commissions — we produce the evidence; the negotiation stays yours. Design partners: the first five are free, in exchange for a public testimonial. → [Pricing page](https://roy-tong.github.io/AgentMeasure/#pricing) · [tongroy18@gmail.com](mailto:tongroy18@gmail.com)
+Complex manual work or extra periods are scoped separately. Design-partner work is
+selected by data feasibility and feedback; public testimonials require separate
+consent. Every delivery reports coverage and unresolved evidence. There are no
+recovery commissions or promises of a particular refund.
+
+**The verification rules stay public and free; paying does not change what the
+evidence says.** No paid rankings, no recommendation slots — see
+[Principles](#principles-written-down-before-anyone-asked) below.
+
+[Read the review brief](website/first-look.html) · [Contact Roy](mailto:tongroy18@gmail.com)
 
 ## Principles (written down before anyone asked)
 
@@ -137,6 +97,14 @@ No accuracy SLAs — every deliverable ships a coverage block instead (what ente
 ![AgentMeasure — The Measurement Stack](assets/agentmeasure-stack.svg)
 
 **Start with the story:** [When the Software Consumer Becomes an Agent](https://roy-tong.github.io/en/notes/when-the-software-consumer-becomes-an-agent/) (EN) · [当软件的消费者变成 Agent](https://roy-tong.github.io/notes/when-the-software-consumer-becomes-an-agent/) (ZH)
+
+---
+
+# For developers and standard contributors
+
+Everything below this line is the open measurement layer: the conformance pack,
+the experiment engine, the core specification and the provider SDK. It powers the
+billing review above, and it stays free.
 
 ## Try it in 2 minutes
 

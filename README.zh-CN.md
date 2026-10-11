@@ -1,101 +1,57 @@
 # AgentMeasure
 
-**用本地证据，找出 Codex / Claude Code 会话中的重复记录、重试链和连续工具失败。**
+**为 AI 客服买方核对合同、账单与业务记录，交付可复核的差异清单。**
 
-Healthcheck 直接读取已有的 **Codex rollout 日志**与 **Claude Code 会话日志**，
-生成终端摘要和本地 HTML 报告。检查重复记录、重试链、连续工具失败（HC-01..03），
-以及运行解析覆盖、缓存记账、token 稳定性等审计项（HC-04..06，`--audit`）。
-证据缺失一律 UNPROVABLE，不静默记零。
+AgentMeasure 把有效条款、invoice、厂商导出和买方业务事实对到一起，支持 CX、财务与采购复核收费。差异双向列示，缺证据保留 **UNPROVABLE**；合同计费差异、买方更严格结果标准和实际退款／抵扣分开记录。
+
+**两个入口，同一套引擎。**
+
+- **给 CX／财务／采购** — 看 [$990 首查覆盖什么](website/first-look.html)，或 30 秒开始：[把厂商导出拖进本地对账页](website/recount.html)（浏览器内运行，不上传任何数据）。
+- **给开发者与工具作者** — [开源工具](healthcheck/README.md)、[conformance 向量](conformance/)、[AMS-1 结算标准](standard/SETTLEMENT.md)、[计量审计报告](campaigns/audit-report-2026-09.md)（110 个工具、23 项上游合并修复）。
+
+近期商业验证聚焦 AI 客服 outcome 账单；开发者 conformance 继续作为开源路线。
+
+## 安装当前版本
 
 ```bash
-# Python 3.9+。注意：PyPI 仍是 0.4.0，首条命令会崩（demo/check/compare 触发 NameError）。
-# 0.4.1 修复已在 GitHub，但尚未上 PyPI——在此之前请从 git 安装。
-pipx install "git+https://github.com/roy-tong/AgentMeasure#subdirectory=healthcheck"
-agentmeasure demo                          # 合成示例，无需个人日志
-agentmeasure check                         # 本机最近 7 天会话
-agentmeasure check --runtime claude        # 强制 Claude Code 适配器
+# Python 3.9+。自 v0.5.0（2026-10-10 验证）起 PyPI 与 GitHub 同步。
+pip install agentmeasure
+agentmeasure demo                          # 合成开发者示例
+agentmeasure check                         # 本地 Codex / Claude Code 会话
+agentmeasure conformance                   # 内置证据检查
 ```
 
-分析全程本地运行，不发网络请求。v0.4.0/v0.4.1 已交付：Claude Code 适配器 v1、
-内置 conformance 检查（`agentmeasure conformance`，亦有
-[GitHub Action](action.yml)）、OTel / Prometheus 导出、运行趋势
-（`agentmeasure trend`），以及**按效果计费的结算声明**——
-`agentmeasure settle --format md|html` 生成
-[AMS-1](standard/SETTLEMENT.md) 一页纸（两线对照、双向披露、cannot-settle
-移除、第三方复现块）与争议包 JSON。对按 resolution 计费的厂商另有完整买方
-流水线：`agentmeasure prepare` 把 Intercom/Zendesk 原生导出映射到规范列
-（判断列留空等人工复核，每个值带出处）；`recount` 按厂商自己公布的规则逐笔
-重算，`--contract` 可叠加买方结果标准——结果标准差异单列一栏，绝不并入索赔
-金额；`dispute` 生成可递交的争议包；`recovery` 记录厂商实际兑现的退还，
-与索赔分开计数。`verify` 把全部 lane 合成一份 Verified Ledger（json+md）；
-`crosscheck` 把你的计费流水与导出并排核对；`dashboard` 把整个核验故事渲染成
-离线单文件 HTML 仪表盘；`rules-diff` 对厂商规则实质变更退出码 1（月度例行动作）；
-`narrative` 两步起草结算函——模型草稿里任何一个不是来自 pack 的数字都会被拒绝、
-回退纯规则模板；`delivery` 记录交付耗时并报告附录 E 的复用指标。
+截至 **2026-10-10**，GitHub 与 [PyPI](https://pypi.org/project/agentmeasure/) 均为 v0.5.0（干净环境安装与 `demo` 已验证）。备用固定安装：`pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.5.0#subdirectory=healthcheck"`。分析本地运行，无运行时网络调用。
 
-[**快速开始与支持范围**](healthcheck/README.md) ·
-[**AMS-1：开放结算声明标准**](standard/SETTLEMENT.md) ·
-[**试跑和安全反馈**](campaigns/healthcheck-first-run.md) ·
-[**公开贡献案例**](campaigns/measurement-casebook.md) · [English](README.md)
-[**Token 计量 Bug 报告：审计约 110 个工具、45+ 实证缺陷、23 项修复已合并或被接受进 openlit、langfuse、codeburn 等上游**](campaigns/audit-report-2026-09.md) ·
-[**维护用量统计工具？10 分钟自检**](campaigns/tool-authors.md) ·
+## 买方核验流程
 
-有用的结果可以保存快照，下次运行时比较。无需上传日志或开 issue 才能使用。
+`prepare` 映射原生 Intercom／Zendesk 导出并显示缺字段；hint 不自动变成已确认事实。`recount` 使用已支持规则；`--contract` 为更严格买方标准提供独立 lane，不能自动当退款请求。`crosscheck`、`crm-join`、`verify` 关联输入并产出核验账本；`dispute`、`recovery`、`period-compare` 和离线 `console` 支持交付与后续记录。见[发布说明](docs/RELEASE-v0.5.0.md)。
 
-## 计量基础设施
+解读差异前，先确认 **有效条款、账期和 outcome 类型**。公开默认规则不覆盖全部定制合同或 Procedure／handoff 情况。原生导出可能需要人工补证据；首查可行性检查决定支持范围。未知或冲突证据不构成确定退款金额。
 
-**Agent 经济缺一把公尺——AI 用了什么、干得怎么样，行业还没有统一的算法。**
-**度量 Agent 的真实使用——别把重试当成用户。**
+## 技术证据
 
-外部证据持续进来：一项去重修复经受住了维护者 136k 事件语料的复审
-（[codeburn #1264](https://github.com/getagentseal/codeburn/pull/1264)）；
-首个由外部送来的真实案例——公开的 436k → 54,154 token 误算（重放的缓存前缀
-被当作每次 spawn 的新增开销）——已入库为带来源引用的
-[conformance 证据案例](conformance/evidence/rulestack-cache-prefix-overhead/README.md)。
+[审计报告](campaigns/audit-report-2026-09.md)记录 110 个工具、45+ 记账 bug 和 23 项上游合并／接受的修复。v0.5.0 有 **450 项 Healthcheck 测试**，10/3 核验通过。它们属于工程成果，不能替代客户付款、真实账单准确性或追回金额。
 
-[![CI: conformance](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml/badge.svg)](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)
-[![Spec](https://img.shields.io/badge/spec-Draft_0.4-blue)](standard/CORE.md)
-[![Release](https://img.shields.io/github/v/release/roy-tong/AgentMeasure?include_prereleases)](https://github.com/roy-tong/AgentMeasure/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-informational.svg)](LICENSE)
-[![Discussions](https://img.shields.io/github/discussions/roy-tong/AgentMeasure)](https://github.com/roy-tong/AgentMeasure/discussions)
+外部维护者曾用自有 136,145 条事件复核 codeburn 报告，挑战早期结论并促成修订。这是[公开复核与纠错](https://github.com/getagentseal/codeburn/pull/1264#pullrequestreview-5215770517)，不表示 AgentMeasure 已核验这些客户账单行。
 
-> **AgentMeasure 把执行事实与逻辑操作分开、把证据与推断分开、把经济结算与价值分开**
-> ——一套面向 Agent Capability Economy 的开放计量层。给仪表盘一个可用的数字
-> （逻辑操作数），给每个数字可审计的证据，给测不到的部分明确的披露，
-> 而不是一个装作精确的估计。判定只来自具名规则与其背后的测试——模型至多做
-> 整理与叙述，永不参与判定；同样的输入，换台机器重跑，得到同一份声明。
-> 支付回单证明钱动了，[AMS-1 结算声明](standard/SETTLEMENT.md)证明这钱是为了什么。
+## 为什么要关联业务证据
 
-**今天：** 度量 Agent 对软件能力的使用——attempts、operations、retry 膨胀、
-分子可审计的成功率。
-**下一步：** 让 Capability 可以跨 Agent 被统一度量、比较和计量——包括正在被
-计费的"效果单位"（什么算一次解决、一次完成的任务）。
-**长期：** 成为 Capability as a Service（CaaS）的计量基础。
-
-**Reach → Choice → Use → Utility → Value**
-
-> AgentMeasure **不是**支付协议、市场或通用排名系统。
-> 它标准化的是这些系统可以构建于其上的事实与测量语义。
-
-## 为什么是现在
-
-AI 服务已经开始按效果收钱：Zendesk 2024 年 8 月起[按"解决一单"收 1.50–2.00 美金](https://www.zendesk.com/newsroom/articles/zendesk-outcome-based-pricing/)，[Intercom Fin 一单 0.99 美金](https://www.intercom.com/pricing/fin)还带退款保证，[Salesforce Agentforce 一段会话 2 美金](https://www.salesforce.com/agentforce/pricing/)，Sierra、Ada、Decagon 全部跟上——两年里，按效果收费从卖点变成了行规。2026 年 5 月，Zendesk 更进一步，只对 "Verified Resolutions" 计费：厂商开始抢"什么算一次解决"的定义权。
-
-买方这边始终没有核对工具。规则是卖方写的，账单是卖方算的；Intercom 自己的文档写着 "We cannot guarantee the limit will be 100% accurate"。我们查了 20 家厂商的公开文档——没有一家写明计错了怎么办。所以我们在做账单的买方一侧：在你自己的机器上重算，拿到 [AMS-1 结算声明](standard/SETTLEMENT.md)——实际收了多少、按厂商自己的规则该收多少、哪些证据证明不了。按解决次数、按任务、还是按用量：三种计费单位，一套结算语义。
-
-钱挂在一个可测量的量上，就得有人把这个量定义清楚。这就是我们在做的事。→ [读这篇说明](https://roy-tong.github.io/AgentMeasure/blog/outcome-yardstick.html)
+[Intercom 当前按 outcome 收费](https://www.intercom.com/pricing)，符合条件的 outcome 有不同类型。对具体账期，以客户有效条款和业务记录判断能检查哪些条件。AgentMeasure 交付具名规则、来源与复算依据；厂商是否接受、实际退款或抵扣分别记录。
 
 ## 定价
 
-标准和本地工具永久免费开源。我们卖的是架在上面的对账服务——下面每一档收费都映射到可数的单位，我们觉得所有 AI 计费都该这样。
-
-| 档位 | 价格 | 你拿到什么 |
+| 服务 | 费用 | 范围 |
 |---|---|---|
-| 开源 | **$0，永久** | CLI 检查器、conformance 包、CI Action、自助生成 AMS-1 声明——[自己跑](healthcheck/README.md) |
-| First-Look 首查 | **$990 一次性**，按厂商导出 | 你提供导出（Intercom Fin / Zendesk / Decagon），我们交付 AMS-1 一页单——确认与假定的 resolutions 分列、美元差额、每个数字背后一条具名规则——外加争议行标记、争议证据包、30 分钟讲解。全程本地处理。 |
-| 月度对账 | **$490/月起** | 每月同一份一页单、厂商改计数规则时的规则更新、争议行监测、季度复盘。分档：≤10k resolutions/月 **$490** · 10k–50k **$990** · 更大量或多厂商栈按企业版报价。 |
+| 开源自助 | **$0** | 本地工具、conformance、CI Action 与 AMS-1 标准 |
+| 首查 | **$990，一次性试点报价** | 单厂商、单完整账期；先确认数据与规则可行性，再约定范围；交付财务一页单、差异与证据包、30 分钟讲解 |
+| 持续／续约核验 | **按范围报价** | 首查后确认需求，按频率、厂商数、数据量与人工复核范围定价 |
 
-不承诺准确率 SLA——每份交付物带 Coverage 块（哪些进了计算、哪些保持 UNPROVABLE）。不做追回分成——我们产出证据，谈判归你。Design Partner：前五家免费，换一份公开证言。→ [定价页](https://roy-tong.github.io/AgentMeasure/#pricing) · [tongroy18@gmail.com](mailto:tongroy18@gmail.com)
+复杂人工和额外账期另定范围。设计伙伴按数据可行性与反馈选择，公开证言另征同意。每份交付列覆盖率和未证明事项；不收追回分成，不承诺特定退款。
+
+**核验规则永远公开免费；付费不改变判定结果。** 不卖排名、不卖推荐位——见下方[我们的原则](#我们的原则先写下来免得以后被要求破例)。
+
+[首查说明](website/first-look.html) · [联系 Roy](mailto:tongroy18@gmail.com)
 
 ## 我们的原则（先写下来，免得以后被要求破例）
 
@@ -108,6 +64,12 @@ AI 服务已经开始按效果收钱：Zendesk 2024 年 8 月起[按"解决一�
 ![AgentMeasure — 计量栈总览](assets/agentmeasure-stack.svg)
 
 **从这里开始读故事：** [当软件的消费者变成 Agent](https://roy-tong.github.io/notes/when-the-software-consumer-becomes-an-agent/)（中文）· [When the Software Consumer Becomes an Agent](https://roy-tong.github.io/en/notes/when-the-software-consumer-becomes-an-agent/)（EN）
+
+---
+
+# 开发者与标准贡献者专区
+
+以下内容是开放计量层：conformance 包、实验引擎、核心规范与 Provider SDK。它支撑上面的账单核验，并保持免费。
 
 ## 2 分钟上手
 

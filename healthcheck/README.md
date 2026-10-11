@@ -1,4 +1,4 @@
-# AgentMeasure Healthcheck (pre-release)
+# AgentMeasure Healthcheck
 
 **A local check-up report for your coding agent runs.**
 Point it at the logs your agent runtime already writes. It answers three
@@ -10,37 +10,26 @@ Same honesty rules as the [conformance pack](../conformance/pack/README.md):
 every verdict is `OK / FINDING / UNPROVABLE`, and UNPROVABLE is a first-class
 result — when the logs cannot decide, that is disclosed, never zeroed.
 
-> Status: engineering preview (v0.3.0). Adapters: **Codex rollout logs** and
-> **Claude Code session logs** (`--runtime claude`; auto-detected when Codex is
-> absent). Claude v1 scope: duplicate / retry / error-run checks fully supported;
-> session token accounting is honestly **UNPROVABLE** — Claude transcripts carry
-> per-request usage only, no cumulative counter, and per-request sums are never
-> presented as session totals.
-> Distribution name decided: **`agentmeasure`** on PyPI (command of the same
-> name). PyPI publish is armed and goes live with tag `v0.3.0` once the PyPI
-> account/trusted publisher is configured — until then use the git install.
+> Status verified 2026-10-03: **v0.5.0 is available on GitHub**; PyPI still
+> serves 0.4.0 and the release publish step has not succeeded. Use the pinned
+> Git installation below. Healthcheck's 450 unit tests passed in the local review.
+> Codex rollout logs and Claude Code session logs are supported. Claude session
+> token accounting remains **UNPROVABLE**: per-request usage is not a cumulative
+> session counter.
 
 ## Install
 
-> **Note (2026-09-21):** PyPI still serves **0.4.0**, which crashes on the
-> first command (`NameError` in `_run_check`; `demo` / `check` / `compare`
-> all affected). The fix is in 0.4.1 and already on main. Until the 0.4.1
-> wheel lands on the index, install from git instead (option 3 below) —
-> that path runs clean.
-
 ```bash
-# 1) from PyPI (live since v0.4.0 — see note above; 0.4.1 pending upload)
-pipx run agentmeasure demo
+# Install the verified release from GitHub.
+pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.5.0#subdirectory=healthcheck"
+agentmeasure demo
 
-# 2) install the command
-pipx install agentmeasure
-
-# 3) from git (tracks main)
-pipx install "git+https://github.com/roy-tong/AgentMeasure#subdirectory=healthcheck"
-
-# 4) zero install, straight from a repository checkout
+# Or run from a repository checkout (use the v0.5.0 tag for reproducibility).
 python3 healthcheck/agentmeasure demo
 ```
+
+Use PyPI only after a current release has been published and verified. The
+0.4.0 package has a known first-command crash; it is not the recommended path.
 
 Python 3.9+ standard library only; zero runtime dependencies; no network code
 (a test enforces both).
@@ -112,6 +101,13 @@ source and confidence (P = primary/official, S = secondary, U = unverified).
 The browser-local recount at [the website](../website/) runs the same Tier 1
 with no upload; a cross-language parity test keeps the two from drifting.
 
+Before a client review, confirm the contract version and outcome subtype.
+Current public Intercom terms include Procedure outcomes and handoffs. Uncovered
+terms must remain unresolved rather than be automatically marked unbillable.
+CRM enrichment also has two reproduced input-boundary issues (missing or aliased
+columns, and multi-record ordering) awaiting fixes; verify enriched values before
+using them as client evidence.
+
 ### The whole story in one artifact
 
 ```bash
@@ -158,8 +154,7 @@ case) is defined — schema first, per the BP — at
 [schemas/outcome-unit.schema.json](../schemas/outcome-unit.schema.json) with
 worked examples. The outcome **engine** now ships too:
 `agentmeasure outcomes --units units.jsonl` verifies them fail-closed, and the
-schema covers action and usage-aggregate units — one evidence plane across the
-BP's three stages.
+schema covers action and usage-aggregate units — an engineering extension beyond the current support-billing sales scope.
 
 ```bash
 agentmeasure crm-join --export prepared.csv --crm crm.csv --out joined.csv
@@ -170,7 +165,10 @@ agentmeasure certify --pack vledger/verified-ledger.json --digest-out digest.txt
 agentmeasure incrementality --events treatment-holdout.csv
 ```
 
-### Agent commerce: the receipt where the click disappears
+### Agent commerce: existing engineering reference
+
+Commercial development of this line is paused in the October buyer-review plan.
+The following documents existing commands, not a current sales offer.
 
 Traditional attribution starts at the click; agent commerce has none. The
 merchant-side measurement receipt (F2.1-F2.9):
