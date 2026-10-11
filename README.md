@@ -7,6 +7,32 @@ vendor export and buyer records together. It produces reviewable findings in bot
 directions and keeps missing evidence **UNPROVABLE**. Billing-rule differences,
 stricter buyer outcome standards and actual credits are separate lanes.
 
+**Try it in 30 seconds** — local, synthetic, no account, no upload:
+
+```bash
+pip install agentmeasure
+agentmeasure demo
+```
+
+```text
+AgentMeasure Healthcheck v0.6.0 · synthetic-demo
+Coverage   sessions 1 · files 1 · lines 26 · corrupt 0 (0.00%)
+Activity   turns 2 · command executions 10 (ok 3 · failed 7)
+           tokens: input 90,000 (cached 40,000) · output 12,000
+Checks     [FINDING] HC-02 — Retry amplification: 1 chain, 3 attempts, 1 logical operation
+           [FINDING] HC-03 — Tool error runs: 7 failed, 1 run of ≥3 same-tool failures
+           [FINDING] HC-04 — Operation resolution coverage: 3/10 (30%)
+Worth checking first
+  1. Fix the retry chain once instead of paying the retries every run.
+  2. Read the first error of the longest failure run: usually a missing
+     dependency, a wrong working directory, or auth the agent could not self-heal.
+Subsets never summed · UNPROVABLE is a result, not an error.
+Local only: no network code, no upload.
+```
+
+Then point it at your own Codex / Claude Code sessions with `agentmeasure check` —
+same checks, real data, still local.
+
 **Five entrances, one engine** — pick the row that is yours:
 
 | Entrance | For | What you get |
@@ -18,7 +44,9 @@ stricter buyer outcome standards and actual credits are separate lanes.
 | [Healthcheck](healthcheck/README.md) | agent developers on Codex / Claude Code | duplicate records, retry chains, token anomalies in your own sessions, locally |
 
 The metering audit report (110 tools, 23 fixes merged upstream) is
-[here](campaigns/audit-report-2026-09.md).
+[here](campaigns/audit-report-2026-09.md); its findings live as a public,
+linkable [metering claims index](https://roy-tong.github.io/AgentMeasure/claims.html)
+(one status, one date, one link per entry — no composite scores).
 
 The current commercial focus is AI support outcome billing; developer conformance remains an open-source route.
 
