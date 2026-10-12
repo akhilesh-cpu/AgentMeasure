@@ -48,7 +48,7 @@ agentmeasure conformance                   # 内置证据检查
 
 ## 技术证据
 
-[审计报告](campaigns/audit-report-2026-09.md)记录 110 个工具、45+ 记账 bug 和 23 项上游合并／接受的修复。v0.5.0 有 **450 项 Healthcheck 测试**，10/3 核验通过。它们属于工程成果，不能替代客户付款、真实账单准确性或追回金额。
+[审计报告](campaigns/audit-report-2026-09.md)记录 110 个工具、45+ 记账 bug 和 23 项上游合并／接受的修复。v0.6.0 有 **466 项 Healthcheck 测试**，2026-10-11 核验通过。它们属于工程成果，不能替代客户付款、真实账单准确性或追回金额。
 
 外部维护者曾用自有 136,145 条事件复核 codeburn 报告，挑战早期结论并促成修订。这是[公开复核与纠错](https://github.com/getagentseal/codeburn/pull/1264#pullrequestreview-5215770517)，不表示 AgentMeasure 已核验这些客户账单行。
 

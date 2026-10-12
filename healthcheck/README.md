@@ -10,26 +10,30 @@ Same honesty rules as the [conformance pack](../conformance/pack/README.md):
 every verdict is `OK / FINDING / UNPROVABLE`, and UNPROVABLE is a first-class
 result — when the logs cannot decide, that is disclosed, never zeroed.
 
-> Status verified 2026-10-03: **v0.5.0 is available on GitHub**; PyPI still
-> serves 0.4.0 and the release publish step has not succeeded. Use the pinned
-> Git installation below. Healthcheck's 450 unit tests passed in the local review.
-> Codex rollout logs and Claude Code session logs are supported. Claude session
-> token accounting remains **UNPROVABLE**: per-request usage is not a cumulative
-> session counter.
+> Status verified 2026-10-11: **v0.6.0 is the current release** — PyPI, npm and
+> GitHub all serve it (clean-environment install + `demo` + `drilldown`
+> verified; CI smoke-tests the packaged wheel before every push). Unit tests:
+> 466 at v0.6.0, 474 at HEAD (2026-10-12). Codex rollout logs and Claude Code
+> session logs are supported. Claude session token accounting remains
+> **UNPROVABLE**: per-request usage is not a cumulative session counter.
 
 ## Install
 
 ```bash
-# Install the verified release from GitHub.
-pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.5.0#subdirectory=healthcheck"
+# Current verified release from PyPI (v0.6.0, verified 2026-10-11).
+pip install agentmeasure            # or: pipx install agentmeasure
 agentmeasure demo
 
-# Or run from a repository checkout (use the v0.5.0 tag for reproducibility).
+# Pinned Git install as fallback.
+pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.6.0#subdirectory=healthcheck"
+
+# Or run from a repository checkout (use a release tag for reproducibility).
 python3 healthcheck/agentmeasure demo
 ```
 
-Use PyPI only after a current release has been published and verified. The
-0.4.0 package has a known first-command crash; it is not the recommended path.
+Historical note: the 0.4.0 wheel (2026-09) had a known first-command crash.
+Since v0.5.0 the release pipeline builds and smoke-tests the packaged wheel in
+a fresh environment before every push; PyPI is again the recommended path.
 
 Python 3.9+ standard library only; zero runtime dependencies; no network code
 (a test enforces both).
@@ -353,7 +357,7 @@ New cli versions are handled defensively: unknown event types are accounted
 ## Development
 
 ```bash
-python3 -m unittest discover -s healthcheck/tests   # 248 tests
+python3 -m unittest discover -s healthcheck/tests   # 474 tests @ HEAD (466 at v0.6.0)
 python3 healthcheck/agentmeasure selftest           # fixtures + redaction + compare + schemas
 bash healthcheck/scripts/smoke_install.sh           # clean-venv install smoke (packaged artifact)
 ```
