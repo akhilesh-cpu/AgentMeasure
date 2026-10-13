@@ -94,7 +94,10 @@ ARS-1 的自我修正机制是盲读者分歧（「读者分歧 = 文本有罪�
   drift / 签名不解免守卫）+ `conformance/runners/run_replay_digest.py`（parity / assembly /
   distinctness / no-shortcut / no-merge 守卫）。
 - 语义出处：Metrecept（iwasinnam2 / Ivan Karpusheff）10/9 生产事故报告与六问回复
-  （2026-10-12）——"签名让缺席看起来像证明"；措辞为本标准职责。
+  （2026-10-12）——join/replay 向量语义与"计数第二条边"由其提出；他确认
+  「聚合上的签名让缺席看起来像证明」这一概括"是对的"（原句为 AgentMeasure 的
+  preamble，作者 Roy Tong——按贡献者署名条件，概括句归属 AgentMeasure，
+  确认句归属 Metrecept）。条款措辞为本标准职责。
 
 ## 2. 结算声明格式（一页纸规范）
 

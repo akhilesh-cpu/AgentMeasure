@@ -3,11 +3,13 @@
 
 Origin: Metrecept (iwasinnam2 / Ivan Karpusheff) — the 2026-10-09 incident
 (edge cache HIT served without the session tag; the SIGNED session aggregate
-said cache_hits=0: "a signature made the absence look like proof") and the
-six-questions answer of 2026-10-12 proposing the join vector: N crossing
-receipts and the one aggregate they belong to; conformance is
-event_count == N and amount == sum. Fixture and wording: AgentMeasure
-(synthetic). His production cut is reserved as external/iwasinnam-004.
+said cache_hits=0) and the six-questions answer of 2026-10-12 proposing the
+join vector: N crossing receipts and the one aggregate they belong to;
+conformance is event_count == N and amount == sum. The framing "a signature
+made the absence look like proof" is AgentMeasure's sentence; his words are
+the confirmation that it is the right one (attribution kept separate per his
+conditions). Fixture and wording: AgentMeasure (synthetic). His production
+cut is reserved as external/iwasinnam-004.
 
 This pins AMS-1 clause S-9 (aggregate reconciliation): an aggregate is
 evidence only if it reconciles to its members by count and by sum.

@@ -2,7 +2,7 @@
   "case": "aggregate-join-integrity",
   "schema_version": 1,
   "origin": {
-    "semantics": "Metrecept (iwasinnam2 / Ivan Karpusheff) — production incident report 2026-10-09 (edge cache HIT served without the caller's session tag; the signed session aggregate said cache_hits=0 — 'a signature made the absence look like proof') and the six-questions answer of 2026-10-12 (the join vector: N crossing receipts and the one aggregate they belong to; conformance is event_count == N and amount == sum). Wording and fixture: AgentMeasure.",
+    "semantics": "Metrecept (iwasinnam2 / Ivan Karpusheff) — production incident report 2026-10-09 (edge cache HIT served without the caller's session tag; the signed session aggregate said cache_hits=0) and the six-questions answer of 2026-10-12 (the join vector: N crossing receipts and the one aggregate they belong to; conformance is event_count == N and amount == sum). He confirmed the framing 'the signature on the aggregate made the absence look like proof' — AgentMeasure's sentence — is the right one for the case. Wording and fixture: AgentMeasure.",
     "companion_external_fixtures": [
       "conformance/vectors/external/iwasinnam-002-metrecept-receipt (per-request receipt shape)",
       "conformance/vectors/external/iwasinnam-003-session-receipt (aggregate cover shape, 1 MISS + 2 HIT)",

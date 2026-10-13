@@ -2,13 +2,15 @@
 
 > Origin: the enforcement case reported by Metrecept (iwasinnam2 / Ivan
 > Karpusheff) on 2026-10-09 — an edge cache HIT served without the caller's
-> session tag, so the **signed** session aggregate said `cache_hits: 0`. His
-> sentence for it: *a signature made the absence look like proof.* The join
-> semantics and the proposed vector are his (six-questions answer,
+> session tag, so the **signed** session aggregate said `cache_hits: 0`. The
+> join semantics and the proposed vector are his (six-questions answer,
 > 2026-10-12): N crossing receipts and the one aggregate they belong to;
-> conformance is `event_count == N` and `amount == sum`. This fixture and its
-> wording are ours; his production cut is offered for the external set
-> (companion slot `external/iwasinnam-004`, in flight).
+> conformance is `event_count == N` and `amount == sum`. The framing sentence
+> "a signature made the absence look like proof" is **AgentMeasure's**
+> (preamble, applied to his case); his words are the confirmation that it is
+> the right one — attribution kept separate per his stated conditions. This
+> fixture and its wording are ours; his production cut is offered for the
+> external set (companion slot `external/iwasinnam-004`, in flight).
 >
 > This fixture is **synthetic, offline conformance evidence**. It asserts
 > join relations between declared quantities only. It is not an endorsement,
