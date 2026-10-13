@@ -90,6 +90,8 @@ python3 conformance/runners/run_sse_usage.py         # Anthropic SSE usage（SSE
   OKP/Ed25519，kid=RFC 7638 摘要；站点 https://metrecept.co.uk）。
   署名归 Metrecept；本仓只作投影与守卫，非 endorsement。
 
+**外部规范钉定**：外部 spec 相关向量在向量目录带 `SPEC-VERSION`（首行=钉定版本）；漂移检查=`python3 conformance/runners/check_external_spec_versions.py`（手动/周跑，非 CI——测试保持密闭）。现行钉定：chenhz01-001 → result-consumption-semantics 0.2.0-draft（2026-10-13）。
+
 提交新 fixture：PR 附 events + expected + mapping（或 sidecar）三件套，
 runner 按上面四类守卫生成；claim boundary 由提交方声明、AgentMeasure 复核。
 

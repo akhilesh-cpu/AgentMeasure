@@ -1,0 +1,5 @@
+0.2.0-draft
+source: https://raw.githubusercontent.com/chenhz01/result-consumption-semantics/main/VERSION
+pinned: 2026-10-13
+policy: this vector tests the axis as specified in 0.2.0-draft; on spec release, re-pin after
+reviewing the changelog (conformance/runners/check_external_spec_versions.py reports drift).
