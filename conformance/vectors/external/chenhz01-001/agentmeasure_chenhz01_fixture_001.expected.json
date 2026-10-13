@@ -2,6 +2,7 @@
   "agentmeasure_commit": "67c276b7d17d5a00dc2fa89681eae97f29eeda06",
   "aggregator_path": "lab/agentmeasure_lab/analysis.py",
   "fixture_scope": "synthetic-availability-certification-only",
+  "spec_version": "0.2.0-draft",
   "variant_id": "availability-cert",
   "events": 14,
   "schema_valid_under_fmt_002": true,

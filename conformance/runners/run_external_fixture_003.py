@@ -55,6 +55,16 @@ EXPECTED_FILE = VEC / "agentmeasure_chenhz01_fixture_001.expected.json"
 CONTEXT_FILE = VEC / "agentmeasure_chenhz01_fixture_001.trace_context.json"
 SCHEMA_FILE = ROOT / "lab" / "schemas" / "funnel-event.schema.json"
 
+# Runner <-> spec drift anchor. This vector pins the availability (State A)
+# four-value axis defined in the external spec that grew out of #11:
+#   chenhz01/result-consumption-semantics  (canonical string in its VERSION file)
+# Bump this in lockstep with that spec's CHANGELOG whenever the four-value
+# availability semantics change (its semver major = these runner assumptions
+# broke). Kept as a local constant rather than fetching the external VERSION at
+# test time, so CI stays self-contained; guard 7 asserts it against the value
+# the vector declares in expected.json, so the two never drift apart silently.
+SPEC_VERSION = "0.2.0-draft"
+
 fails: list = []
 
 
@@ -183,10 +193,20 @@ def main() -> int:
     check("collapsing unreachable->absent changes the denominator (3 -> 4)",
           collapsed_den == 4 and collapsed_den != judgeable, str(collapsed_den))
 
+    print(f"chenhz01-001 guard 7: spec-version pin (targets {SPEC_VERSION})")
+    # Drift anchor: the runner's SPEC_VERSION and the vector's declared
+    # spec_version must agree, so a spec bump that touches one without the other
+    # trips here instead of passing silently (the quiet death of an external
+    # spec). The external source of truth is the spec's own VERSION/CHANGELOG.
+    declared = expected.get("spec_version")
+    check("vector declares a spec_version", bool(declared), "missing expected.json spec_version")
+    check(f"runner SPEC_VERSION matches vector ({SPEC_VERSION})", declared == SPEC_VERSION,
+          f"runner {SPEC_VERSION!r} != vector {declared!r}")
+
     if fails:
         print(f"\nCHENHZ01-001 CONFORMANCE FAIL: {len(fails)} guard(s): {', '.join(fails)}")
         return 1
-    print("\nCHENHZ01-001 CONFORMANCE PASS: schema + core collapse + cert + re-serial + boundary + collapse-detectable")
+    print("\nCHENHZ01-001 CONFORMANCE PASS: schema + core collapse + cert + re-serial + boundary + collapse-detectable + spec-pin")
     return 0
 
 
