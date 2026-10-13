@@ -1,0 +1,6 @@
+{"schemaVersion":"0.1","event":"run_started","timestamp":1791767203795,"runId":"run_MwTkRe9Vhe","name":"O05-identity-collision","startTime":1791767203795}
+{"schemaVersion":"0.1","event":"step_started","timestamp":1791767203814,"runId":"run_MwTkRe9Vhe","stepId":"step_QNjFrxGGFD","name":"retrieve_policy","type":"tool","startTime":1791767203814,"metadata":{"toolName":"retrieve_policy","operationId":"op1","attemptId":"a1","attemptNumber":1}}
+{"schemaVersion":"0.1","event":"step_completed","timestamp":1791767203816,"runId":"run_MwTkRe9Vhe","stepId":"step_QNjFrxGGFD","status":"success","endTime":1791767203816,"durationMs":2}
+{"schemaVersion":"0.1","event":"step_started","timestamp":1791767203824,"runId":"run_MwTkRe9Vhe","stepId":"step_lKoRabB8KV","name":"retrieve_policy","type":"tool","startTime":1791767203824,"metadata":{"toolName":"retrieve_policy","operationId":"op1","attemptId":"a1","attemptNumber":1}}
+{"schemaVersion":"0.1","event":"step_completed","timestamp":1791767203826,"runId":"run_MwTkRe9Vhe","stepId":"step_lKoRabB8KV","status":"success","endTime":1791767203826,"durationMs":2}
+{"schemaVersion":"0.1","event":"run_completed","timestamp":1791767203838,"runId":"run_MwTkRe9Vhe","status":"success","endTime":1791767203838,"durationMs":43}

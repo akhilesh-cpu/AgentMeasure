@@ -1,0 +1,17 @@
+import {openTraceFile} from 'agent-inspect/readers';
+import {evaluateTraceContract} from 'agent-inspect/checks';
+import {writeFileSync} from 'node:fs';
+const paths={source:new URL('../otlp-evidence/O05-repeated-delivery.source.jsonl',import.meta.url).pathname,otlp:new URL('../otlp-evidence/O05-repeated-delivery.default-otlp.json',import.meta.url).pathname};
+const results=[];
+for(const [format,file] of Object.entries(paths)){
+  const read=await openTraceFile(file);
+  for(const maxAttempts of [1,2]){
+    const result=evaluateTraceContract({read},{retry:{maxAttempts}});
+    results.push({format,maxAttempts,status:result.status,findings:result.findings.map(f=>({ruleId:f.ruleId,actual:f.actual,message:f.message}))});
+  }
+}
+writeFileSync(new URL('../otlp-delivery-boundary-results.json',import.meta.url),JSON.stringify(results,null,2)+'\n');
+console.log(JSON.stringify(results,null,2));
+const source=results.find(r=>r.format==='source'&&r.maxAttempts===2);
+const exported=results.find(r=>r.format==='otlp'&&r.maxAttempts===2);
+if(source.status!==exported.status)process.exitCode=1;

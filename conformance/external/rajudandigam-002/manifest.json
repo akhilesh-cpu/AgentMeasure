@@ -1,0 +1,142 @@
+[
+  {
+    "file": "O01-robb-one-op-two-attempts.contract-results.json",
+    "sha256": "dfdfcacd397031d16e93f495063e49fb7a932dea4839605e162d2e80ef1a1609",
+    "bytes": 197
+  },
+  {
+    "file": "O01-robb-one-op-two-attempts.default-otlp.json",
+    "sha256": "ac56fec454d519f0f1e3f87cb1540ac4f65dbd57c379cb8457ece656a305f510",
+    "bytes": 7231
+  },
+  {
+    "file": "O01-robb-one-op-two-attempts.source.jsonl",
+    "sha256": "9873c64e32a2880e6209c63feb4b00ba43a65b8c96484b464cd9da701f3d8328",
+    "bytes": 1718
+  },
+  {
+    "file": "O02-roy-three-attempts.contract-results.json",
+    "sha256": "6e086eab62d7a413864516f221fb79050cb0c00dad6644dd61fed3869954b94b",
+    "bytes": 215
+  },
+  {
+    "file": "O02-roy-three-attempts.default-otlp.json",
+    "sha256": "916183ba1441b9110095853b71cde290dc63df52c35bf18db5c36eedc0f019d8",
+    "bytes": 8127
+  },
+  {
+    "file": "O02-roy-three-attempts.source.jsonl",
+    "sha256": "e0ddef3af2f412119653b92433b4f68b2fbe4dc4d7fe7d512df2102d11092fa8",
+    "bytes": 4189
+  },
+  {
+    "file": "O03-two-ops-four-attempts.contract-results.json",
+    "sha256": "f276f084ba7ec7e83e26b070442b892fc1e678c9001672c011e0e9f936f9d7b9",
+    "bytes": 267
+  },
+  {
+    "file": "O03-two-ops-four-attempts.default-otlp.json",
+    "sha256": "240c8c5e33c9c414da20bdb6779a5a98bc9ad0ac90acdf321d73f2888b24b1ac",
+    "bytes": 10481
+  },
+  {
+    "file": "O03-two-ops-four-attempts.source.jsonl",
+    "sha256": "62877aee000d168a6f5a703ee64d2dd3ff415249d4787dc71e1e46806557b34a",
+    "bytes": 2262
+  },
+  {
+    "file": "O04-second-physical-run.contract-results.json",
+    "sha256": "dfdfcacd397031d16e93f495063e49fb7a932dea4839605e162d2e80ef1a1609",
+    "bytes": 197
+  },
+  {
+    "file": "O04-second-physical-run.default-otlp.json",
+    "sha256": "5487cf7db2581a497200464d8721ad8a3a932706e944b8abaea711aa7d04b099",
+    "bytes": 5427
+  },
+  {
+    "file": "O04-second-physical-run.source.jsonl",
+    "sha256": "2a003c290f48bb1773e7687ac948bc92671196764f7129d949c7d5f3cee37ece",
+    "bytes": 1275
+  },
+  {
+    "file": "O05-identity-collision.contract-results.json",
+    "sha256": "fdad50470f564280bef0706b09701d4d5f328bfd6b09e4418b864ce0a1887645",
+    "bytes": 842
+  },
+  {
+    "file": "O05-identity-collision.default-otlp.json",
+    "sha256": "2e793fc93b2e4bb712e25a63f767c4d4a57b2b68a4bec7442d57b4586d9254b2",
+    "bytes": 5248
+  },
+  {
+    "file": "O05-identity-collision.source.jsonl",
+    "sha256": "acf64d6e7d4b119fdf8472d11c9027beefee1edf613b648541bee717a4d852c9",
+    "bytes": 1257
+  },
+  {
+    "file": "O05-repeated-delivery-base.default-otlp.json",
+    "sha256": "897bb3b394ec995bba2e94b56345b67fb342f980011f8043c22c3701d732be41",
+    "bytes": 5425
+  },
+  {
+    "file": "O05-repeated-delivery-base.source.jsonl",
+    "sha256": "a6b67beb38e5c674f06ba101f5ca4d7ab9821e4d6e4f0cc1c8091b34d531087e",
+    "bytes": 1276
+  },
+  {
+    "file": "O05-repeated-delivery.contract-results.json",
+    "sha256": "da3b87ca6d2a12b25d86309d20d5df314dca6993403cea0b9d8133fc685723c8",
+    "bytes": 272
+  },
+  {
+    "file": "O05-repeated-delivery.default-otlp.json",
+    "sha256": "897bb3b394ec995bba2e94b56345b67fb342f980011f8043c22c3701d732be41",
+    "bytes": 5425
+  },
+  {
+    "file": "O05-repeated-delivery.source.jsonl",
+    "sha256": "2744634b1b3e19cbafa8093ca0e0a156c676a811e6608c8579107de5e68e6799",
+    "bytes": 2552
+  },
+  {
+    "file": "O06-partial-identity.contract-results.json",
+    "sha256": "b58d560fc23e8ab58fef5859b79c9de2d23ae52ad9fe2dcac7d76f5a5da53307",
+    "bytes": 326
+  },
+  {
+    "file": "O06-partial-identity.default-otlp.json",
+    "sha256": "422d8df77ee53f17f71c63b21e20cef162eca81f3c8e29f8acb98c894037c82c",
+    "bytes": 4347
+  },
+  {
+    "file": "O06-partial-identity.source.jsonl",
+    "sha256": "e00721603f81f454c41a9bffcf9c5330ef5d860ad3b2213b4da06bbd06ec9881",
+    "bytes": 1163
+  },
+  {
+    "file": "O07-equal-args-distinct-ops.default-otlp.json",
+    "sha256": "e4bbf48b4701b25337814667958e8425c132f1619c6aa64189ba92d6d167a5c4",
+    "bytes": 5248
+  },
+  {
+    "file": "O07-equal-args-distinct-ops.source.jsonl",
+    "sha256": "4d2a42d12295bb1f90a5995a767ef856ddbb9246c70ccc9fec01b6eeb10193e9",
+    "bytes": 1320
+  },
+  {
+    "file": "mapping-and-loss-table.json",
+    "sha256": "cdbd72a20adeeffac2e449ae58ff4f7179c55c72dc3d7c17a24b5e400e22e4b2",
+    "bytes": 6760
+  },
+  {
+    "file": "independent-repeated-delivery-results.json",
+    "sha256": "405a2998921b9ebbb37100681e51dbe5811f827773007bd0d3c1725480321778",
+    "bytes": 1031
+  },
+  {
+    "file": "otlp-delivery-boundary-probe.mjs.txt",
+    "sha256": "b86aa4fc30c2cfd79d311ae3d3dd80e4246634790d1efd2a255f86cf07c18aff",
+    "bytes": 1086
+  }
+]

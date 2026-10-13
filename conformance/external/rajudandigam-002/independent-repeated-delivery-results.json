@@ -1,0 +1,49 @@
+[
+  {
+    "format": "source",
+    "maxAttempts": 1,
+    "status": "fail",
+    "findings": [
+      {
+        "ruleId": "contract.retry.duplicate-attempt-id",
+        "actual": "duplicate",
+        "message": "Operation op1 has duplicate attemptId values."
+      },
+      {
+        "ruleId": "contract.retry.max-attempts",
+        "actual": 2,
+        "message": "Operation op1 exceeded maxAttempts 1."
+      }
+    ]
+  },
+  {
+    "format": "source",
+    "maxAttempts": 2,
+    "status": "fail",
+    "findings": [
+      {
+        "ruleId": "contract.retry.duplicate-attempt-id",
+        "actual": "duplicate",
+        "message": "Operation op1 has duplicate attemptId values."
+      }
+    ]
+  },
+  {
+    "format": "otlp",
+    "maxAttempts": 1,
+    "status": "fail",
+    "findings": [
+      {
+        "ruleId": "contract.retry.max-attempts",
+        "actual": 2,
+        "message": "Operation op1 exceeded maxAttempts 1."
+      }
+    ]
+  },
+  {
+    "format": "otlp",
+    "maxAttempts": 2,
+    "status": "pass",
+    "findings": []
+  }
+]

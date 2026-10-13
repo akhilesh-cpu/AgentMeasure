@@ -1,0 +1,9 @@
+{
+  "note": "Repeated delivery of the same persisted events — distinct from two handler executions.",
+  "sourceStatus": "fail",
+  "otlpStatus": "fail",
+  "sourceAttemptCount": 4,
+  "otlpAttemptCount": 2,
+  "physicalEventRows": 12,
+  "uniqueLogicalAttemptsExpected": 2
+}

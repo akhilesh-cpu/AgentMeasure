@@ -1,0 +1,31 @@
+{
+  "note": "Two executions with the same attemptId — identity-collision negative (not repeated delivery).",
+  "status": "fail",
+  "findings": [
+    {
+      "ruleId": "contract.retry.duplicate-attempt-id",
+      "severity": "error",
+      "status": "fail",
+      "message": "Operation op1 has duplicate attemptId values.",
+      "expected": "unique attemptId",
+      "actual": "duplicate",
+      "evidence": [
+        {
+          "runId": "run_MwTkRe9Vhe",
+          "eventId": "step_QNjFrxGGFD",
+          "kind": "TOOL",
+          "name": "retrieve_policy",
+          "status": "ok"
+        },
+        {
+          "runId": "run_MwTkRe9Vhe",
+          "eventId": "step_lKoRabB8KV",
+          "kind": "TOOL",
+          "name": "retrieve_policy",
+          "status": "ok"
+        }
+      ]
+    }
+  ],
+  "assertedDuplicateDiagnostic": true
+}
