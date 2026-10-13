@@ -1,0 +1,75 @@
+{
+  "case": "aggregate-join-integrity",
+  "schema_version": 1,
+  "origin": {
+    "semantics": "Metrecept (iwasinnam2 / Ivan Karpusheff) — production incident report 2026-10-09 (edge cache HIT served without the caller's session tag; the signed session aggregate said cache_hits=0 — 'a signature made the absence look like proof') and the six-questions answer of 2026-10-12 (the join vector: N crossing receipts and the one aggregate they belong to; conformance is event_count == N and amount == sum). Wording and fixture: AgentMeasure.",
+    "companion_external_fixtures": [
+      "conformance/vectors/external/iwasinnam-002-metrecept-receipt (per-request receipt shape)",
+      "conformance/vectors/external/iwasinnam-003-session-receipt (aggregate cover shape, 1 MISS + 2 HIT)",
+      "conformance/vectors/external/iwasinnam-004 (join, production cut — offered 2026-10-12, in flight)"
+    ]
+  },
+  "claim_boundary": "Synthetic fixture authored by AgentMeasure for conformance use. Not a Metrecept production artifact, not an endorsement, not an external reproduction. Money identities and digests below are fixture-level.",
+  "canonicalization_rule": "digests are sha256 over canonical JSON (sorted keys, no whitespace, UTF-8) of the labeled content; amounts are integer micro-USD to keep the sum exact",
+  "session": {
+    "session_sha256": "sha256 of the raw session id 'agg-join-demo'; the raw id never appears",
+    "raw_id_hint": "agg-join-demo"
+  },
+  "members": [
+    {
+      "meter_event_id": "me-001",
+      "kind": "fill",
+      "plane": "control",
+      "request_sha256": "sha256:5f2a…c1",
+      "response_sha256": "sha256:9d4e…07",
+      "tokens": 152,
+      "amount_usd_micro": 1000,
+      "session_tag": "present"
+    },
+    {
+      "meter_event_id": "me-002",
+      "kind": "replay",
+      "plane": "edge",
+      "request_sha256": "sha256:5f2a…c1",
+      "response_sha256": "sha256:9d4e…07",
+      "tokens": 0,
+      "amount_usd_micro": 2000,
+      "session_tag": "present"
+    },
+    {
+      "meter_event_id": "me-003",
+      "kind": "replay",
+      "plane": "edge",
+      "request_sha256": "sha256:5f2a…c1",
+      "response_sha256": "sha256:9d4e…07",
+      "tokens": 0,
+      "amount_usd_micro": 2000,
+      "session_tag": "present"
+    },
+    {
+      "meter_event_id": "me-004",
+      "kind": "bypass",
+      "plane": "edge",
+      "request_sha256": "sha256:1b77…e9",
+      "response_sha256": "sha256:44c0…d2",
+      "tokens": 40,
+      "amount_usd_micro": 500,
+      "session_tag": "absent"
+    }
+  ],
+  "session_aggregate": {
+    "kind": "session",
+    "event_count": 3,
+    "amount_usd_micro": 5000,
+    "cache_hits": 2,
+    "cache_misses": 1,
+    "signature": "valid-demo",
+    "note": "covers exactly the tagged members; me-004 is metered in the ledger but was never session-tagged (the 2026-10-09 incident shape)"
+  },
+  "ledger_aggregate": {
+    "kind": "ledger",
+    "event_count": 4,
+    "amount_usd_micro": 5500,
+    "note": "all metered crossings, tagged or not"
+  }
+}

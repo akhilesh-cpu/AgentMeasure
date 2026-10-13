@@ -72,6 +72,15 @@
       "enforced_by": [
         "GOVERNANCE.md process"
       ]
+    },
+    {
+      "id": "S-9",
+      "title": "Aggregate reconciliation (counting's second edge)",
+      "adopted_from": "Metrecept incident report 2026-10-09 + six-questions answer 2026-10-12 (iwasinnam2)",
+      "enforced_by": [
+        "conformance/runners/run_aggregate_join.py",
+        "conformance/runners/run_replay_digest.py"
+      ]
     }
   ],
   "posture_ladder": {

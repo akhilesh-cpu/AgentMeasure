@@ -39,6 +39,8 @@ python3 conformance/runners/run_external_fixture.py  # 外部 fixture（Urusilla
 python3 conformance/runners/run_outcome_audit.py     # 效果审计（OUT-001..005）
 python3 conformance/runners/run_delegation.py        # 多 Agent 委托（DELEGATION-001..007）
 python3 conformance/runners/run_sse_usage.py         # Anthropic SSE usage（SSE-001，#24）
+python3 conformance/runners/run_aggregate_join.py    # 聚合对账（AMS-1 S-9：join 守卫族）
+python3 conformance/runners/run_replay_digest.py     # replay 字节级成本保全（AMS-1 S-9）
 ```
 
 ### 检查家族与对应不变量
@@ -50,6 +52,8 @@ python3 conformance/runners/run_sse_usage.py         # Anthropic SSE usage（SSE
 | DELEGATION-001..003 | 不压平为 Operation、DAG 深度、跨 harness 成本归属 | **27–31** |
 | **DELEGATION-004..007** | **四类委托计费失败模式：少计 / 多计 / 错误归属 / 不传播** | **27–31 + D-2** |
 | SSE-001 | Anthropic `message_start` 携带 input/cache，只读 `message_delta` 会丢掉 input bucket | #24 |
+| **aggregate-join** | 聚合必须按计数与金额 join 回成员；签名不解免对账义务；absence/untagged/duplicate/drift 守卫 | **S-9（计数完整性第二条边）** |
+| **replay-digest** | fill/replay 同请求双平面摘要相等（canonical+流装配规则）；载荷不同⇒摘要必不同；replay 不并入 fill | **S-9（crossing 边）** |
 
 > DELEGATION-004..007 来自 2026-09 的需求扫描（**强信号 4 条 + 中信号 15 条**），
 > 见 `市场推广/DeepSeek/leads/v2v3/COMPETITIVE-LANDSCAPE-20260919.md`。
@@ -89,6 +93,19 @@ python3 conformance/runners/run_sse_usage.py         # Anthropic SSE usage（SSE
   （公网 JWKS 目录：`https://api.metrecept.co.uk/.well-known/http-message-signatures-directory`；
   OKP/Ed25519，kid=RFC 7638 摘要；站点 https://metrecept.co.uk）。
   署名归 Metrecept；本仓只作投影与守卫，非 endorsement。
+
+**在飞外部槽位（offered/reserved，数据未到不入库）**：
+
+- **iwasinnam-004（join，生产切件）** — 2026-10-12 六问回复中主动提出：N 张
+  crossing 收据 + 1 个聚合的 join 向量照 -003 形状从生产管道切出。语义先行版已落
+  `conformance/evidence/aggregate-join-integrity/`（合成，CI 常驻）；生产件到达后
+  按外部三件套入位并替换合成版为本件的对偶。
+- **iwasinnam-005（replay，生产切件）** — 同上；先行版
+  `conformance/evidence/replay-digest-parity/`。
+- **rajudandigam-003（传输层身份反例）** — 维护者侧反例（maxAttempts=2：源 JSONL
+  重复 attempt 身份判失败而 OTLP 导出通过）；贡献者修正生成器后交完整包（2026-10-11
+  回复）。原则（missing identity 保持 unknown、去重不得抹掉真实执行的 attempts）已写入
+  `registry/provider-mapping.md` 与 AMS-1 S-9。
 
 **外部规范钉定**：外部 spec 相关向量在向量目录带 `SPEC-VERSION`（首行=钉定版本）；漂移检查=`python3 conformance/runners/check_external_spec_versions.py`（手动/周跑，非 CI——测试保持密闭）。现行钉定：chenhz01-001 → result-consumption-semantics 0.2.0-draft（2026-10-13）。
 

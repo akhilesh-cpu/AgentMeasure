@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "scope": "Model token pricing, per 1M tokens, USD. Ground-truth DATA registry: conformance vectors validate verdict semantics (priced / contract-difference / UNPROVABLE), never these tables — see CONTRIBUTING 'Where does a pricing contribution go'.",
+  "entry_rules": {
+    "required_per_vendor": ["source", "verified_on"],
+    "required_per_model_flat": ["input_cache_miss", "output"],
+    "required_per_window": ["name", "input_cache_miss", "output"],
+    "time_windowed": "a model may price flat, or via windows[]; exactly one window must carry fallback:true (applies whenever no explicit window matches — e.g. off-peak as the complement of published peak hours); a window with explicit hours must carry hours_utc as HH:MM-HH:MM ranges",
+    "unit": "USD per 1,000,000 tokens",
+    "numbers_must_be": "copied from the vendor's official pricing page on verified_on — never ratio-generated, never from memory"
+  },
+  "vendors": {
+    "deepseek": {
+      "source": "https://api-docs.deepseek.com/quick_start/pricing",
+      "verified_on": "2026-10-13",
+      "note": "First time-windowed entry. Off-peak rates are half of peak. Cache-hit ratios cross-checked independently: flash 0.003/0.15 = 0.02x, pro 0.022/0.66 = 0.033x (verified against the same page).",
+      "models": {
+        "deepseek-flash": {
+          "windows": [
+            {
+              "name": "peak",
+              "hours_utc": ["01:00-04:00", "06:00-10:00"],
+              "days": "Monday through Friday, excluding Chinese public holidays",
+              "input_cache_miss": 0.30,
+              "input_cache_hit": 0.006,
+              "output": 1.20
+            },
+            {
+              "name": "off-peak",
+              "fallback": true,
+              "input_cache_miss": 0.15,
+              "input_cache_hit": 0.003,
+              "output": 0.60
+            }
+          ]
+        },
+        "deepseek-v4-pro": {
+          "windows": [
+            {
+              "name": "peak",
+              "hours_utc": ["01:00-04:00", "06:00-10:00"],
+              "days": "Monday through Friday, excluding Chinese public holidays",
+              "input_cache_miss": 1.32,
+              "input_cache_hit": 0.044,
+              "output": 3.96
+            },
+            {
+              "name": "off-peak",
+              "fallback": true,
+              "input_cache_miss": 0.66,
+              "input_cache_hit": 0.022,
+              "output": 1.98
+            }
+          ]
+        }
+      }
+    }
+  }
+}

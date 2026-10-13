@@ -1,11 +1,16 @@
 # AgentMeasure Registry（机器可读）
 
-两个互补的机器可读注册表：
+互补的机器可读注册表：
 
 | 注册表 | 回答 | 格式 | 校验 |
 | --- | --- | --- | --- |
 | `entities/` | 被用什么（Software Entity 身份） | YAML（`schemas/entity.schema.json`） | `python3 registry/validate_entities.py` |
 | `project-identity/` | 谁在用（Project 身份，Client 侧） | JSON | 同上（结构性检查） |
+| `vendor-rules.json` | 按结果计费厂商怎么计（buyer 对账规则族） | JSON | recount 链路 + `gen_web_rules.py --check` 同步 |
+| `token-rates.json` | 模型 token 费率是多少（含分时窗口） | JSON | `python3 registry/validate_token_rates.py --selftest` |
+
+> 定价数据放哪个 registry：见 [CONTRIBUTING](../CONTRIBUTING.md)「定价数据放哪里」。
+> conformance 向量只验判定语义，永不验证价表本身（issue #34 裁定）。
 
 ## entities/（Entity Registry）
 

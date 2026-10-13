@@ -26,6 +26,21 @@ AgentMeasure 是一个 measurement 标准项目。**问题定义和测量严谨�
 - 新增 adapter 必须附 capability matrix 更新（docs/adapters.md）
 - 隐私相关改动必须附泄漏测试
 
+## 定价数据放哪里（pricing contributions）
+
+两个 registry，各答一问，**不要互相塞**：
+
+| 你要加的数据 | 去处 | 必带字段 |
+| --- | --- | --- |
+| **模型 token 费率**（input / output / cache-write / cache-read，按 1M tokens；含分时 peak/off-peak） | [`registry/token-rates.json`](registry/token-rates.json) | `source`（官方价页 URL）+ `verified_on`（你核对的日期）；分时用 `windows[]` + 恰一个 `fallback: true` |
+| **按结果计费的客服厂商规则**（unit_price、billing_trigger、静默计费、重开扣减、导出表头别名） | [`registry/vendor-rules.json`](registry/vendor-rules.json) | 规则版本 + `verified_on` + 已知歧义注记 |
+
+纪律（issue #34 的裁定，对两个 registry 都成立）：
+
+1. **conformance 向量只验判定语义**（priced / contract-difference / UNPROVABLE），**永不验证价表本身**——价表是数据，不是断言；向量里的 fixture 价表内嵌于 fixture，不引用本 registry。
+2. **数字必须抄自官方价页并在当天核对**——不 ratio 推算、不凭记忆（litellm #40360 的教训：比例生成的费率与公布值漂移）。
+3. 提交前本地校验：`python3 registry/validate_token_rates.py --selftest`（token 费率）或 `python3 -m healthcheck...`（厂商规则，见各 GFI 指引）；CI 同样执行。
+
 ## AI 协作贡献（AI-assisted contributions）
 
 欢迎用 AI 辅助贡献，但规则如下（与项目证据纪律同源）：

@@ -87,3 +87,22 @@ UNPROVABLE-by-surface 的 scope 随 measurement surface 扩大而缩小。
 | 0.5 | + Claude Code adapter（骨架上） | Claude 侧的 operation resolution、consumption |
 | 0.6 | + SDK 自带 attempt-attestation hook | Attempt 级签名 |
 | Future | + Platform attestation | 受信任平台可直接报告 operation/attempt |
+
+## 6. 已实测的拓扑案例：自托管 OpenAI 兼容服务器（2026-10-13 增补）
+
+第三方实测（[@qaisermehdi3-coder, Discussion #26](https://github.com/roy-tong/AgentMeasure/discussions/26)，
+2026-09-24；vLLM 0.27.1 + Qwen2.5-0.5B，Colab T4）：
+
+- **client surface 的盲区**：流式请求不带 `stream_options` 时，客户端**零 usage 上报**——
+  不是 0 token，是没有任何 usage 字段（absent，非 zero）。
+- **server surface 可恢复的部分**：`/metrics` 前后快照差（`vllm:request_success_total`、
+  `request_prompt_tokens_sum`、`request_generation_tokens_sum`）可对账**期间总量**——
+  实测 3 请求 108/48 tokens，client 只记 72/32，差额 36/16 恰好=未上报的那笔请求。
+- **server surface 也恢复不了的部分**：差额**归属于哪一笔请求**——期间粒度可证，
+  归属粒度仍 UNPROVABLE-by-surface。
+
+结论：自托管 OpenAI 兼容拓扑下，token 计量的正确姿势是**双面快照对账**
+（server `/metrics` 期间差 ↔ client 逐笔合计），单靠任一面都会把 absent 误读成零。
+社区参考实现：该 Discussion 作者的 `qvunex_single.py --reconcile`
+（stdlib only，读保存的快照，无网络代码）。
+

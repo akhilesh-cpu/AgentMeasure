@@ -77,6 +77,25 @@ ARS-1 的自我修正机制是盲读者分歧（「读者分歧 = 文本有罪�
 条款修改 MUST 同时更新其执行测试；测试分歧时**先改规范文本、再合测试**
 （与 ARS-1 盲读者机制同构：分歧即文本之罪）。
 
+### S-9 · 聚合对账（计数完整性的第二条边，2026-10-13 增补）
+
+- 任何聚合（session / statement / invoice support）**必须能按计数与金额 join 回其成员记录**
+  （`event_count == 成员数`、`总额 == 成员和`），否则不构成核验。
+  只在自身上验证通过的聚合，只是"对聚合器恰好收到的事件"的已验证主张。
+- **签名不解免对账义务**：聚合验签通过、字段自洽，不能替代成员对账——
+  计数完整性有两条边：把一个事件只计一次（去重族），与把它计进对的聚合（join 族）；
+  第二条边恰恰藏在"验签通过的聚合"里。
+- **成员身份不可伪造**：缺失身份保持 unknown，去重不得抹掉真实执行的成员；
+  未打会话标签的已计量成员不得被发明进会话聚合（ledger 总账对全部成员对账，
+  session 聚合只对打标成员——两层各自成立，不得互相冒充）。
+- **Replay 的字节级成本保全**：缓存重放声称原答案的成本基，仅当按 crossing 记录
+  证明字节相等（canonical 请求摘要 + 按公布装配规则的响应摘要）；载荷不同 ⇒ 摘要必不同。
+- 执行测试：`conformance/runners/run_aggregate_join.py`（absence / untagged / duplicate /
+  drift / 签名不解免守卫）+ `conformance/runners/run_replay_digest.py`（parity / assembly /
+  distinctness / no-shortcut / no-merge 守卫）。
+- 语义出处：Metrecept（iwasinnam2 / Ivan Karpusheff）10/9 生产事故报告与六问回复
+  （2026-10-12）——"签名让缺席看起来像证明"；措辞为本标准职责。
+
 ## 2. 结算声明格式（一页纸规范）
 
 证据包的正式名称：**AgentMeasure Dispute Bundle（ADB）**——`agentmeasure settle`

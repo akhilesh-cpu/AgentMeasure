@@ -88,6 +88,12 @@ jobs:
       - name: "SSE usage conformance (SSE-001: Anthropic message_start input bucket)"
         run: |
           python3 conformance/runners/run_sse_usage.py
+      - name: "Aggregate-join conformance (AMS-1 S-9: an aggregate is evidence only if it reconciles to its members)"
+        run: |
+          python3 conformance/runners/run_aggregate_join.py
+      - name: "Replay-digest conformance (AMS-1 S-9: cost preservation stated as bytes)"
+        run: |
+          python3 conformance/runners/run_replay_digest.py
       - name: "Browser-local recount: rules file in sync with the registry"
         run: |
           python3 scripts/gen_web_rules.py --check
@@ -113,6 +119,9 @@ jobs:
       - name: Metric registry validation (metrics.yaml ↔ METRICS.md)
         run: |
           python3 registry/validate_metrics.py
+      - name: "Token rates registry validation (structure + time-window selection selftest)"
+        run: |
+          python3 registry/validate_token_rates.py --selftest
       - name: Canonical observation schema validation
         run: |
           python3 schemas/validate_observation.py

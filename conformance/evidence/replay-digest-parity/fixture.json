@@ -1,0 +1,43 @@
+{
+  "case": "replay-digest-parity",
+  "schema_version": 1,
+  "origin": {
+    "semantics": "Metrecept (iwasinnam2 / Ivan Karpusheff) — six-questions answer 2026-10-12, the replay vector: 'the fill and the replay of the same request, from two planes, with equal request and response digests, and a changed payload alongside with its own digests. That is cost-preservation stated as bytes: a replay is the same answer, and the record proves it rather than asserts it.' Wording and fixture: AgentMeasure.",
+    "companion_external_fixtures": [
+      "conformance/vectors/external/iwasinnam-001 (hop-replay ledger)",
+      "conformance/vectors/external/iwasinnam-005 (replay, production cut — offered 2026-10-12, in flight)"
+    ]
+  },
+  "claim_boundary": "Synthetic fixture authored by AgentMeasure for conformance use. Not a Metrecept production artifact, not an endorsement, not an external reproduction.",
+  "published_rules": {
+    "canonical_json": "sorted keys, no whitespace, UTF-8, ensure_ascii=false — digests are sha256 over this form",
+    "stream_assembly": "a streamed response body is the concatenation of its text deltas in emission order; the digest is taken over the assembled body (the published assembly rule)"
+  },
+  "crossings": [
+    {
+      "meter_event_id": "rp-001",
+      "role": "fill",
+      "plane": "control",
+      "request_content": {"model": "fixture-1b", "messages": [{"role": "user", "content": "hello"}], "temperature": 0},
+      "request_wire": "{\"temperature\":0,\"model\":\"fixture-1b\",\"messages\":[{\"role\":\"user\",\"content\":\"hello\"}]}",
+      "response_chunks": ["Hello ", "world"]
+    },
+    {
+      "meter_event_id": "rp-002",
+      "role": "replay",
+      "plane": "edge",
+      "request_content": {"messages": [{"content": "hello", "role": "user"}], "model": "fixture-1b", "temperature": 0},
+      "request_wire": "{\n  \"messages\": [{\"content\": \"hello\", \"role\": \"user\"}],\n  \"model\": \"fixture-1b\",\n  \"temperature\": 0\n}",
+      "response_chunks": ["Hell", "o world"]
+    },
+    {
+      "meter_event_id": "rp-003",
+      "role": "changed-payload",
+      "plane": "control",
+      "request_content": {"model": "fixture-1b", "messages": [{"role": "user", "content": "hello?"}], "temperature": 0},
+      "request_wire": "one character different from rp-001",
+      "response_chunks": ["Hello ", "world?"]
+    }
+  ],
+  "ledger_note": "rp-001 and rp-002 are two distinct metered crossings (distinct meter_event_id) whose payloads are byte-provably the same answer; rp-003 is a different request with its own digests."
+}

@@ -106,6 +106,31 @@ review fixes have been pushed, but upstream workflow approval and merging are
 still pending. It complements Urusilla's fixture-specific validators rather
 than replacing them.
 
+## Semantic field reuse: a boolean that swallows the gap (2026-10, third-party production report)
+
+A new failure shape, distinct from `|| 0` patterns: a boolean/enum field whose
+name says one thing ("consumed") gets reused as the gate for counting a
+*different* quantity — so items the field never covered render as a
+confident zero instead of an open gap. In the reported production incident
+(third-party, attribution pending the contributor's draft review; details on
+request via the maintainers), thousands of gap entries collapsed to zero
+across coverage panels and weekly counts, and the damage was decision-quality
+loss, not a billing error — panels quietly said "nothing to do" while the
+backlog existed.
+
+What this establishes: absence can enter through *semantics* (a reused field
+meaning), not only through null-handling syntax. What it does not establish:
+anything about the specific system beyond the reported incident, or that
+boolean-gated counters are wrong in general — the defect is counting a
+different quantity than the field describes.
+
+Detection posture: our repository scanner carries a candidate pattern for
+this class (`P4b semantic-field-reuse`: boolean-named field adjacent to a
+count/sum operation, gated by gap/citation vocabulary — hits are triage
+candidates, never auto-filed issues). The correction principle is the same
+as everywhere in this casebook: a gap must stay a gap; if the field does not
+cover the quantity, the counter owes you an UNPROVABLE, not a zero.
+
 ## Try the local product or contribute a bounded example
 
 For Codex Desktop logs, [try Healthcheck](healthcheck-first-run.md). For generic
