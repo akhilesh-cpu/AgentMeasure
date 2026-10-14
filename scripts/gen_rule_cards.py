@@ -63,13 +63,35 @@ _PAGE = """<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../light.css">
 <style>{css}</style>
 </head>
 <body>
+<header class="snav">
+  <div class="snav-in">
+    <a class="snav-brand" href="../index.html">AgentMeasure<span>_</span></a>
+    <nav class="snav-links" aria-label="Sections">
+      <a href="../index.html#evidence">Evidence</a>
+      <a href="../index.html#pricing">Pricing</a>
+      <a href="../recount.html">Free recount</a>
+      <a class="ext" href="https://github.com/roy-tong/AgentMeasure" target="_blank" rel="noopener">GitHub&nbsp;↗</a>
+    </nav>
+    <a class="snav-cta" href="../first-look.html">Review my bill&nbsp;→</a>
+  </div>
+</header>
 <div class="wrap">
 {body}
 </div>
+<footer class="sfoot">
+  <div class="sfoot-in">
+    <span class="sfoot-brand">AgentMeasure<span>_</span></span>
+    <a href="../index.html">Home</a>
+    <a href="../claims.html">Claims index</a>
+    <a href="../releases.html">Release notes</a>
+    <a href="https://github.com/roy-tong/AgentMeasure" target="_blank" rel="noopener">GitHub</a>
+    <span class="sfoot-note">Open source under MIT. The verification rules stay public and free.</span>
+  </div>
+</footer>
 </body>
 </html>
 """
