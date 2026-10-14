@@ -106,6 +106,9 @@ def _vendor_card(vendor_id: str, v: dict) -> str:
                              for k, val in sorted(timers.items()))
                   or "not published")
     notes = "".join("<li>%s</li>" % n for n in (v.get("notes") or []))
+    src = (v.get("source") or "").strip()
+    source_html = ('<a href="%s" rel="noopener">%s</a>' % (src, src)
+                   if src.startswith(("http://", "https://")) else (src or "—"))
     extra = ""
     if v.get("structural_risk"):
         extra += ('<p class="notes">%s</p>' % v["structural_risk"])
@@ -122,7 +125,7 @@ def _vendor_card(vendor_id: str, v: dict) -> str:
 <dt>Reopen handling</dt><dd>{REOPEN_TEXT.get(v['reopen_deduction'], v['reopen_deduction'])}</dd>
 <dt>Silence bills</dt><dd>{'yes' if v.get('silence_bills') else ('no' if v.get('silence_bills') is False else 'unknown')}{(' — window %sh' % v['silence_window_hours']) if v.get('silence_window_hours') else ''}</dd>
 <dt>Closure timers</dt><dd>{timer_html}</dd>
-<dt>Source</dt><dd><a href="{v.get('source','')}" rel="noopener">{v.get('source','—')}</a></dd>
+<dt>Source</dt><dd>{source_html}</dd>
 </dl>
 {('<ul class="notes">%s</ul>' % notes) if notes else ''}
 {extra}
