@@ -5,8 +5,8 @@ servers. Emits Canonical Observations (AgentMeasure Draft 0.4.3); non-blocking
 buffered spool; no content captured.
 
 ```bash
-# npm registry publish pending — install from the release tarball:
-npm install https://github.com/roy-tong/AgentMeasure/releases/download/v0.1.1/agentmeasure-mcp-0.1.1.tgz
+# SDK 0.2.0 on npm, verified 2026-10-14 (versioned separately from the CLI).
+npm install @agentmeasure/mcp
 ```
 
 ## MCP SDK v2 (primary) — `@modelcontextprotocol/server`

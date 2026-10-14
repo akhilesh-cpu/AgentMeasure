@@ -1,5 +1,24 @@
 # AgentMeasure Roadmap
 
+## Current focus — 2026-10-14 through October 31
+
+Validate two narrow services: $10 Healthcheck Diagnosis and $20 Metering QA. Keep the local CLI free. Improve onboarding, sample fit, reproducible delivery and evidence of concrete user value before expanding scope.
+
+- **Healthcheck:** help Codex / Claude Code developers interpret one anomaly; distinguish aggregate interpretation from diagnosis requiring a redacted excerpt.
+- **Metering QA:** verify supported sample invariants; refuse unsupported input rather than invent session or operation identity.
+- **Conformance / AMS-1 and SDK:** maintain the open technical foundation and fixes needed for real samples. They are not separate new commercial product launches this month.
+- **Buyer reconciliation:** preserve experimental tools and documentation; defer new full-period review offers.
+- **Lab:** retain existing research tooling; defer hosted analytics and new product expansion.
+
+Validation tracks distinct price acceptance, actual paid users and orders, completed delivery, concrete value confirmation and repeat purchases. Engineering tests, stars and published findings do not substitute for those outcomes. This is an experiment, not a declaration of product-market fit.
+
+[Current services](https://roy-tong.github.io/AgentMeasure/services.html) · [Latest release](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.0)
+
+<details>
+<summary>Historical roadmap — August/September 2026; not current commitments</summary>
+
+# Historical roadmap
+
 > **Positioning（2026-09-04）**：公开叙事统一为"开放公尺"——usage 与 outcome 同一套语义（官网 Why now / Principles 两节与 README 已同步）。按效果计费的场景（per-resolution 计费的 AI 客服生态）是标准落地的第一个目标场景；当前唯一产品验收是采用指标：生产接入家数、月度被计量交互量、opt-in 数据回流率、被外部项目合并的规则数。原则红线：免费清单写进治理；原始数据本地默认；不卖排名、不碰资金。
 
 > **Timebox（2026-08-21 → 09-04）**：standard 轨暂停非 blocking 变更（AUP 一律排队，除非阻塞接入）；关键路径是双假设实验与 **9/3 Gate Review**（判据预注册见 PRD v0.5 §8.2）。Audit 以 concierge 形态受试：[product/AUDIT.md](product/AUDIT.md)。
@@ -70,3 +89,5 @@
 | Conformance | 每个指标至少 3 个 vectors（正常 / 边界 / fail-closed） |
 | 声称 | 只宣称有 vectors 支撑的部分 |
 | 产品 | MVP 只承诺已实现的能力；SDK/Analytics 标注 in development |
+
+</details>

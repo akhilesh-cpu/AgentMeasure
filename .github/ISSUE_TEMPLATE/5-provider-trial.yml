@@ -1,21 +1,17 @@
-name: Provider Trial — 7-day audit application
-description: Apply for the external provider trial · one capability · 7 days · your data stays local
-title: "[Provider Trial] "
+name: Provider integration feedback
+description: Report an integration need or reproducible metering issue; no service commitment
+title: "[Provider feedback] "
 labels: [provider-trial]
 body:
   - type: markdown
     attributes:
       value: |
-        **What you get:** a 7-day measurement of one of your capabilities — retry inflation,
-        execution economics, and traffic quality — plus a 45-minute review call.
+        Share a reproducible provider integration issue or describe the metering decision you need help with.
+        This is a public issue. Do not include private customer data, credentials or raw production logs.
+        It does not reserve a free audit or create a service commitment.
 
-        **What we ask:** ~30 minutes to integrate the SDK (one `npm install` from the release
-        tarball, wrap your tool handlers), and 7 days of real traffic observed on your machine.
-
-        Full methodology: [`product/AUDIT.md`](https://github.com/roy-tong/AgentMeasure/blob/main/product/AUDIT.md) ·
-        Program context: [#2](https://github.com/roy-tong/AgentMeasure/issues/2)
-
-        We take 3 providers per cycle. If the method breaks on your data, we document that too.
+        For a scoped paid check, see [the $10 / $20 services](https://roy-tong.github.io/AgentMeasure/services.html).
+        SDK installation: `npm install @agentmeasure/mcp`.
   - type: input
     id: provider
     attributes:
@@ -46,16 +42,6 @@ body:
     attributes:
       label: Approx. traffic volume
       description: Calls per day — honest ranges are fine ("~500/day", "spiky, 0–5k")
-    validations:
-      required: true
-  - type: dropdown
-    id: track
-    attributes:
-      label: Track preference
-      description: Private Alpha keeps your name and findings confidential; Public Alpha lets us publish the anonymized findings.
-      options:
-        - Private Alpha
-        - Public Alpha
     validations:
       required: true
   - type: textarea

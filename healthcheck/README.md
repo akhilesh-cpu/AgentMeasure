@@ -10,22 +10,17 @@ Same honesty rules as the [conformance pack](../conformance/pack/README.md):
 every verdict is `OK / FINDING / UNPROVABLE`, and UNPROVABLE is a first-class
 result — when the logs cannot decide, that is disclosed, never zeroed.
 
-> Status verified 2026-10-11: **v0.6.0 is the current release** — PyPI, npm and
-> GitHub all serve it (clean-environment install + `demo` + `drilldown`
-> verified; CI smoke-tests the packaged wheel before every push). Unit tests:
-> 466 at v0.6.0, 474 at HEAD (2026-10-12). Codex rollout logs and Claude Code
-> session logs are supported. Claude session token accounting remains
-> **UNPROVABLE**: per-request usage is not a cumulative session counter.
+> Status verified 2026-10-14: CLI **v0.7.0** is available on PyPI and GitHub; the separately versioned Provider SDK is **v0.2.0** on npm. 477 Healthcheck tests passed locally. See [release notes](https://roy-tong.github.io/AgentMeasure/releases.html).
 
 ## Install
 
 ```bash
-# Current verified release from PyPI (v0.6.0, verified 2026-10-11).
+# Current verified release from PyPI (v0.7.0, verified 2026-10-14).
 pip install agentmeasure            # or: pipx install agentmeasure
 agentmeasure demo
 
 # Pinned Git install as fallback.
-pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.6.0#subdirectory=healthcheck"
+pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.7.0#subdirectory=healthcheck"
 
 # Or run from a repository checkout (use a release tag for reproducibility).
 python3 healthcheck/agentmeasure demo
@@ -357,7 +352,7 @@ New cli versions are handled defensively: unknown event types are accounted
 ## Development
 
 ```bash
-python3 -m unittest discover -s healthcheck/tests   # 474 tests @ HEAD (466 at v0.6.0)
+python3 -m unittest discover -s healthcheck/tests   # 477 tests verified 2026-10-14
 python3 healthcheck/agentmeasure selftest           # fixtures + redaction + compare + schemas
 bash healthcheck/scripts/smoke_install.sh           # clean-venv install smoke (packaged artifact)
 ```
