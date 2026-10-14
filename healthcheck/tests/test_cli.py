@@ -64,14 +64,20 @@ class TestDemoRun(CliHarness):
         home2 = os.path.join(self.tmp.name, "home2")
         os.makedirs(home2, exist_ok=True)
         html = os.path.join(self.tmp.name, "d1.html")
-        old = os.environ.get("HOME")
+        # expanduser("~") reads USERPROFILE on Windows and HOME elsewhere;
+        # set both so the history lands in home2 on every CI OS.
+        old = {k: os.environ.get(k) for k in ("HOME", "USERPROFILE")}
         os.environ["HOME"] = home2
+        os.environ["USERPROFILE"] = home2
         try:
             self.run_cli(["demo", "--html", html])
             self.run_cli(["demo", "--html", html])
         finally:
-            if old is not None:
-                os.environ["HOME"] = old
+            for key, value in old.items():
+                if value is not None:
+                    os.environ[key] = value
+                else:
+                    os.environ.pop(key, None)
         entries = history_mod.load_history(home2)
         self.assertEqual(len(entries), 2)
         self.assertEqual(history_mod.run_number("synthetic-demo", home2), 3)
