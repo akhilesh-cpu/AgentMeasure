@@ -149,7 +149,7 @@ def evaluate(events, claims):
         # I-3 cost-preservation
         if cup["numerator"] in (0, 0.0, None):
             r["cost-preservation"] = {"verdict": UNPROVABLE,
-                                      "reason": "fixture carries no attempt cost fields"}
+                                      "reason": "aggregate attempt cost is zero or unavailable; this check does not establish cost preservation for this sample"}
         else:
             conserved = abs(round(cup["numerator"], 6) - round(
                 sum(ev.get("cost_units", 0) for ev in events if ev.get("event") == "attempt"), 6)) < 1e-9

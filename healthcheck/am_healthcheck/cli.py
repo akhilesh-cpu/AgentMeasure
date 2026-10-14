@@ -514,7 +514,7 @@ def cmd_share(args) -> int:
         except OSError as exc:
             print("error: could not write share summary: %s" % exc, file=sys.stderr)
             return 2
-        print("\nExported → %s (you reviewed the preview above)" % os.path.abspath(args.out))
+        print("\nExported → %s (saved locally; inspect the file before sharing)" % os.path.abspath(args.out))
     else:
         print("\nPreview only — nothing was written. To export after review, "
               "re-run with: --out summary.md")
@@ -565,10 +565,13 @@ def cmd_conformance(args) -> int:
     """
     if args.new_vector:
         args.out = args.out or os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(
-                os.path.abspath(__file__)))), "conformance", "vectors",
-            "external")
+            os.getcwd(), "conformance", "vectors", "external")
         return cmd_new_vector(args)
+    if not args.fixture:
+        print("error: provide --fixture <events.jsonl>. To try a synthetic sample, run:\n"
+              "  agentmeasure conformance --new-vector my-sample --out ./vectors\n"
+              "then run the validation command printed by the scaffold.", file=sys.stderr)
+        return 2
     try:
         from . import pack as pack_mod
     except ImportError as e:

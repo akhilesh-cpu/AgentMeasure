@@ -68,13 +68,19 @@ jobs:
             echo "v0.1.0 release not found (nothing to supersede)"
           fi
 
-      - name: Attach npm tarball as release asset
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Attach built npm tarball as release asset
         working-directory: sdk
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          npm ci
+          npm run build
+          PKG_VERSION=$(node -p "require('./package.json').version")
           npm pack --pack-destination .
-          gh release upload "$TAG" agentmeasure-mcp-0.1.1.tgz --clobber
+          gh release upload "$TAG" "agentmeasure-mcp-${PKG_VERSION}.tgz" --clobber
 
       # ── process fix (live-codex-desc-clarity-001 lesson): bundles ship with the tag ──
       # Every bundles/<experiment-id>/ is zipped and attached as a release asset, so a

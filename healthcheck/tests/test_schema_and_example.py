@@ -182,7 +182,8 @@ class TestShareCommand(unittest.TestCase):
         report = self._report()
         dest = os.path.join(self.tmp.name, "summary.md")
         out = self._run(["share", report, "--out", dest])
-        self.assertIn("reviewed the preview", out)
+        self.assertIn("inspect the file before sharing", out)
+        self.assertNotIn("you reviewed", out)
         self.assertTrue(os.path.isfile(dest))
 
     def test_json_variant(self):

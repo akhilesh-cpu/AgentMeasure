@@ -301,6 +301,8 @@ jobs:
           cd /tmp && /tmp/smoke/bin/agentmeasure demo --no-history
           /tmp/smoke/bin/agentmeasure selftest
           /tmp/smoke/bin/agentmeasure recount --list-vendors
+          /tmp/smoke/bin/agentmeasure conformance --new-vector smoke-case --out /tmp/am-smoke-vectors
+          /tmp/smoke/bin/agentmeasure conformance --fixture /tmp/am-smoke-vectors/smoke-case-001/agentmeasure_smoke_case_fixture_001.events.jsonl
 
   status-sync:
     runs-on: ubuntu-latest

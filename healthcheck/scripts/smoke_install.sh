@@ -49,4 +49,7 @@ cd "$tmp"
 test -f "$tmp/pack/dispute-pack.md"
 test -f "$tmp/pack/dispute-pack.json"
 
-echo "smoke: install + demo + selftest + validate + settlement surface ALL OK"
+"$tmp/venv/bin/agentmeasure" conformance --new-vector smoke-case --out "$tmp/vectors"
+"$tmp/venv/bin/agentmeasure" conformance --fixture "$tmp/vectors/smoke-case-001/agentmeasure_smoke_case_fixture_001.events.jsonl"
+
+echo "smoke: conformance + install + demo + selftest + validate + settlement surface ALL OK"

@@ -3,6 +3,16 @@
 All notable changes to AgentMeasure (standard, SDK, and reference product) are
 documented here. Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [v0.7.1] - 2026-10-15
+
+### Fixed
+
+- Include the bundled lab subpackage in the wheel so installed conformance works.
+- Scaffold under the caller's working directory; explain missing fixture input.
+- Correct share-export confirmation and zero-cost evidence wording.
+- Exercise conformance in the installed-wheel smoke test.
+- Add first-run recovery guidance, report examples and email-client fallbacks to the website.
+
 ## [v0.7.0] - 2026-10-14
 
 ### Added

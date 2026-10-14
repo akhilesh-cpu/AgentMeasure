@@ -119,3 +119,20 @@ class TestExitCodes(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestConformanceFirstRun(CliHarness):
+    def test_no_fixture_explains_next_step(self):
+        _out, err = self.run_cli(["conformance"], expect_code=2)
+        self.assertIn("--fixture", err)
+        self.assertIn("--new-vector", err)
+
+    def test_default_scaffold_is_in_callers_working_directory(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            with patch("am_healthcheck.cli.os.getcwd", return_value=directory):
+                self.run_cli(["conformance", "--new-vector", "first-run"])
+            fixture = os.path.join(directory, "conformance", "vectors", "external",
+                                   "first-run-001", "agentmeasure_first_run_fixture_001.events.jsonl")
+            self.assertTrue(os.path.isfile(fixture))
+            self.run_cli(["conformance", "--fixture", fixture])

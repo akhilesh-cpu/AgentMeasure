@@ -7,6 +7,28 @@ fixture and reports `PASS / FAIL / UNPROVABLE` per invariant — and
 `UNPROVABLE` is a first-class result: when the evidence to decide is absent,
 it is reported as a finding, never folded into a count or a zero.
 
+## First run from an installed CLI
+
+Use CLI **0.7.1 or newer**. The 0.7.0 wheel omitted a required module; upgrade
+before running conformance. No repository clone is needed for this path:
+
+```bash
+python -m pip install --upgrade agentmeasure
+agentmeasure conformance --new-vector my-sample --out ./vectors
+agentmeasure conformance --fixture ./vectors/my-sample-001/agentmeasure_my_sample_fixture_001.events.jsonl --json result.json
+```
+
+The scaffold is synthetic and valid as generated: 4 PASS, 1 UNPROVABLE for its
+zero-cost sample; token/cache checks are NOT-SUPPORTED. The output names the
+actual fixture and metadata paths. Keep the synthetic label until you replace
+it with real evidence. Default scaffolding writes under your current directory,
+never into the Python installation. Existing names are refused rather than overwritten.
+
+For your own data, use genuine session/operation/attempt identities. Without
+`--claims`, results only concern the sample's internal consistency. For a free
+fit review before a $20 check, send your native schema and redacted sample rows;
+you do not have to perform the mapping first. [Service scope](https://roy-tong.github.io/AgentMeasure/services.html#qa20).
+
 ## Use
 
 ```bash

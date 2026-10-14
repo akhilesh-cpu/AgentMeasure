@@ -10,17 +10,17 @@ Same honesty rules as the [conformance pack](../conformance/pack/README.md):
 every verdict is `OK / FINDING / UNPROVABLE`, and UNPROVABLE is a first-class
 result — when the logs cannot decide, that is disclosed, never zeroed.
 
-> Status verified 2026-10-14: CLI **v0.7.0** is available on PyPI and GitHub; the separately versioned Provider SDK is **v0.2.0** on npm. 477 Healthcheck tests passed locally. See [release notes](https://roy-tong.github.io/AgentMeasure/releases.html).
+> Status verified 2026-10-15: CLI **v0.7.1** is available on PyPI and GitHub; the separately versioned Provider SDK is **v0.2.0** on npm. 479 Healthcheck tests passed locally. See [release notes](https://roy-tong.github.io/AgentMeasure/releases.html).
 
 ## Install
 
 ```bash
-# Current verified release from PyPI (v0.7.0, verified 2026-10-14).
+# Current verified release from PyPI (v0.7.1, verified 2026-10-15).
 pip install agentmeasure            # or: pipx install agentmeasure
 agentmeasure demo
 
 # Pinned Git install as fallback.
-pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.7.0#subdirectory=healthcheck"
+pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.7.1#subdirectory=healthcheck"
 
 # Or run from a repository checkout (use a release tag for reproducibility).
 python3 healthcheck/agentmeasure demo
@@ -32,6 +32,14 @@ a fresh environment before every push; PyPI is again the recommended path.
 
 Python 3.9+ standard library only; zero runtime dependencies; no network code
 (a test enforces both).
+
+The 0.7.0 wheel's conformance command is broken because a bundled dependency was
+omitted. **Upgrade to 0.7.1** for `conformance`; Healthcheck itself was unaffected.
+[Installed conformance quickstart](../conformance/pack/README.md#first-run-from-an-installed-cli).
+
+[Installation and error recovery](https://roy-tong.github.io/AgentMeasure/#install-help)
+includes Windows and virtual environments. The report path is printed after a
+successful check. Keep full JSON/HTML local; only share an inspected summary.
 
 ## Quick start
 
@@ -352,7 +360,7 @@ New cli versions are handled defensively: unknown event types are accounted
 ## Development
 
 ```bash
-python3 -m unittest discover -s healthcheck/tests   # 477 tests verified 2026-10-14
+python3 -m unittest discover -s healthcheck/tests   # 479 tests verified 2026-10-15
 python3 healthcheck/agentmeasure selftest           # fixtures + redaction + compare + schemas
 bash healthcheck/scripts/smoke_install.sh           # clean-venv install smoke (packaged artifact)
 ```

@@ -14,7 +14,11 @@ agentmeasure check                # 检查本地 Codex / Claude Code 会话
 
 样例展示覆盖范围、失败、重试链及可观测的 Token 信息。检查自己的日志时，缺失证据保留为未知；一次重试不自动算作一个新的逻辑操作。
 
-Python 3.9+。2026-10-14 核验：[PyPI CLI](https://pypi.org/project/agentmeasure/) 为 **0.7.0**，[npm SDK](https://www.npmjs.com/package/@agentmeasure/mcp) 为 **0.2.0**；两者独立版本。
+Python 3.9+。2026-10-15 核验：[PyPI CLI](https://pypi.org/project/agentmeasure/) 为 **0.7.1**，[npm SDK](https://www.npmjs.com/package/@agentmeasure/mcp) 为 **0.2.0**；两者独立版本。
+
+终端会打印 HTML 报告路径，打开该文件即可查看。macOS/Linux 可使用 `python3 -m pip`，Windows 可使用 `py -m pip`。遇到权限或 externally managed 错误，按[虚拟环境步骤](https://roy-tong.github.io/AgentMeasure/#install-help)安装。
+
+同时有两种运行时日志时默认优先 Codex；Claude Code 用 `agentmeasure check --runtime claude`。最近七天没有日志可试 `--all`，或指定 `--dir` 与 `--runtime`。输入缺失不代表检查通过。
 
 ## 一次解决一个问题
 
@@ -36,6 +40,8 @@ agentmeasure validate summary.json
 
 `--out` 会立即写入本地文件。检查文件后再决定是否发送，不会自动上传。“未发现问题”和“证据不足”均可能成为交付结论。
 
+申请按钮只打开邮件草稿，不会自动附加文件或提交申请。没有本地邮件客户端时，可以[复制或下载邮件模板](https://roy-tong.github.io/AgentMeasure/services.html#after-apply)，在网页邮箱发送。只要求摘要时，不要附上完整 report.json、HTML 报告或原始日志。工具缺陷可免费在 [Issues](https://github.com/roy-tong/AgentMeasure/issues/new) 提交脱敏复现，无需购买诊断。
+
 ## 维护者与服务提供商入口
 
 | 资料 | 用途 |
@@ -52,7 +58,7 @@ agentmeasure validate summary.json
 
 [9 月审计报告](campaigns/audit-report-2026-09.md)记录了 110 个工具的审查；后续修复与纠错以公开发现索引为准。技术成果不能替代付费需求、客户节省或退款依据。实际用户价值和复购仍在验证。
 
-2026-10-14 本地 477 项 Healthcheck 单元测试通过。最新工程结果见 [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)，发布范围见 [v0.7.0](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.0)。合成夹具不是客户生产数据。
+2026-10-15 本地 479 项 Healthcheck 单元测试通过。最新工程结果见 [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)，发布范围见 [v0.7.1](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.1)。合成夹具不是客户生产数据。
 
 ## 开源承诺
 

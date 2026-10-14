@@ -16,9 +16,17 @@ The demo shows findings from a bundled synthetic session. Your own check reports
 coverage, failures, retry chains and available token evidence. Missing evidence
 stays unknown; a retry is not automatically a second logical operation.
 
-Python 3.9+. CLI **0.7.0** on [PyPI](https://pypi.org/project/agentmeasure/);
+Python 3.9+. CLI **0.7.1** on [PyPI](https://pypi.org/project/agentmeasure/);
 Provider SDK **0.2.0** on [npm](https://www.npmjs.com/package/@agentmeasure/mcp),
-verified 2026-10-14. These packages have separate version numbers.
+verified 2026-10-15. These packages have separate version numbers.
+
+Open the HTML report at the path printed by the command. On macOS/Linux use
+`python3 -m pip` if needed; on Windows use `py -m pip`. For permission or
+“externally managed” errors, use the [virtual-environment instructions](https://roy-tong.github.io/AgentMeasure/#install-help).
+With both runtimes present, auto-discovery prefers Codex; use
+`agentmeasure check --runtime claude` for Claude Code. No logs in the default
+seven-day window? Try `--all` or an explicit `--dir` and `--runtime`. A missing
+input is not a passing check. [More recovery steps](https://roy-tong.github.io/AgentMeasure/#how).
 
 ## Get help with one question
 
@@ -52,6 +60,11 @@ agentmeasure validate summary.json
 send it. Nothing is automatically uploaded. Refund terms and evidence limits are
 on the service page; “no finding” and “not enough evidence” are valid outcomes.
 
+No local mail app? [Download an application template or copy the email](https://roy-tong.github.io/AgentMeasure/services.html#after-apply).
+Attachments are manual. Do not send the full report.json, HTML report or raw logs
+when only a summary is requested. Tool bugs can be reported free in
+[Issues](https://github.com/roy-tong/AgentMeasure/issues/new), with a redacted reproduction.
+
 ## For tool maintainers and providers
 
 | Resource | Use it for |
@@ -73,8 +86,8 @@ The [September audit report](campaigns/audit-report-2026-09.md) documents the
 the claims index. Engineering evidence does not establish paid demand, customer
 savings or a right to a refund. Customer value and repeat purchase remain under validation.
 
-477 Healthcheck unit tests passed on 2026-10-14. See [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)
-for current results and [v0.7.0](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.0)
+479 Healthcheck unit tests passed on 2026-10-15. See [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)
+for current results and [v0.7.1](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.1)
 for the release scope. Example fixtures are not production customer data.
 
 ## Open-source commitments
