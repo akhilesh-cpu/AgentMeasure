@@ -1,0 +1,34 @@
+{
+  "case": "unknown-model-pricing",
+  "schema": "agentmeasure.evidence/unknown-model-pricing/0.1",
+  "fixture_class": "synthetic-offline",
+  "test_registry": {
+    "known-model-001": {
+      "input_usd_per_million_tokens": 2,
+      "output_usd_per_million_tokens": 8
+    }
+  },
+  "expected": [
+    {
+      "row_id": "known-model-001",
+      "model_id": "known-model-001",
+      "verdict": "PRICED",
+      "cost_usd": 0.0028
+    },
+    {
+      "row_id": "unknown-model-001",
+      "model_id": "model-2099a",
+      "verdict": "UNPRICED",
+      "alternate_verdict": "UNPROVABLE",
+      "cost_usd": null,
+      "reason": "unknown_model_id; no registered price; default fallback forbidden"
+    }
+  ],
+  "forbidden_unknown_outcomes": [
+    "numeric_zero",
+    "silent_zero_cost",
+    "default_model_price",
+    "any_fallback_model_price"
+  ],
+  "claim_boundary": "Synthetic test registry and fixture only; not current provider pricing or a claim about any named implementation."
+}

@@ -1,0 +1,2 @@
+{"row_id":"known-model-001","model_id":"known-model-001","input_tokens":1000,"output_tokens":100,"fixture_class":"synthetic-test-only"}
+{"row_id":"unknown-model-001","model_id":"model-2099a","input_tokens":1000,"output_tokens":100,"fixture_class":"synthetic-test-only"}
