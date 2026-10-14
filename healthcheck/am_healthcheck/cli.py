@@ -2193,6 +2193,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv=None) -> int:
+    # Windows consoles default to legacy code pages (cp1252/cp936) that cannot
+    # encode every glyph in the report output; degrade to '?' instead of
+    # crashing mid-report — the check must finish on any stock terminal.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(errors="replace")
+        except (AttributeError, ValueError):
+            pass
     argv = list(sys.argv[1:] if argv is None else argv)
     parser = build_parser()
     if not argv:

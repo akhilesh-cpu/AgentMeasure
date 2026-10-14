@@ -3,16 +3,14 @@
 All notable changes to AgentMeasure (standard, SDK, and reference product) are
 documented here. Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [v0.6.0] - 2026-10-11
+## [v0.7.0] - 2026-10-14
 
 ### Added
 
-- **External conformance growth**: iwasinnam-003 (Metrecept session-aggregate receipt vector, litellm#39057 — 1 MISS + 2 HIT with per-crossing meter_event_id that never collapses, estimates forever unsigned), the rksharma-001 external-contribution card (PR #27 cross-file replay enforcement), and **chenhz01-001 — the first availability-certification vector, contributed via PR #32** (gunjanjaswal) with an airtight empty-events guard and documented real-trace boundaries. Metrecept public verification URLs pinned per iwasinnam2's 10/10 review.
-- **Release plumbing, now proven live**: PyPI trusted publishing works (0.5.0 shipped on the re-run), npm works (@agentmeasure/mcp 0.1.1 live); the release workflow gained workflow_dispatch tag input and idempotent PyPI + npm steps so re-runs never fail on already-published versions.
+- **`validate` now recognizes the standalone share-summary export** (`summary.json` written by `share --out`): whitelist + required-key checks via the same `summary_problems` the preview-then-export flow uses — a buyer-submitted summary is machine-checkable end to end (`validate summary.json` prints `valid share-summary`), and tampered/missing-key files are named, never waved through.
+- **Windows, ahead of demand**: stdout/stderr degrade unencodable glyphs instead of crashing mid-report on legacy console code pages (cp1252/cp936), and CI gains a `windows-latest` job (full unit suite + a demo → share → validate smoke). Paid-diagnosis intake accepts Windows-generated summaries.
+- **Paid diagnosis page live** (website/services.html): two fixed-price human-delivered diagnostics — $10 healthcheck anomaly diagnosis, $20 metering QA single-sample check — email application, refund terms on the page, and an explicit "free answers IF, paid answers WHAT" line; README (EN/zh) positioning updated to match.
 
-## [Unreleased]
-
-### Added
 
 - **Five-direction maturity wave (requirements pool §七)**: 
   - **S1/S3 SDK 0.2.0** — tool annotations declared in the SDK's own examples (readOnlyHint/destructiveHint/idempotentHint/openWorldHint, with the spec note that idempotentHint is Optional) plus a "declaring tool annotations" README section: the metering standard's own MCP now preaches what it practices. npm tests 21/21 on a clean install.
@@ -29,6 +27,13 @@ documented here. Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **`agentmeasure drilldown`** (BP r32 p09 promise ②, "ask the customer to re-check one finding"): replays ONE conversation on screen — the exported row, every rule step that fired in plain language, the verdict with its three-state, the amount at issue, and the exact command to reproduce it. `explain_one` walks the same branches as the recount in the same order; a test replays every fixture row through both and asserts the verdicts agree. Tier 1 only by design — the buyer's own standard is leverage, not part of the billing replay.
 - **`agentmeasure decisions`** (the third value book from BP r32 p06): an append-only local journal recording how the buyer used the verification in a business decision (payment approved/held, discount requested, renewal signed, vendor review…) — enum-validated, linked to the finding it rests on, outcome stated, amounts context-only and never summed with recovered cash. Cash (recovery), hours (delivery), decisions (this) now each have their own book.
 - **Release smoke job in CI**: builds the wheel and runs `--version` / `demo` / `selftest` / `recount --list-vendors` from a fresh venv — the packaged artifact must actually run (source-tree green ≠ installable; the 0.4.0 NameError lesson, now mechanical).
+## [v0.6.0] - 2026-10-11
+
+### Added
+
+- **External conformance growth**: iwasinnam-003 (Metrecept session-aggregate receipt vector, litellm#39057 — 1 MISS + 2 HIT with per-crossing meter_event_id that never collapses, estimates forever unsigned), the rksharma-001 external-contribution card (PR #27 cross-file replay enforcement), and **chenhz01-001 — the first availability-certification vector, contributed via PR #32** (gunjanjaswal) with an airtight empty-events guard and documented real-trace boundaries. Metrecept public verification URLs pinned per iwasinnam2's 10/10 review.
+- **Release plumbing, now proven live**: PyPI trusted publishing works (0.5.0 shipped on the re-run), npm works (@agentmeasure/mcp 0.1.1 live); the release workflow gained workflow_dispatch tag input and idempotent PyPI + npm steps so re-runs never fail on already-published versions.
+
 
 ## [v0.5.0] - 2026-10-03
 

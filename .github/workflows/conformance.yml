@@ -49,6 +49,26 @@ jobs:
       - name: Healthcheck install smoke (packaged artifact)
         run: bash healthcheck/scripts/smoke_install.sh
 
+  # ─── 套件 0b：Windows 提前保障（控制台/路径/编码差异，无真机时的常驻回归） ───
+  healthcheck-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Healthcheck unit tests on Windows
+        run: |
+          python -m unittest discover -s healthcheck/tests
+      - name: CLI smoke on a Windows console codepage (demo + share export)
+        run: |
+          python healthcheck/agentmeasure demo --json demo-report.json
+          python healthcheck/agentmeasure share demo-report.json --out summary.json
+          python healthcheck/agentmeasure validate summary.json
+
   # ─── 套件 1：spec conformance（向量 + registry + metric registry） ───
   spec-conformance:
     runs-on: ubuntu-latest

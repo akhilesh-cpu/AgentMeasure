@@ -159,7 +159,23 @@ def detect_kind(data: dict) -> Optional[str]:
         return "report"
     if "changed_verdicts" in data and "token_state" in data:
         return "compare"
+    if data.get("tool") == "AgentMeasure Healthcheck" and "checks" in data \
+            and "notes" in data:
+        return "share-summary"
     return None
+
+
+def validate_share_summary(data: dict) -> List[str]:
+    # Lazy import: share pulls in the package root; keep module load order flat.
+    from .share import summary_problems
+    errors = list(summary_problems(data))
+    required = ("tool", "tool_version", "mode", "runtime", "window",
+                "sessions", "command_executions", "checks", "notes")
+    missing = [k for k in required if k not in data]
+    if missing:
+        errors.append("share-summary: missing required key(s): %s"
+                      % ", ".join(missing))
+    return errors
 
 
 def validate_file(path: str):
@@ -180,5 +196,6 @@ def validate_file(path: str):
         return None, ["%s is not an AgentMeasure export (no known top-level "
                       "shape)" % path]
     validators = {"report": validate_report, "snapshot": validate_snapshot,
-                  "compare": validate_compare}
+                  "compare": validate_compare,
+                  "share-summary": validate_share_summary}
     return kind, validators[kind](data)

@@ -63,11 +63,13 @@ Full notes: [v0.6.0 release](https://github.com/roy-tong/AgentMeasure/releases/t
 ## Install the current release
 
 ```bash
-# Python 3.9+. PyPI is current as of v0.6.0 (verified 2026-10-11).
+# Python 3.9+, any OS. PyPI is current as of v0.7.0 (verified 2026-10-14).
 pip install agentmeasure
 agentmeasure demo                          # synthetic developer example
 agentmeasure check                         # local Codex / Claude Code sessions
 agentmeasure conformance                   # bundled evidence checks
+# Windows: PowerShell or cmd both work; if glyphs look off in cmd, run
+# `chcp 65001` first (output degrades to '?' instead of failing either way).
 ```
 
 As checked on **2026-10-11**, GitHub, [PyPI](https://pypi.org/project/agentmeasure/) and

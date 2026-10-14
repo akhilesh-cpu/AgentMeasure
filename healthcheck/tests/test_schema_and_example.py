@@ -224,3 +224,48 @@ class TestSummaryWhitelist(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ValidateShareSummaryTest(unittest.TestCase):
+    """`validate` must recognize the standalone share-summary export
+    (summary.json written by `share --out`), not just report/snapshot/compare.
+    """
+
+    def _write_summary(self, tmpdir, name="summary.json"):
+        s = parse_session(fixture("codex-ok.jsonl"))
+        ov, checks, _cov, _top = run_checks([s], "unit")
+        summary = share_mod.build_share_summary(ov, checks, "own-data", "unit")
+        path = os.path.join(tmpdir, name)
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(share_mod.share_json(summary))
+        return path
+
+    def test_valid_share_summary(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = self._write_summary(tmpdir)
+            kind, errors = schema_mod.validate_file(path)
+            self.assertEqual(kind, "share-summary")
+            self.assertEqual(errors, [])
+
+    def test_cli_validate_reports_kind(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = self._write_summary(tmpdir)
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                rc = cli.main(["validate", path])
+            self.assertEqual(rc, 0)
+            self.assertIn("valid share-summary", buf.getvalue())
+
+    def test_tampered_share_summary_rejected(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = self._write_summary(tmpdir)
+            with open(path, encoding="utf-8") as fh:
+                data = json.load(fh)
+            data["secret_field"] = "not on the whitelist"
+            data.pop("sessions")
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump(data, fh)
+            kind, errors = schema_mod.validate_file(path)
+            self.assertEqual(kind, "share-summary")
+            self.assertTrue(any("whitelist" in e or "missing required" in e
+                                for e in errors), errors)
