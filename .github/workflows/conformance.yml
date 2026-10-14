@@ -127,6 +127,9 @@ jobs:
         run: |
           python3 -m unittest discover -s tests -p "test_parity.py" -v
         working-directory: healthcheck
+      - name: "Evidence case: assumed-resolution (pins the published 70% vs 40% numbers)"
+        run: |
+          python3 conformance/evidence/assumed-resolution/run_case.py
       - name: "Evidence case: unknown model pricing (no silent fallback)"
         run: |
           python3 conformance/evidence/unknown-model-pricing/run_case.py
