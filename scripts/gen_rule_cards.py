@@ -65,6 +65,7 @@ _PAGE = """<!doctype html>
 <meta name="description" content="{desc}">
 <link rel="stylesheet" href="../light.css">
 <style>{css}</style>
+<link rel="canonical" href="https://roy-tong.github.io/AgentMeasure/rules/index.html">
 </head>
 <body>
 <header class="snav">
