@@ -175,3 +175,10 @@ for the release scope. Example fixtures are not production customer data.
 [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Governance](GOVERNANCE.md) · [Agent instructions](AGENTS.md) · [Whitepaper](whitepaper/measuring-software-used-by-ai-agents.md)
 
 [Task scope and validation priorities](docs/product-scope.md) · [Developer guide](docs/developer-guide.md)
+
+## Why optional paid help?
+
+The public cases and free explanations stay free. A paid review is agreed human
+work on a remaining decision, not a secret scanner or automatic certification.
+If existing output answers the question, we recommend self-service. See the
+[paid review scope](docs/paid-review-scope.md).

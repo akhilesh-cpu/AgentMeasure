@@ -38,3 +38,10 @@ Independent reviewers get reproducible inputs, known limits and the ability to
 criticize or decline. We do not condition service on a positive post or testimonial.
 Cost-saving language is a hypothesis to test, not permission to invent savings
 or claim that finding a difference guarantees a refund.
+
+## Why optional paid help?
+
+The public cases and free explanations stay free. A paid review is agreed human
+work on a remaining decision, not a secret scanner or automatic certification.
+If existing output answers the question, we recommend self-service. See the
+[paid review scope](paid-review-scope.md).

@@ -133,3 +133,7 @@ agentmeasure validate summary.json
 ## Claude跨文件响应证据
 
 `agentmeasure response-audit first.jsonl fork.jsonl --json responses.json` 按响应标识对照重复用量快照、冲突与缺字段。只读，不改日志，不选取first/last/max，不计算会话或账单总额。见[使用说明](docs/response-audit.md)。
+
+## 开源为什么还能收费？
+
+不需要付费也可以自己运行、修改代码、阅读公开病例和排查说明。可选付费服务承接的是一个事前约定的未决问题：说明免费基线已回答什么、这单还要核验什么、需要哪些证据以及如何复查。若只能重复免费输出或通用建议，就建议免费自助。现有$10/$20均为人工交付，不承诺专有病例库、认证效力或必然省钱。见[交付范围](docs/paid-review-scope.md)。
