@@ -28,11 +28,28 @@ agentmeasure recount --export export.csv --vendor zendesk
 输出先是厂商规则及其公开出处，然后是双向核对结果，最后是钱数：
 
 ```
+billed $10.00 · net overcharge $2.00 · at USD 2.0/resolution
+...
 Dollars (at USD 2.0 per resolution)
 overcharge identified       2.00
 undercharge (vendor favour) 0.00
 net variance                2.00
 ```
+
+手头没有 CSV？`agentmeasure recount --sample` 直接跑内置的 5 行合成导出
+（Zendesk 规则）——与上面的文件完全相同。
+
+三个可复现 showcase 案例（拒绝猜测的超收判定 / 双向核对 / 合同航道）在
+[examples/showcase](examples/showcase/README.md)，期望输出已冻结、CI 每次
+变更都会比对，展示与现实不会悄悄分叉。
+
+## 每月自动对账，无需值守
+
+Fork 本仓库、把厂商导出放进 `.agentmeasure/`，
+[Monthly bill reconcile](.github/workflows/reconcile.yml) 工作流就会按月
+自动复算你的账单——GitHub Actions 当算力，无服务器，数据不出你的 fork，
+差额非零时自动开一个跟踪 issue，让发现不会被遗忘。配置五分钟：
+[RECONCILE.md](RECONCILE.md)。
 
 今天内置六家厂商规则——Intercom Fin、Zendesk AI Agents、HubSpot Breeze、
 Salesforce Agentforce、Ada，以及一个通用按结果基线——每条规则都注明出处

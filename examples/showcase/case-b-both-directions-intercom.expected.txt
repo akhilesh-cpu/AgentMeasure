@@ -1,0 +1,29 @@
+Tier 1 Recount — the vendor's own published rules
+==========================================================
+billed $2.97 · net overcharge $0.99 · at USD 0.99/resolution
+
+Vendor:      Intercom Fin
+Rule source: fin.ai pricing & outcomes; Intercom help centre (Fin AI Agent outcomes)
+Confidence:  P
+
+Conversations:        5
+Billed by vendor:     3
+
+Findings, both directions (D-2)
+----------------------------------------------------------
+billed but not billable     2
+billable but not billed     1
+net                         +1
+cannot settle               0 (0.0%)
+agrees with the vendor      2
+three-state: PASS 2 / FAIL 3 / UNPROVABLE 0
+
+Dollars (at USD 0.99 per resolution)
+----------------------------------------------------------
+overcharge identified       1.98
+undercharge (vendor favour) 0.99
+net variance                0.99
+cannot settle (removed)     0.00
+
+Undercharge is netted before any dollar is claimed.
+cannot_settle amounts are removed from the claim, not zeroed.

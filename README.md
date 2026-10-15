@@ -30,11 +30,30 @@ The output prints the vendor's rule with its public source, findings in both
 directions, then the dollars:
 
 ```
+billed $10.00 · net overcharge $2.00 · at USD 2.0/resolution
+...
 Dollars (at USD 2.0 per resolution)
 overcharge identified       2.00
 undercharge (vendor favour) 0.00
 net variance                2.00
 ```
+
+No CSV at hand yet? `agentmeasure recount --sample` runs the bundled 5-row
+synthetic export with the Zendesk rule set — the same file as above.
+
+Three reproducible showcase cases (overcharge with refused guesses, findings
+in both directions, the contract lane) live in
+[examples/showcase](examples/showcase/README.md) with frozen expected outputs
+that CI compares on every change.
+
+## Reconcile monthly, hands-free
+
+Fork this repo, drop your vendor export into `.agentmeasure/`, and the
+[Monthly bill reconcile](.github/workflows/reconcile.yml) workflow re-counts
+your bill on a schedule — GitHub Actions is the compute, no server, nothing
+leaves your fork, and a non-zero variance opens a tracking issue so the
+finding cannot be forgotten. Setup is five minutes:
+[RECONCILE.md](RECONCILE.md).
 
 Six vendor rule sets ship today — Intercom Fin, Zendesk AI Agents, HubSpot
 Breeze, Salesforce Agentforce, Ada and a generic per-resolution baseline —

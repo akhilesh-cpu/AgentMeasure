@@ -1,0 +1,4 @@
+{
+  "vendor": "intercom",
+  "export": ".agentmeasure/recount-export.csv"
+}

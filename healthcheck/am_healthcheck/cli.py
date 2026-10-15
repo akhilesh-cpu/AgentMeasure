@@ -924,9 +924,20 @@ def cmd_recount(args) -> int:
             print("             source: %s" % v["source"])
         return 0
 
+    if getattr(args, "sample", False):
+        if args.export:
+            print("error: --sample and --export are mutually exclusive",
+                  file=sys.stderr)
+            return 2
+        args.export = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "demo", "sample-recount-export.csv")
+        if not args.vendor:
+            args.vendor = "zendesk"
+
     if not args.export or not args.vendor:
         print("error: --export and --vendor are both required "
-              "(or use --list-vendors)", file=sys.stderr)
+              "(or use --sample / --list-vendors)", file=sys.stderr)
         return 2
 
     try:
@@ -1812,6 +1823,9 @@ def build_parser() -> argparse.ArgumentParser:
              "counts-only export (the line the vendor cannot argue with)")
     p_recount.add_argument("--export", metavar="PATH", default=None,
                            help="counts-only CSV export (7 columns, 5 required)")
+    p_recount.add_argument("--sample", action="store_true",
+                           help="run the bundled 5-row synthetic export instead "
+                                "of --export (defaults to the zendesk rule set)")
     p_recount.add_argument("--vendor", default=None,
                            help="which vendor's rules to apply: %s"
                                 % ", ".join(v["id"] for v in vendors_mod.list_vendors()))

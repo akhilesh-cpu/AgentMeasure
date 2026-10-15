@@ -1,0 +1,6 @@
+conversation_id,human_agent_participated,issue_addressed,customer_recontacted_within_window,vendor_billed
+c-001,N,Y,N,Y
+c-002,N,Y,N,Y
+c-003,N,Y,N,Y
+c-004,Y,Y,N,Y
+c-005,N,Y,Y,Y

@@ -3,6 +3,31 @@
 All notable changes to AgentMeasure (standard, SDK, and reference product) are
 documented here. Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Added
+
+- **Bill-recount identity**: README (EN/zh) and the website hero now lead with
+  the buyer-side recount — a copy-paste 5-row sample, the one command that
+  runs it, and the dollar variance it prints. Local log checks remain the
+  free second section. No service scope or boundary changed.
+- **`recount --sample`**: run the bundled 5-row synthetic export (Zendesk rule
+  set) with no CSV of your own — the same file the README shows.
+- **Dollar headline**: every recount report opens with
+  `billed $X · net overcharge $Y · at price/resolution` before any detail.
+- **Reproducible showcase** (`examples/showcase/`): three public cases
+  (overcharge with refused guesses / findings in both directions / the
+  contract lane) with frozen expected outputs; CI compares them on every
+  change so the showcase cannot drift from shipped behaviour.
+- **Monthly bill reconcile workflow** (`.github/workflows/reconcile.yml` +
+  `RECONCILE.md`): fork the repo, drop in your vendor export, and the recount
+  runs monthly on GitHub Actions — no server, nothing leaves your fork, and a
+  non-zero variance opens a tracking issue. The "fork-to-run" adoption path.
+- **Vendor billing-rule scorecard** (website claims index): the six published
+  rule sets with prices, triggers, dated sources, confidence grades and how
+  far each is re-countable from a counts-only export — the page always
+  matches the shipped registry.
+
 ## [v0.7.2] - 2026-10-15
 
 - Add `inspect-input`: read-only JSONL format routing, explicit NOT-RUN validation/verdict, invalid-row counts and safe next steps.

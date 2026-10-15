@@ -38,6 +38,7 @@ am_healthcheck = [
     "fixtures/*.jsonl",
     "fixtures/*.csv",
     "demo/*.jsonl",
+    "demo/*.csv",
     "pack_invariants.json",
     "vendor-rules.json",
     "lab/schemas/funnel-event.schema.json",

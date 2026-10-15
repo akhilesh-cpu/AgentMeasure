@@ -237,6 +237,12 @@ def recount_report(result: Dict[str, Any]) -> str:
     out = []
     out.append("Tier 1 Recount — the vendor's own published rules")
     out.append("=" * W)
+    if "variance" in result:
+        billed_total = round(result["billed_by_vendor"] * result["unit_price"], 2)
+        out.append("billed $%.2f · net overcharge $%.2f · at %s %s/resolution"
+                   % (billed_total, result["variance"],
+                      result["currency"], result["unit_price"]))
+        out.append("")
     out.append("Vendor:      %s" % result["vendor_name"])
     out.append("Rule source: %s" % result["vendor_rule_source"])
     out.append("Confidence:  %s" % result["vendor_rule_confidence"])

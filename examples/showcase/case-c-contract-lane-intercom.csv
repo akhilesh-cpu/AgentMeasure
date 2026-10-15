@@ -1,0 +1,6 @@
+conversation_id,human_agent_participated,issue_addressed,customer_recontacted_within_window,customer_recontacted_at,closed_at,vendor_billed
+c-201,N,Y,N,2026-09-02T10:00:00Z,2026-09-01T10:00:00Z,Y
+c-202,Y,Y,N,,2026-09-03T09:00:00Z,Y
+c-203,N,Y,Y,,,Y
+c-204,N,Y,N,,2026-09-04T12:00:00Z,Y
+c-205,N,Y,N,,,N
