@@ -44,7 +44,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           NOTES="docs/RELEASE-${TAG}.md"
-          if [[ ! -f "$NOTES" ]]; then NOTES="docs/RELEASE-v0.1.1.md"; fi
+          if [[ ! -f "$NOTES" ]]; then
+            echo "::error::Release notes $NOTES not found. Add the file before tagging $TAG. (The old silent fallback to v0.1.1 notes shipped a wrong body on v0.7.0.)"
+            exit 1
+          fi
           if gh release view "$TAG" --json tagName >/dev/null 2>&1; then
             gh release edit "$TAG" --notes-file "$NOTES"
           else

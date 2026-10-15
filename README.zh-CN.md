@@ -1,24 +1,64 @@
 # AgentMeasure
 
-**检查 Codex / Claude Code 日志中的重复记录、重试与 Token 异常，用可复现证据核对 Agent 计量。**
+**每一张按使用量或结果计费的 AI 账单，付费方都应能一条命令独立复算。**
+
+AgentMeasure 用厂商自己发布的计费规则复算 AI 客服账单：打印美元差额，
+生成可以放到厂商面前的证据包。全程本地运行，不上传任何数据。
 
 [官网](https://roy-tong.github.io/AgentMeasure/) · [English](README.md) · [Healthcheck 使用指南](healthcheck/README.md) · [发布说明](https://roy-tong.github.io/AgentMeasure/releases.html)
 
-## 先在本地试用
+## 60 秒复算一张账单
+
+把这五行样例存成 `export.csv`（数据是合成的，命令是真的）：
+
+```csv
+conversation_id,human_agent_participated,issue_addressed,customer_recontacted_within_window,vendor_billed
+c-001,N,Y,N,Y
+c-002,N,Y,N,Y
+c-003,N,Y,N,Y
+c-004,Y,Y,N,Y
+c-005,N,Y,Y,Y
+```
 
 ```bash
 pip install agentmeasure
-agentmeasure demo                 # 合成样例，无需账号、不上传
-agentmeasure check                # 检查本地 Codex / Claude Code 会话
+agentmeasure recount --export export.csv --vendor zendesk
 ```
 
-样例展示覆盖范围、失败、重试链及可观测的 Token 信息。检查自己的日志时，缺失证据保留为未知；一次重试不自动算作一个新的逻辑操作。
+输出先是厂商规则及其公开出处，然后是双向核对结果，最后是钱数：
 
-Python 3.9+。2026-10-15 核验：[PyPI CLI](https://pypi.org/project/agentmeasure/) 为 **0.7.2**，[npm SDK](https://www.npmjs.com/package/@agentmeasure/mcp) 为 **0.2.0**；两者独立版本。
+```
+Dollars (at USD 2.0 per resolution)
+overcharge identified       2.00
+undercharge (vendor favour) 0.00
+net variance                2.00
+```
 
-终端会打印 HTML 报告路径，打开该文件即可查看。macOS/Linux 可使用 `python3 -m pip`，Windows 可使用 `py -m pip`。遇到权限或 externally managed 错误，按[虚拟环境步骤](https://roy-tong.github.io/AgentMeasure/#install-help)安装。
+今天内置六家厂商规则——Intercom Fin、Zendesk AI Agents、HubSpot Breeze、
+Salesforce Agentforce、Ada，以及一个通用按结果基线——每条规则都注明出处
+与置信级（`agentmeasure recount --list-vendors`）。复算与账单对不上时：
+`agentmeasure prepare` 把 Intercom/Zendesk 原生导出对齐到规范列，
+`agentmeasure dispute` 生成争议与追回包，`agentmeasure recovery` 单独记录
+厂商实际让步了什么，不与索赔混计。
 
-同时有两种运行时日志时默认优先 Codex；Claude Code 用 `agentmeasure check --runtime claude`。最近七天没有日志可试 `--all`，或指定 `--dir` 与 `--runtime`。输入缺失不代表检查通过。
+复算是算术，不是裁决：证据不足的行进 `cannot settle`、从索赔中剔除而不是
+记零；“查无差异”是有效结果。厂商账单复算是免费 CLI 能力，不是下面两项
+付费服务。
+
+## 先查自己（免费）
+
+`agentmeasure check` 检查本地 Codex / Claude Code 会话的重复记录、重试放大
+与 Token 异常——同一套证据纪律，指向你自己的日志。`agentmeasure demo`
+跑内置合成样例，无需账号、不上传。缺失证据保留为未知；一次重试不自动算作
+一个新的逻辑操作。
+
+Python 3.9+。2026-10-15 核验：[PyPI CLI](https://pypi.org/project/agentmeasure/) 为 **0.7.2**，
+[npm SDK](https://www.npmjs.com/package/@agentmeasure/mcp) 为 **0.2.0**；两者独立版本。
+macOS/Linux 可使用 `python3 -m pip`，Windows 可使用 `py -m pip`。遇到权限或
+externally managed 错误，按[虚拟环境步骤](https://roy-tong.github.io/AgentMeasure/#install-help)安装。
+同时有两种运行时日志时默认优先 Codex；Claude Code 用
+`agentmeasure check --runtime claude`。最近七天没有日志可试 `--all`，或指定
+`--dir` 与 `--runtime`。输入缺失不代表检查通过。
 
 ## 一次解决一个问题
 
@@ -52,7 +92,7 @@ agentmeasure validate summary.json
 | [公开发现索引](https://roy-tong.github.io/AgentMeasure/claims.html) | 逐条查看日期、复现证据与上游回应 |
 | [Lab](lab/README.md) | 已有实验工具，不承诺托管产品 |
 
-[买方核账](https://roy-tong.github.io/AgentMeasure/first-look.html)保留为实验性工具参考，不属于当前两项固定价服务。当前开发取舍见[路线图](ROADMAP.md)。
+上文买方工具（`recount` / `prepare` / `dispute` / `recovery`）共用一份[端到端走查](https://roy-tong.github.io/AgentMeasure/first-look.html)。它们是免费 CLI 能力，不属于当前两项固定价服务。当前开发取舍见[路线图](ROADMAP.md)。
 
 ## 证据与验证进度
 

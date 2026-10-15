@@ -1,27 +1,68 @@
 # AgentMeasure
 
-**Check Codex / Claude Code logs for duplicate records, retries and token anomalies. Verify agent metering with reproducible evidence.**
+**Every usage- or outcome-billed AI invoice should be independently re-countable by the party paying it — in one command.**
+
+AgentMeasure re-counts an AI support bill against the vendor's own published
+billing rules, prints the dollar variance, and builds the evidence pack you
+can put in front of the vendor. It runs locally; nothing uploads.
 
 [Website](https://roy-tong.github.io/AgentMeasure/) · [中文](README.zh-CN.md) · [Healthcheck guide](healthcheck/README.md) · [Release notes](https://roy-tong.github.io/AgentMeasure/releases.html)
 
-## Try it locally
+## Re-count a bill in 60 seconds
+
+Save this five-line sample as `export.csv` (synthetic data, real command):
+
+```csv
+conversation_id,human_agent_participated,issue_addressed,customer_recontacted_within_window,vendor_billed
+c-001,N,Y,N,Y
+c-002,N,Y,N,Y
+c-003,N,Y,N,Y
+c-004,Y,Y,N,Y
+c-005,N,Y,Y,Y
+```
 
 ```bash
 pip install agentmeasure
-agentmeasure demo                 # synthetic example; no account or upload
-agentmeasure check                # inspect your local Codex / Claude Code sessions
+agentmeasure recount --export export.csv --vendor zendesk
 ```
 
-The demo shows findings from a bundled synthetic session. Your own check reports
-coverage, failures, retry chains and available token evidence. Missing evidence
-stays unknown; a retry is not automatically a second logical operation.
+The output prints the vendor's rule with its public source, findings in both
+directions, then the dollars:
+
+```
+Dollars (at USD 2.0 per resolution)
+overcharge identified       2.00
+undercharge (vendor favour) 0.00
+net variance                2.00
+```
+
+Six vendor rule sets ship today — Intercom Fin, Zendesk AI Agents, HubSpot
+Breeze, Salesforce Agentforce, Ada and a generic per-resolution baseline —
+each citing its source and confidence grade
+(`agentmeasure recount --list-vendors`). When a recount disagrees with the
+invoice: `agentmeasure prepare` maps a native Intercom or Zendesk export onto
+the canonical columns, `agentmeasure dispute` builds the Dispute & Recovery
+Pack, and `agentmeasure recovery` records what the vendor actually conceded,
+counted separately from the claim.
+
+A recount is arithmetic, not a verdict: rows without enough evidence land in
+`cannot settle` and are removed from the claim, never zeroed. "No finding" is
+a valid outcome. Vendor recounting is a free CLI capability, not one of the
+two paid services below.
+
+## Start with your own machine (free)
+
+`agentmeasure check` inspects your local Codex / Claude Code sessions for
+duplicate records, retry amplification and token anomalies — the same evidence
+discipline pointed at your own logs. `agentmeasure demo` runs a bundled
+synthetic session with no account and no upload. Missing evidence stays
+unknown; a retry is not automatically a second logical operation.
 
 Python 3.9+. CLI **0.7.2** on [PyPI](https://pypi.org/project/agentmeasure/);
 Provider SDK **0.2.0** on [npm](https://www.npmjs.com/package/@agentmeasure/mcp),
 verified 2026-10-15. These packages have separate version numbers.
-
-Open the HTML report at the path printed by the command. On macOS/Linux use
-`python3 -m pip` if needed; on Windows use `py -m pip`. For permission or
+On macOS/Linux use `python3 -m pip` if needed; on Windows use `py -m pip`.
+For permission or
 “externally managed” errors, use the [virtual-environment instructions](https://roy-tong.github.io/AgentMeasure/#install-help).
 With both runtimes present, auto-discovery prefers Codex; use
 `agentmeasure check --runtime claude` for Claude Code. No logs in the default
@@ -75,9 +116,10 @@ when only a summary is requested. Tool bugs can be reported free in
 | [Claims index](https://roy-tong.github.io/AgentMeasure/claims.html) | Inspect dated findings, reproductions and upstream responses |
 | [Lab](lab/README.md) | Existing experimental tooling; no hosted product commitment |
 
-Buyer reconciliation tools remain available as [an experimental reference](https://roy-tong.github.io/AgentMeasure/first-look.html).
-They are not one of the two current fixed-price services. Current development
-priorities are in the [roadmap](ROADMAP.md).
+The buyer tools above (`recount`, `prepare`, `dispute`, `recovery`) share one
+[end-to-end walkthrough](https://roy-tong.github.io/AgentMeasure/first-look.html).
+They are free CLI capabilities, not one of the two current fixed-price
+services. Current development priorities are in the [roadmap](ROADMAP.md).
 
 ## Evidence and limits
 
