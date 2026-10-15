@@ -3,6 +3,12 @@
 All notable changes to AgentMeasure (standard, SDK, and reference product) are
 documented here. Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [v0.7.2] - 2026-10-15
+
+- Add `inspect-input`: read-only JSONL format routing, explicit NOT-RUN validation/verdict, invalid-row counts and safe next steps.
+- Conformance explains canonical/rollout/mixed input mismatches before emitting unrelated FMT-002 field errors.
+- No implicit conversion, repair, upload or evidence upgrade.
+
 ## [v0.7.1] - 2026-10-15
 
 ### Fixed

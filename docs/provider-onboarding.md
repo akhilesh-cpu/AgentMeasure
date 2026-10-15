@@ -6,6 +6,10 @@
 > that you don't choose to send. This page defines the path and what "a
 > successful run" means — both sides hold the same yardstick.
 
+## Identify your input first
+
+With CLI 0.7.2+, run `agentmeasure inspect-input your.jsonl`. This is format routing only, not validation or a conformance pass. Path A/B below uses canonical observations; `agentmeasure conformance` uses FMT-002. These are different contracts. A valid canonical file must not be repaired by inventing FMT-002 fields.
+
 ## Three entry paths (pick one)
 
 | Path | What you do | Best when |

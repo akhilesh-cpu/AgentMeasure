@@ -557,6 +557,24 @@ def cmd_new_vector(args) -> int:
     return 0
 
 
+def cmd_inspect_input(args) -> int:
+    from . import input_inspect
+    try:
+        path_error = _validate_output_paths([args.path], args.json_out)
+        if path_error:
+            raise ValueError(path_error)
+        result = input_inspect.inspect(args.path)
+        if args.json_out:
+            with open(args.json_out, "w", encoding="utf-8") as fh:
+                json.dump(result, fh, indent=2, ensure_ascii=False)
+                fh.write("\n")
+        print(input_inspect.render(result))
+        return 0 if result["format"] in ("fmt002", "canonical-observations", "codex-rollout") else 2
+    except (OSError, ValueError) as exc:
+        print("error: %s" % exc, file=sys.stderr)
+        return 2
+
+
 def cmd_conformance(args) -> int:
     """Run the conformance pack on a caller-provided telemetry fixture.
 
@@ -571,6 +589,16 @@ def cmd_conformance(args) -> int:
         print("error: provide --fixture <events.jsonl>. To try a synthetic sample, run:\n"
               "  agentmeasure conformance --new-vector my-sample --out ./vectors\n"
               "then run the validation command printed by the scaffold.", file=sys.stderr)
+        return 2
+    from . import input_inspect
+    try:
+        routing = input_inspect.inspect(args.fixture)
+    except (OSError, ValueError) as exc:
+        print("error: %s" % exc, file=sys.stderr)
+        return 2
+    if routing["format"] in ("canonical-observations", "codex-rollout", "mixed", "ambiguous"):
+        print(input_inspect.render(routing), file=sys.stderr)
+        print("Conformance requires one FMT-002 input. No conformance verdict was produced.", file=sys.stderr)
         return 2
     try:
         from . import pack as pack_mod
@@ -1713,6 +1741,11 @@ def build_parser() -> argparse.ArgumentParser:
                                 "against its versioned schema")
     p_val.add_argument("paths", nargs="+", metavar="FILE")
     p_val.set_defaults(func=cmd_validate)
+
+    p_input = sub.add_parser("inspect-input", help="identify JSONL format and the correct check entry point; not a conformance verdict")
+    p_input.add_argument("path", metavar="FILE")
+    p_input.add_argument("--json", dest="json_out", default=None)
+    p_input.set_defaults(func=cmd_inspect_input)
 
     p_conf = sub.add_parser("conformance",
                              help="verify a telemetry fixture against measurement invariants "

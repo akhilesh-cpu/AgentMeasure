@@ -16,7 +16,7 @@ The demo shows findings from a bundled synthetic session. Your own check reports
 coverage, failures, retry chains and available token evidence. Missing evidence
 stays unknown; a retry is not automatically a second logical operation.
 
-Python 3.9+. CLI **0.7.1** on [PyPI](https://pypi.org/project/agentmeasure/);
+Python 3.9+. CLI **0.7.2** on [PyPI](https://pypi.org/project/agentmeasure/);
 Provider SDK **0.2.0** on [npm](https://www.npmjs.com/package/@agentmeasure/mcp),
 verified 2026-10-15. These packages have separate version numbers.
 
@@ -86,8 +86,8 @@ The [September audit report](campaigns/audit-report-2026-09.md) documents the
 the claims index. Engineering evidence does not establish paid demand, customer
 savings or a right to a refund. Customer value and repeat purchase remain under validation.
 
-479 Healthcheck unit tests passed on 2026-10-15. See [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)
-for current results and [v0.7.1](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.1)
+487 Healthcheck unit tests passed on 2026-10-15. See [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)
+for current results and [v0.7.2](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.2)
 for the release scope. Example fixtures are not production customer data.
 
 ## Open-source commitments

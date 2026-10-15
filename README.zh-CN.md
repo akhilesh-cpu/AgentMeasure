@@ -14,7 +14,7 @@ agentmeasure check                # 检查本地 Codex / Claude Code 会话
 
 样例展示覆盖范围、失败、重试链及可观测的 Token 信息。检查自己的日志时，缺失证据保留为未知；一次重试不自动算作一个新的逻辑操作。
 
-Python 3.9+。2026-10-15 核验：[PyPI CLI](https://pypi.org/project/agentmeasure/) 为 **0.7.1**，[npm SDK](https://www.npmjs.com/package/@agentmeasure/mcp) 为 **0.2.0**；两者独立版本。
+Python 3.9+。2026-10-15 核验：[PyPI CLI](https://pypi.org/project/agentmeasure/) 为 **0.7.2**，[npm SDK](https://www.npmjs.com/package/@agentmeasure/mcp) 为 **0.2.0**；两者独立版本。
 
 终端会打印 HTML 报告路径，打开该文件即可查看。macOS/Linux 可使用 `python3 -m pip`，Windows 可使用 `py -m pip`。遇到权限或 externally managed 错误，按[虚拟环境步骤](https://roy-tong.github.io/AgentMeasure/#install-help)安装。
 
@@ -58,7 +58,7 @@ agentmeasure validate summary.json
 
 [9 月审计报告](campaigns/audit-report-2026-09.md)记录了 110 个工具的审查；后续修复与纠错以公开发现索引为准。技术成果不能替代付费需求、客户节省或退款依据。实际用户价值和复购仍在验证。
 
-2026-10-15 本地 479 项 Healthcheck 单元测试通过。最新工程结果见 [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)，发布范围见 [v0.7.1](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.1)。合成夹具不是客户生产数据。
+2026-10-15 本地 487 项 Healthcheck 单元测试通过。最新工程结果见 [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)，发布范围见 [v0.7.2](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.2)。合成夹具不是客户生产数据。
 
 ## 开源承诺
 
