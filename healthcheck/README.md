@@ -10,17 +10,17 @@ Same honesty rules as the [conformance pack](../conformance/pack/README.md):
 every verdict is `OK / FINDING / UNPROVABLE`, and UNPROVABLE is a first-class
 result — when the logs cannot decide, that is disclosed, never zeroed.
 
-> Status verified 2026-10-15: CLI **v0.7.2** is available on PyPI and GitHub; the separately versioned Provider SDK is **v0.2.0** on npm. 487 Healthcheck tests passed locally. See [release notes](https://roy-tong.github.io/AgentMeasure/releases.html).
+> Status verified 2026-10-15: CLI **v0.8.0** is available on PyPI and GitHub; the separately versioned Provider SDK is **v0.2.0** on npm. 511 Healthcheck tests passed locally. See [release notes](https://roy-tong.github.io/AgentMeasure/releases.html).
 
 ## Install
 
 ```bash
-# Current verified release from PyPI (v0.7.2, verified 2026-10-15).
+# Current verified release from PyPI (v0.8.0, verified 2026-10-15).
 pip install agentmeasure            # or: pipx install agentmeasure
 agentmeasure demo
 
 # Pinned Git install as fallback.
-pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.7.2#subdirectory=healthcheck"
+pipx install "git+https://github.com/roy-tong/AgentMeasure@v0.8.0#subdirectory=healthcheck"
 
 # Or run from a repository checkout (use a release tag for reproducibility).
 python3 healthcheck/agentmeasure demo
@@ -34,7 +34,7 @@ Python 3.9+ standard library only; zero runtime dependencies; no network code
 (a test enforces both).
 
 The 0.7.0 wheel's conformance command is broken because a bundled dependency was
-omitted. **Upgrade to 0.7.2** for `conformance`; Healthcheck itself was unaffected.
+omitted. **Upgrade to 0.7.2 or later** for `conformance`; Healthcheck itself was unaffected.
 [Installed conformance quickstart](../conformance/pack/README.md#first-run-from-an-installed-cli).
 
 [Installation and error recovery](https://roy-tong.github.io/AgentMeasure/#install-help)
@@ -360,7 +360,7 @@ New cli versions are handled defensively: unknown event types are accounted
 ## Development
 
 ```bash
-python3 -m unittest discover -s healthcheck/tests   # 487 tests verified 2026-10-15
+python3 -m unittest discover -s healthcheck/tests   # 511 tests verified 2026-10-15
 python3 healthcheck/agentmeasure selftest           # fixtures + redaction + compare + schemas
 bash healthcheck/scripts/smoke_install.sh           # clean-venv install smoke (packaged artifact)
 ```
@@ -387,3 +387,7 @@ agentmeasure inspect-input sample.jsonl --json input-routing.json
 ```
 
 This reads every nonempty JSONL row and identifies canonical provider observations, FMT-002, or Codex rollout shapes. Mixed, invalid and unknown inputs exit 2 with next steps. Exit 0 means a format was recognized, **not** that the schema or measurement passed. The report includes no source rows. Canonical observations use the repository validator and provider onboarding path; do not invent fields to force them into FMT-002.
+
+## Compare Claude response snapshots (0.8.0)
+
+`agentmeasure response-audit session.jsonl fork.jsonl --json responses.json` compares explicit inputs without rewriting logs or claiming invoice totals. See [scope and next steps](../docs/response-audit.md).

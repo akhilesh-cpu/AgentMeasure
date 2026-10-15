@@ -557,6 +557,24 @@ def cmd_new_vector(args) -> int:
     return 0
 
 
+def cmd_response_audit(args) -> int:
+    from . import response_audit
+    try:
+        error = _validate_output_paths(args.paths, args.json_out)
+        if error:
+            raise ValueError(error)
+        result = response_audit.audit(args.paths)
+        rendered = json.dumps(result, indent=2, ensure_ascii=True)
+        if args.json_out:
+            with open(args.json_out, "w", encoding="utf-8") as stream:
+                stream.write(rendered + "\n")
+        print(rendered)
+        return 0
+    except (OSError, ValueError) as exc:
+        print("error: %s" % exc, file=sys.stderr)
+        return 2
+
+
 def cmd_inspect_input(args) -> int:
     from . import input_inspect
     try:
@@ -1752,6 +1770,11 @@ def build_parser() -> argparse.ArgumentParser:
                                 "against its versioned schema")
     p_val.add_argument("paths", nargs="+", metavar="FILE")
     p_val.set_defaults(func=cmd_validate)
+
+    p_responses = sub.add_parser("response-audit", help="compare Claude response usage snapshots across selected JSONL files; not a token or invoice total")
+    p_responses.add_argument("paths", nargs="+", metavar="FILE.jsonl")
+    p_responses.add_argument("--json", dest="json_out", default=None)
+    p_responses.set_defaults(func=cmd_response_audit)
 
     p_input = sub.add_parser("inspect-input", help="identify JSONL format and the correct check entry point; not a conformance verdict")
     p_input.add_argument("path", metavar="FILE")

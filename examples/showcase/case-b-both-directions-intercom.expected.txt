@@ -1,6 +1,8 @@
 Tier 1 Recount — the vendor's own published rules
 ==========================================================
-billed $2.97 · net overcharge $0.99 · at USD 0.99/resolution
+Rule-priced billed flags: USD 2.97; identified net variance: USD +0.99
+Basis: published unit price, not a verified invoice total or refund.
+Unsettled rows: 0/5; zero identified variance is not a cleared bill.
 
 Vendor:      Intercom Fin
 Rule source: fin.ai pricing & outcomes; Intercom help centre (Fin AI Agent outcomes)

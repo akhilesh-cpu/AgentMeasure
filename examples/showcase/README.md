@@ -1,8 +1,9 @@
 # Reproducible bill-recount showcase
 
-Three public cases. Each case is an input CSV (synthetic data), the one command
+Three synthetic cases (not customer recoveries). Each case is an input CSV (synthetic data), the one command
 that runs it, and a frozen expected output. If the tool in your hand produces
-a different report than the one frozen here, that is a bug — open an issue.
+a different report, first confirm you are running the same source revision.
+These snapshots match CLI 0.8.0; older releases have an older report header.
 
 The pattern is borrowed from projects that earn trust by being reproducible:
 the showcase is not a claim, it is a runnable expectation.

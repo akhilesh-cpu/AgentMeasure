@@ -1,3 +1,7 @@
+> Current task scope and adoption criteria: [product scope](docs/product-scope.md). CLI 0.8.0 adds response evidence inspection; it does not complete session/invoice reconciliation.
+
+> **Current product priorities — 2026-10-15:** local diagnosis and bounded metering QA remain the two fixed-price service experiments ($10/$20). Buyer recount is a free tool with a separate feasibility track; it is not proven buyer PMF. Prioritize real sample receipts, Claude response identity, actionable reports and the payment/delivery path. Runtime budget control and per-client cost allocation need task-specific validation before expansion. Historical platform milestones below are not current delivery promises.
+
 # AgentMeasure Roadmap
 
 ## Current focus — 2026-10-14 through October 31

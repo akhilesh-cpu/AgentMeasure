@@ -37,6 +37,9 @@ cd "$tmp"
 # than only in a user's install. The recount and dispute runs then exercise the
 # rules and the pack writer against the shipped fixture.
 "$tmp/venv/bin/agentmeasure" recount --list-vendors >/dev/null
+"$tmp/venv/bin/agentmeasure" recount --sample --json "$tmp/sample.json" >/dev/null
+printf '%s\n' '{"type":"assistant","message":{"id":"smoke"}}' > "$tmp/response.jsonl"
+"$tmp/venv/bin/agentmeasure" response-audit "$tmp/response.jsonl" --json "$tmp/response-audit.json" >/dev/null
 "$tmp/venv/bin/agentmeasure" recount \
     --export "$here/am_healthcheck/fixtures/vendor-export-intercom.csv" \
     --vendor intercom --json "$tmp/recount.json" >/dev/null

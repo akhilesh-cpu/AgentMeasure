@@ -1,6 +1,8 @@
 Tier 1 Recount — the vendor's own published rules
 ==========================================================
-billed $10.00 · net overcharge $2.00 · at USD 2.0/resolution
+Rule-priced billed flags: USD 10.00; identified net variance: USD +2.00
+Basis: published unit price, not a verified invoice total or refund.
+Unsettled rows: 4/5; zero identified variance is not a cleared bill.
 
 Vendor:      Zendesk AI Agents
 Rule source: Zendesk help centre: About the automated resolutions platform; About automated resolution tiers (edited 2026-08-25)

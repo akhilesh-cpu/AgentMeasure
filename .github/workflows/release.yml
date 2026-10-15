@@ -6,7 +6,7 @@ name: release
 #
 # Triggers:
 #   - push of a v* tag (e.g. v0.1.1)
-#   - manual workflow_dispatch (defaults to v0.1.1)
+#   - manual workflow_dispatch (requires an explicit existing vX.Y.Z tag)
 
 on:
   push:
@@ -15,7 +15,8 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag to operate on (e.g. v0.5.0); empty = ref name or v0.1.1 fallback'
+        description: 'Existing release tag, e.g. v0.8.0 (required for a manual run)'
+        required: true
         default: ''
 
 permissions:
@@ -26,18 +27,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
 
-      - name: Resolve tag
+      - name: Resolve and verify tag
+        env:
+          REQUESTED_TAG: ${{ inputs.tag }}
         run: |
-          INPUT_TAG="${{ inputs.tag }}${{ github.event.inputs.tag }}"
-          if [[ -n "$INPUT_TAG" ]]; then
-            echo "TAG=$INPUT_TAG" >> "$GITHUB_ENV"
-          elif [[ "$GITHUB_REF_NAME" == v* ]]; then
-            echo "TAG=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
-          else
-            echo "TAG=v0.1.1" >> "$GITHUB_ENV"
+          TAG="${REQUESTED_TAG:-$GITHUB_REF_NAME}"
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::An explicit vX.Y.Z tag is required."
+            exit 1
           fi
-          echo "releasing $TAG"
+          test "$(git rev-parse HEAD)" = "$(git rev-list -n 1 "$TAG")"
+          VER=$(python3 -c "import tomllib; print(tomllib.load(open('healthcheck/pyproject.toml','rb'))['project']['version'])")
+          test "$TAG" = "v$VER"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Create or update GitHub Release
         env:
@@ -113,6 +119,8 @@ jobs:
       HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -149,6 +157,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
       - name: Skip if this version is already live on PyPI (idempotent re-runs)
         run: |
           VER=$(python3 -c "import tomllib; print(tomllib.load(open('healthcheck/pyproject.toml','rb'))['project']['version'])" 2>/dev/null || echo unknown)

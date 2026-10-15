@@ -3,26 +3,33 @@
 All notable changes to AgentMeasure (standard, SDK, and reference product) are
 documented here. Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased]
+## [v0.8.0] - 2026-10-15
 
 ### Added
 
+- **Claude response evidence**: `response-audit` compares explicitly selected
+  JSONL files by response ID, exposing repeats, conflicts and missing fields.
+  It never calculates session or invoice totals or rewrites source logs.
+
+
 - **Bill-recount identity**: README (EN/zh) and the website hero now lead with
-  the buyer-side recount — a copy-paste 5-row sample, the one command that
-  runs it, and the dollar variance it prints. Local log checks remain the
-  free second section. No service scope or boundary changed.
+  supported recount with a copy-paste synthetic sample; task routing also
+  keeps developer diagnostics and metering QA visible. Buyer invoice review
+  is not included in the $10/$20 services. Source-only features are labelled.
 - **`recount --sample`**: run the bundled 5-row synthetic export (Zendesk rule
   set) with no CSV of your own — the same file the README shows.
-- **Dollar headline**: every recount report opens with
-  `billed $X · net overcharge $Y · at price/resolution` before any detail.
+- **Evidence-qualified headline**: recount labels published-price estimates,
+  identified net variance and unsettled rows. These are not verified invoice
+  totals or refunds; zero identified variance does not clear an incomplete bill.
 - **Reproducible showcase** (`examples/showcase/`): three public cases
   (overcharge with refused guesses / findings in both directions / the
   contract lane) with frozen expected outputs; CI compares them on every
   change so the showcase cannot drift from shipped behaviour.
 - **Monthly bill reconcile workflow** (`.github/workflows/reconcile.yml` +
-  `RECONCILE.md`): fork the repo, drop in your vendor export, and the recount
-  runs monthly on GitHub Actions — no server, nothing leaves your fork, and a
-  non-zero variance opens a tracking issue. The "fork-to-run" adoption path.
+  `RECONCILE.md`): opt-in hosting in an independent private repository; data
+  is uploaded to GitHub. Requires a reviewed export hash and billing period.
+  Stale scheduled inputs stop; optional issues track offsetting findings and
+  unknowns per vendor/period, not only nonzero net amounts.
 - **Vendor billing-rule scorecard** (website claims index): the six published
   rule sets with prices, triggers, dated sources, confidence grades and how
   far each is re-countable from a counts-only export — the page always

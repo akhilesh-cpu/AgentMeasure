@@ -1,56 +1,49 @@
-# Reconcile your vendor's bill every month, hands-free
+# Repeat a review for each billing period
 
-This repo ships a GitHub Actions workflow (`Monthly bill reconcile`) that
-re-counts an AI support bill under the vendor's own published rules on a
-monthly schedule. Fork the repo, drop in your export, and the recount happens
-by itself: GitHub Actions is the compute, there is no server, and nothing
-leaves your fork.
+For local-only data handling, run `agentmeasure recount --export FILE --vendor ID`
+on your own machine. This does not fetch vendor data or prove the final invoice.
 
-## Setup (5 minutes, one time)
+The optional **Monthly bill reconcile** workflow runs on GitHub-hosted runners.
+It uploads the export, report and artifacts to GitHub; repository access controls
+apply. It is not the local-only mode. Do not commit customer exports to a public
+fork. [Public forks remain public](https://docs.github.com/en/pull-requests/reference/forks).
 
-1. **Fork this repo.** A private fork keeps your export file to yourself.
-2. **Copy the config template**:
-   - `examples/reconcile.example.json` → `.agentmeasure/reconcile.json`
-   - set `"vendor"` to your vendor's id — `agentmeasure recount --list-vendors`
-     prints every id with its rule source (intercom, zendesk, hubspot, ada,
-     salesforce, generic).
-3. **Save your export** as `.agentmeasure/recount-export.csv` — the vendor's
-   resolution-counts export with these columns (5 required, 2 optional):
+## Optional hosted setup
 
-   ```
-   conversation_id, human_agent_participated, issue_addressed,
-   customer_recontacted_within_window[, customer_recontacted_at, closed_at],
-   vendor_billed
-   ```
+1. Create a **separate private repository**, with a reviewed copy of this source
+   tree. Do not use a public fork for billing data. The workflow skips public repos.
+   Enable Actions in that private repository; enable Issues only if you want tracking.
+2. Copy `examples/reconcile.example.json` to `.agentmeasure/reconcile.json`.
+   Set the vendor and `billing_period` (`YYYY-MM`).
+3. Prepare and review that period's export. Required fields are
+   `conversation_id,human_agent_participated,issue_addressed,customer_recontacted_within_window,vendor_billed`.
+   Optional `customer_recontacted_at,closed_at` support the separate contract lane.
+   `agentmeasure prepare` can map supported native exports; it leaves judgement
+   fields empty for review. Missing evidence remains unknown.
+4. Save the reviewed file at the configured path. Compute its SHA256 locally
+   with `python -c "import hashlib; print(hashlib.sha256(open('.agentmeasure/recount-export.csv','rb').read()).hexdigest())"`
+   and set `reviewed_export_sha256`. This records the reviewed file, not proof
+   that its rows truly belong to that period; you must check that yourself.
+5. These runtime files are gitignored. Only in the independent private repository,
+   explicitly add the two reviewed files with `git add -f .agentmeasure/reconcile.json .agentmeasure/recount-export.csv`,
+   commit, and push. This step uploads the data to GitHub.
+6. Run **Monthly bill reconcile** manually. It installs the checked-out source
+   revision, writes a run summary, and retains artifacts for seven days.
+   Set `open_tracking_issue` to `true` only if you want a GitHub issue containing
+   the report. Issues have their own retention and are not deleted with artifacts.
 
-   `agentmeasure prepare --export <native export> --vendor <id>` maps a native
-   Intercom or Zendesk export onto these columns; judgement columns stay empty
-   for a human to review — the tool never invents a value.
-4. **Commit both files** to your fork.
-5. **Run it once manually**: your fork → Actions → *Monthly bill reconcile* →
-   *Run workflow*. Confirm the report looks right, then let the schedule take
-   over (3rd of each month, 09:00 UTC).
+## Each new month
 
-## What each run does
+Replace the export, review it, update the billing period and hash, then commit the
+new input. The workflow does **not** fetch new exports. The scheduled run on the
+3rd at 09:00 UTC requires the previous calendar month and stops on stale config.
+A manual run may review an older period.
 
-- Re-counts your export under the vendor's own published billing rules.
-- Pins the full report to the run summary and uploads the machine-readable
-  result (`recount-result.json`) as an artifact.
-- When the net variance is not zero, opens (or updates) one tracking issue
-  per state, so the finding cannot be forgotten.
+Tracking is per vendor and billing period. Offsetting findings and unresolved
+rows still require review even if net variance is zero. Re-running updates that
+period's open issue instead of creating duplicate comments. No report is sent to
+a vendor, and no refund is promised. Credits, negotiated prices, contract terms
+and the actual invoice still require separate checks.
 
-## What it deliberately does not do
-
-- It does not guess. Rows without enough evidence land in `cannot settle` and
-  are removed from the claim, never zeroed.
-- It does not call the vendor, request a refund, or assert wrongdoing. The
-  variance is arithmetic under the vendor's own published rules — evidence for
-  a conversation with the vendor, not a guaranteed refund. When you want the
-  negotiable pack, `agentmeasure dispute` builds it.
-- It does not upload anything anywhere. The report and the artifact live in
-  your fork only.
-
-## Cost
-
-Zero. The workflow installs the CLI from PyPI on GitHub's runners and exits in
-under a minute; the free tier's monthly minutes cover it comfortably.
+GitHub Actions and storage usage depend on your plan; this is not a guarantee of
+zero cost or a fixed runtime. Use local CLI handling if you do not want hosting.

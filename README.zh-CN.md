@@ -1,9 +1,16 @@
 # AgentMeasure
 
-**每一张按使用量或结果计费的 AI 账单，付费方都应能一条命令独立复算。**
+**检查 AI 用量记录，依据证据复算受支持的客服计费导出。**
 
-AgentMeasure 用厂商自己发布的计费规则复算 AI 客服账单：打印美元差额，
-生成可以放到厂商面前的证据包。全程本地运行，不上传任何数据。
+AgentMeasure 检查 Codex / Claude Code 日志，并对受支持的客服导出应用公开计费规则。
+本地 CLI 不上传数据；只有 PDF 或账单总额无法完成复算，还需要已核对的事件字段。
+按公开价格计算的差异不等于已确认退款。
+
+| 你的任务 | 入口 |
+|---|---|
+| 解释重复记录、重试或失败 | 免费 demo/check，可选 $10 人工解读 |
+| 检查一份事件样本的计量规则 | 免费确认适配，再做有边界的 $20 QA |
+| 核对客服计费账期 | 下方免费 recount，独立可行性核对，不包含在 $10/$20 内 |
 
 [官网](https://roy-tong.github.io/AgentMeasure/) · [English](README.md) · [Healthcheck 使用指南](healthcheck/README.md) · [发布说明](https://roy-tong.github.io/AgentMeasure/releases.html)
 
@@ -28,28 +35,24 @@ agentmeasure recount --export export.csv --vendor zendesk
 输出先是厂商规则及其公开出处，然后是双向核对结果，最后是钱数：
 
 ```
-billed $10.00 · net overcharge $2.00 · at USD 2.0/resolution
-...
 Dollars (at USD 2.0 per resolution)
 overcharge identified       2.00
 undercharge (vendor favour) 0.00
 net variance                2.00
 ```
 
-手头没有 CSV？`agentmeasure recount --sample` 直接跑内置的 5 行合成导出
-（Zendesk 规则）——与上面的文件完全相同。
+CLI 0.8.0 可直接运行 `agentmeasure recount --sample`，使用相同的内置合成导出。
+样例有4行不可判定；$8不能叫已核实应付金额，$2是按规则计价的发现，不是已追回款。
 
 三个可复现 showcase 案例（拒绝猜测的超收判定 / 双向核对 / 合同航道）在
 [examples/showcase](examples/showcase/README.md)，期望输出已冻结、CI 每次
 变更都会比对，展示与现实不会悄悄分叉。
 
-## 每月自动对账，无需值守
+## 按账期重复核对
 
-Fork 本仓库、把厂商导出放进 `.agentmeasure/`，
-[Monthly bill reconcile](.github/workflows/reconcile.yml) 工作流就会按月
-自动复算你的账单——GitHub Actions 当算力，无服务器，数据不出你的 fork，
-差额非零时自动开一个跟踪 issue，让发现不会被遗忘。配置五分钟：
-[RECONCILE.md](RECONCILE.md)。
+希望数据只留本地，可对每期新导出运行CLI。可选的[GitHub Actions工作流](RECONCILE.md)
+要求独立私有仓库，并将数据和报告上传GitHub；公开仓库的fork不是私有存储。
+每期必须准备新的、经过核对的导出，工作流不会自动向厂商拉取数据。
 
 今天内置六家厂商规则——Intercom Fin、Zendesk AI Agents、HubSpot Breeze、
 Salesforce Agentforce、Ada，以及一个通用按结果基线——每条规则都注明出处
@@ -69,7 +72,7 @@ Salesforce Agentforce、Ada，以及一个通用按结果基线——每条规�
 跑内置合成样例，无需账号、不上传。缺失证据保留为未知；一次重试不自动算作
 一个新的逻辑操作。
 
-Python 3.9+。2026-10-15 核验：[PyPI CLI](https://pypi.org/project/agentmeasure/) 为 **0.7.2**，
+Python 3.9+。2026-10-15 核验：[PyPI CLI](https://pypi.org/project/agentmeasure/) 为 **0.8.0**，
 [npm SDK](https://www.npmjs.com/package/@agentmeasure/mcp) 为 **0.2.0**；两者独立版本。
 macOS/Linux 可使用 `python3 -m pip`，Windows 可使用 `py -m pip`。遇到权限或
 externally managed 错误，按[虚拟环境步骤](https://roy-tong.github.io/AgentMeasure/#install-help)安装。
@@ -115,7 +118,7 @@ agentmeasure validate summary.json
 
 [9 月审计报告](campaigns/audit-report-2026-09.md)记录了 110 个工具的审查；后续修复与纠错以公开发现索引为准。技术成果不能替代付费需求、客户节省或退款依据。实际用户价值和复购仍在验证。
 
-2026-10-15 本地 487 项 Healthcheck 单元测试通过。最新工程结果见 [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)，发布范围见 [v0.7.2](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.2)。合成夹具不是客户生产数据。
+2026-10-15 本地 511 项 Healthcheck 单元测试通过。最新工程结果见 [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)，发布范围见 [v0.8.0](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.8.0)。合成夹具不是客户生产数据。
 
 ## 开源承诺
 
@@ -126,3 +129,7 @@ agentmeasure validate summary.json
 [贡献指南](CONTRIBUTING.md) · [安全](SECURITY.md) · [治理](GOVERNANCE.md) · [Agent 指令](AGENTS.md) · [中文白皮书](whitepaper/measuring-software-used-by-ai-agents.zh-CN.md)
 
 [开发者详细指南](docs/developer-guide.zh-CN.md)
+
+## Claude跨文件响应证据
+
+`agentmeasure response-audit first.jsonl fork.jsonl --json responses.json` 按响应标识对照重复用量快照、冲突与缺字段。只读，不改日志，不选取first/last/max，不计算会话或账单总额。见[使用说明](docs/response-audit.md)。

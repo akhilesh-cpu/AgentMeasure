@@ -1,140 +1,38 @@
-# Monthly bill reconcile — fork this repo, drop in your export, never think
-# about it again (the "fork-to-run" pattern: GitHub Actions is the compute,
-# there is no server and nothing leaves your fork).
-#
-# Setup (5 minutes, one time):
-#   1. Fork this repo (a PRIVATE fork keeps your export to yourself).
-#   2. Copy examples/reconcile.example.json to .agentmeasure/reconcile.json
-#      and set "vendor" (agentmeasure recount --list-vendors shows the ids).
-#   3. Export last month's resolution counts from your vendor and save them as
-#      .agentmeasure/recount-export.csv (the 7-column export; see RECONCILE.md).
-#   4. Commit both files to your fork.
-#   5. Run it once from the Actions tab ("Monthly bill reconcile" → Run
-#      workflow) to confirm, then let the monthly schedule take over.
-#
-# Every run: recount your export under the vendor's own published rules,
-# pin the report to the run summary, upload the machine-readable result as an
-# artifact, and open one tracking issue per billing month when the net
-# variance is not zero.
-
+# Optional hosted review: use an independent private repository, not a public fork.
+# Data, reports and optional issues are uploaded to GitHub. See RECONCILE.md.
 name: Monthly bill reconcile
-
 on:
   schedule:
-    # 3rd of each month, 09:00 UTC — after vendor invoices close.
     - cron: "0 9 3 * *"
   workflow_dispatch: {}
-
 permissions:
   contents: read
   issues: write
-
 concurrency:
   group: reconcile-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   reconcile:
+    # Public forks must never be presented as private billing-data storage.
+    if: github.event.repository.private == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Install AgentMeasure
-        run: pip install agentmeasure
-
-      - name: Read configuration
-        id: cfg
-        run: |
-          if [ ! -f .agentmeasure/reconcile.json ]; then
-            echo "::notice::No .agentmeasure/reconcile.json found. Copy examples/reconcile.example.json, set your vendor, and commit your export as .agentmeasure/recount-export.csv (see RECONCILE.md). Nothing was run."
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "configured=true" >> "$GITHUB_OUTPUT"
-          python - << 'PY' >> "$GITHUB_OUTPUT"
-          import json
-          cfg = json.load(open(".agentmeasure/reconcile.json"))
-          print("vendor=%s" % cfg.get("vendor", ""))
-          print("export=%s" % cfg.get("export", ".agentmeasure/recount-export.csv"))
-          PY
-
-      - name: Recount the export
-        if: steps.cfg.outputs.configured == 'true'
-        run: |
-          EXPORT="${{ steps.cfg.outputs.export }}"
-          if [ ! -f "$EXPORT" ]; then
-            echo "::error::$EXPORT not found. Save your vendor export there first (RECONCILE.md describes the 7 columns)."
-            exit 1
-          fi
-          agentmeasure recount \
-            --export "$EXPORT" \
-            --vendor "${{ steps.cfg.outputs.vendor }}" \
-            --json recount-result.json | tee recount-report.txt
-
-      - name: Pin report to the run summary
-        if: steps.cfg.outputs.configured == 'true'
-        run: |
-          {
-            echo "## Monthly bill reconcile"
-            echo
-            cat recount-report.txt
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload machine-readable result
-        if: steps.cfg.outputs.configured == 'true'
+      - name: Install this reviewed source revision
+        run: python -m pip install ./healthcheck
+      - name: Review the configured billing period
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/reconcile_period.py
+      - name: Store results on GitHub
         uses: actions/upload-artifact@v4
         with:
           name: reconcile-result
           path: |
             recount-report.txt
             recount-result.json
+          retention-days: 7
           if-no-files-found: error
-
-      - name: Open a tracking issue when the variance is not zero
-        if: steps.cfg.outputs.configured == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          python - << 'PY' > /tmp/verdict.txt
-          import json
-          r = json.load(open("recount-result.json"))
-          if "variance" in r:
-              print("variance=%.2f" % r["variance"])
-          else:
-              print("variance=none")
-          PY
-          VERDICT="$(cat /tmp/verdict.txt)"
-          case "$VERDICT" in
-            variance=0.00)
-              echo "Net variance is zero — nothing to track."
-              exit 0
-              ;;
-            variance=none)
-              echo "Vendor price not published — no dollar variance computed; see the report for counts."
-              exit 0
-              ;;
-          esac
-          TITLE="Bill reconcile: net variance $VERDICT (via ${{ steps.cfg.outputs.vendor }} rules)"
-          BODY_FILE=/tmp/issue-body.md
-          {
-            echo "Monthly recount found a non-zero net variance."
-            echo
-            echo '```'
-            cat recount-report.txt
-            echo '```'
-            echo
-            echo "_Automated by the Monthly bill reconcile workflow. The dollar variance is arithmetic under the vendor's own published rules; it is evidence for a conversation with the vendor, not a guaranteed refund. See RECONCILE.md._"
-          } > "$BODY_FILE"
-          gh issue list --state open --search "Bill reconcile: in:title" --json number,title \
-            --jq '.[] | select(.title | startswith("Bill reconcile:")) | .number' \
-            > /tmp/open-issue.txt || true
-          EXISTING="$(head -n1 /tmp/open-issue.txt || true)"
-          if [ -n "$EXISTING" ]; then
-            gh issue comment "$EXISTING" --body-file "$BODY_FILE"
-          else
-            gh issue create --title "$TITLE" --body-file "$BODY_FILE"
-          fi

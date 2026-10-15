@@ -1,10 +1,17 @@
 # AgentMeasure
 
-**Every usage- or outcome-billed AI invoice should be independently re-countable by the party paying it — in one command.**
+**Check AI usage records. Re-count supported support-billing exports with evidence.**
 
-AgentMeasure re-counts an AI support bill against the vendor's own published
-billing rules, prints the dollar variance, and builds the evidence pack you
-can put in front of the vendor. It runs locally; nothing uploads.
+AgentMeasure checks Codex / Claude Code logs and applies published billing
+rules to supported AI support exports. Local CLI commands do not upload data.
+A PDF or invoice total alone is insufficient: recount needs reviewed event
+fields, and price-based differences are not verified refunds.
+
+| Your task | Start here |
+|---|---|
+| Explain a local duplicate, retry or failure | `agentmeasure demo`, then `agentmeasure check`; optional $10 interpretation |
+| Check event accounting against one supported ruleset | Free input fit check, then bounded $20 Metering QA |
+| Review a support-billing period | Free `recount` below; separate buyer feasibility review, not included in $10/$20 |
 
 [Website](https://roy-tong.github.io/AgentMeasure/) · [中文](README.zh-CN.md) · [Healthcheck guide](healthcheck/README.md) · [Release notes](https://roy-tong.github.io/AgentMeasure/releases.html)
 
@@ -30,30 +37,27 @@ The output prints the vendor's rule with its public source, findings in both
 directions, then the dollars:
 
 ```
-billed $10.00 · net overcharge $2.00 · at USD 2.0/resolution
-...
 Dollars (at USD 2.0 per resolution)
 overcharge identified       2.00
 undercharge (vendor favour) 0.00
 net variance                2.00
 ```
 
-No CSV at hand yet? `agentmeasure recount --sample` runs the bundled 5-row
-synthetic export with the Zendesk rule set — the same file as above.
+No CSV at hand? `agentmeasure recount --sample` runs the same bundled synthetic export in CLI 0.8.0.
+In this synthetic example, four rows remain unsettled; $8 is not a verified
+billable total. The $2 is a rule-priced finding, not recovered money.
 
 Three reproducible showcase cases (overcharge with refused guesses, findings
 in both directions, the contract lane) live in
 [examples/showcase](examples/showcase/README.md) with frozen expected outputs
 that CI compares on every change.
 
-## Reconcile monthly, hands-free
+## Repeat a billing review
 
-Fork this repo, drop your vendor export into `.agentmeasure/`, and the
-[Monthly bill reconcile](.github/workflows/reconcile.yml) workflow re-counts
-your bill on a schedule — GitHub Actions is the compute, no server, nothing
-leaves your fork, and a non-zero variance opens a tracking issue so the
-finding cannot be forgotten. Setup is five minutes:
-[RECONCILE.md](RECONCILE.md).
+For local-only handling, run the CLI on each new period's export. The optional
+[GitHub Actions workflow](RECONCILE.md) requires a separate private repository
+and uploads data and reports to GitHub. Public forks are not private storage.
+Each period needs a fresh, reviewed export; no vendor data is fetched automatically.
 
 Six vendor rule sets ship today — Intercom Fin, Zendesk AI Agents, HubSpot
 Breeze, Salesforce Agentforce, Ada and a generic per-resolution baseline —
@@ -77,7 +81,7 @@ discipline pointed at your own logs. `agentmeasure demo` runs a bundled
 synthetic session with no account and no upload. Missing evidence stays
 unknown; a retry is not automatically a second logical operation.
 
-Python 3.9+. CLI **0.7.2** on [PyPI](https://pypi.org/project/agentmeasure/);
+Python 3.9+. CLI **0.8.0** on [PyPI](https://pypi.org/project/agentmeasure/);
 Provider SDK **0.2.0** on [npm](https://www.npmjs.com/package/@agentmeasure/mcp),
 verified 2026-10-15. These packages have separate version numbers.
 On macOS/Linux use `python3 -m pip` if needed; on Windows use `py -m pip`.
@@ -87,6 +91,17 @@ With both runtimes present, auto-discovery prefers Codex; use
 `agentmeasure check --runtime claude` for Claude Code. No logs in the default
 seven-day window? Try `--all` or an explicit `--dir` and `--runtime`. A missing
 input is not a passing check. [More recovery steps](https://roy-tong.github.io/AgentMeasure/#how).
+
+### Compare Claude response evidence across files
+
+```bash
+agentmeasure response-audit first-session.jsonl fork-session.jsonl --json responses.json
+```
+
+This read-only command groups supplied response IDs and shows repeated usage
+snapshots, conflicts and missing fields. It does not rewrite logs, choose a
+winning snapshot or compute a session/invoice total. See the
+[response-audit guide](docs/response-audit.md).
 
 ## Get help with one question
 
@@ -147,8 +162,8 @@ The [September audit report](campaigns/audit-report-2026-09.md) documents the
 the claims index. Engineering evidence does not establish paid demand, customer
 savings or a right to a refund. Customer value and repeat purchase remain under validation.
 
-487 Healthcheck unit tests passed on 2026-10-15. See [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)
-for current results and [v0.7.2](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.2)
+511 Healthcheck unit tests passed on 2026-10-15. See [CI](https://github.com/roy-tong/AgentMeasure/actions/workflows/conformance.yml)
+for current results and [v0.8.0](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.8.0)
 for the release scope. Example fixtures are not production customer data.
 
 ## Open-source commitments
@@ -159,4 +174,4 @@ for the release scope. Example fixtures are not production customer data.
 
 [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Governance](GOVERNANCE.md) · [Agent instructions](AGENTS.md) · [Whitepaper](whitepaper/measuring-software-used-by-ai-agents.md)
 
-[Developer guide](docs/developer-guide.md)
+[Task scope and validation priorities](docs/product-scope.md) · [Developer guide](docs/developer-guide.md)

@@ -239,9 +239,12 @@ def recount_report(result: Dict[str, Any]) -> str:
     out.append("=" * W)
     if "variance" in result:
         billed_total = round(result["billed_by_vendor"] * result["unit_price"], 2)
-        out.append("billed $%.2f · net overcharge $%.2f · at %s %s/resolution"
-                   % (billed_total, result["variance"],
-                      result["currency"], result["unit_price"]))
+        out.append("Rule-priced billed flags: %s %.2f; identified net variance: %s %+.2f"
+                   % (result["currency"], billed_total,
+                      result["currency"], result["variance"]))
+        out.append("Basis: published unit price, not a verified invoice total or refund.")
+        out.append("Unsettled rows: %d/%d; zero identified variance is not a cleared bill."
+                   % (result["counts"][CANNOT_SETTLE], result["total_conversations"]))
         out.append("")
     out.append("Vendor:      %s" % result["vendor_name"])
     out.append("Rule source: %s" % result["vendor_rule_source"])
