@@ -4,9 +4,9 @@ Combines the two lines defined in COMMERCIAL 5.1 into one artifact a buyer can
 hand to a vendor:
 
   Tier 1  the vendor's own published rules, applied to the buyer's export
-          (vendors.recount). This is the line the vendor cannot argue with:
-          they can dispute the data, which is the buyer's, but not their own
-          published rule.
+          (vendors.recount). Every finding cites a rule the vendor itself
+          published: the data can be disputed — it is the buyer's — and each
+          rule citation is there for either side to check.
   Tier 2  the AgentMeasure settlement standard, applied to the buyer's effect
           records when those are supplied.
 
