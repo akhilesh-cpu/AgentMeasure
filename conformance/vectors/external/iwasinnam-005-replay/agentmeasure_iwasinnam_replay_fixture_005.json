@@ -1,0 +1,526 @@
+{
+  "fixture_scope": "external-production-replay-digest-request-5",
+  "variant_id": "metrecept-replay-digest",
+  "external_source": {
+    "contributor": "iwasinnam2 (Ivan Karpusheff, METRECEPT LIMITED)",
+    "origin_thread": "BerriAI/litellm#39057; Roy Tong mail 2026-10-13 'Yes to both. Cut them.'",
+    "provenance": "real receipts minted by the Metrecept production pipe at https://api.metrecept.co.uk on 2026-10-13 (run tag 20261013b); the Python control plane signs, the Rust edge serves replays; every JWS below verified against https://api.metrecept.co.uk/.well-known/http-message-signatures-directory (kid = RFC 7638 thumbprint) by this cutting script before the file was written; gateway at iwasinnam2/ohm@b4d440e",
+    "date_received": "2026-10-13",
+    "stranger_verification_path": "python open-repo/demo/verify_receipt.py <jws> --base https://api.metrecept.co.uk (signature); python open-repo/demo/response_digest.py <body|--sse stream> --receipt <jws> (response digest); python scripts/verify_clock.py --receipt <jws> --base https://api.metrecept.co.uk (hour); repo github.com/iwasinnam2/metrecept-opensource",
+    "cutting_script": "scripts/cut_agentmeasure_vectors.py (iwasinnam2/ohm)"
+  },
+  "scenario": {
+    "description": "Cost-preservation stated as bytes. JSON carriage: one request filled by the Python control plane (MISS) and replayed by the Rust edge (HIT) carries one request digest and one response digest on two receipts signed by two planes; a changed payload beside them carries its own. Streamed carriage: the same request streamed twice, fill then replay; the stranger assembles each SSE stream by the published rule and lands on the digest both receipts carry. Every crossing is its own metered event; nothing is merged.",
+    "session_header": "X-Metrecept-Session: iwasinnam-005-replay-20261013b",
+    "json_carriage": [
+      {
+        "label": "json-fill-MISS",
+        "cache_header": "MISS",
+        "kind": "cache_miss",
+        "plane": "python",
+        "request_sha256": "9b45e134bf41e86d0bfcce50d0a4ed88788c1676bb54543d8617e2dabf400975",
+        "response_sha256": "f704a1550b61a05090a652787093d414f62bac2d16a82c51782151221984135f"
+      },
+      {
+        "label": "json-replay-HIT",
+        "cache_header": "HIT",
+        "kind": "cache_hit",
+        "plane": "rust-edge",
+        "request_sha256": "9b45e134bf41e86d0bfcce50d0a4ed88788c1676bb54543d8617e2dabf400975",
+        "response_sha256": "f704a1550b61a05090a652787093d414f62bac2d16a82c51782151221984135f"
+      },
+      {
+        "label": "json-changed-MISS",
+        "cache_header": "MISS",
+        "kind": "cache_miss",
+        "plane": "python",
+        "request_sha256": "1e0b66cfc7adefff400d2b63449d059953817cee7f4d3c88fd9ba22782f6b352",
+        "response_sha256": "2cad922ed5cf286a5b7b6f4c573cc6cdf20d22213132e3aa9a3ddc0435851aef"
+      }
+    ],
+    "streamed_carriage": [
+      {
+        "label": "sse-fill-MISS",
+        "cache_header": "MISS",
+        "kind": "cache_miss",
+        "plane": "python",
+        "request_sha256": "a6065e12bccd76102ebd9887b873a401e73b59f2984996ca56158cb2a803d87e",
+        "response_sha256": "80f1bfd223564a238b146ee12c50f85dd0a9e34b71c32a58ea61f480f0f42983",
+        "chunk_count": 15
+      },
+      {
+        "label": "sse-replay-HIT",
+        "cache_header": "HIT",
+        "kind": "cache_hit",
+        "plane": "python",
+        "request_sha256": "a6065e12bccd76102ebd9887b873a401e73b59f2984996ca56158cb2a803d87e",
+        "response_sha256": "80f1bfd223564a238b146ee12c50f85dd0a9e34b71c32a58ea61f480f0f42983",
+        "chunk_count": 5
+      }
+    ]
+  },
+  "wire_format": {
+    "alg": "Ed25519",
+    "type": "ohm-receipt+jws",
+    "transport": "per-crossing kinds travel detached in the X-Metrecept-Receipt response header (JSON crossing) or as the last SSE data chunk before [DONE] (streamed crossing); the session aggregate travels inline as the `receipt` field of GET /v1/sessions/{id}. A streamed crossing's receipt is the last data chunk before [DONE], with empty choices, the usage chunk's shape.",
+    "kid": "RFC 7638 thumbprint of the Ed25519 JWK in the public directory"
+  },
+  "json_receipts": [
+    {
+      "label": "json-fill-MISS",
+      "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQyLCJraW5kIjoiY2FjaGVfbWlzcyIsIm1ldGVyX2V2ZW50X2lkIjoiNjIyODY2MjVkMTk3NDA5OThlODkwZjhkNmI4NjYyZDMiLCJtb2RlbCI6Im1vY2siLCJwaXBlX3VzZCI6MC4wMDE1LCJwbGFuZSI6InB5dGhvbiIsInJlZ2lvbiI6InVzLWVhc3QtMSIsInJlcXVlc3Rfc2hhMjU2IjoiOWI0NWUxMzRiZjQxZTg2ZDBiZmNjZTUwZDBhNGVkODg3ODhjMTY3NmJiNTQ1NDNkODYxN2UyZGFiZjQwMDk3NSIsInJlc3BvbnNlX3NoYTI1NiI6ImY3MDRhMTU1MGI2MWEwNTA5MGE2NTI3ODcwOTNkNDE0ZjYyYmFjMmQxNmE4MmM1MTc4MjE1MTIyMTk4NDEzNWYiLCJybF9lcG9jaCI6IjIwMjYxMDEzIiwidGVuYW50X3NoYTI1NiI6ImUxZjQzNWM1NjJkZTIyMjQiLCJ0b2tlbnNfcmVwbGF5ZWQiOjAsInRyZWVfaWQiOiJtYWluIiwidHJlZV9uYW1lIjoibWFpbiIsInYiOjF9.ZtWzTcdXBAQrihV766i--tRLDwsyGynvBxGTO9XOhMW1Wobp5SoPlZcLfRza107zTnuF1k0F176IF5Z_gJ1cDQ",
+      "jws_header": {
+        "alg": "EdDSA",
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "typ": "ohm-receipt+jws"
+      },
+      "decoded_payload": {
+        "admit": "allow",
+        "iat": 1791929742,
+        "kind": "cache_miss",
+        "meter_event_id": "62286625d19740998e890f8d6b8662d3",
+        "model": "mock",
+        "pipe_usd": 0.0015,
+        "plane": "python",
+        "region": "us-east-1",
+        "request_sha256": "9b45e134bf41e86d0bfcce50d0a4ed88788c1676bb54543d8617e2dabf400975",
+        "response_sha256": "f704a1550b61a05090a652787093d414f62bac2d16a82c51782151221984135f",
+        "rl_epoch": "20261013",
+        "tenant_sha256": "e1f435c562de2224",
+        "tokens_replayed": 0,
+        "tree_id": "main",
+        "tree_name": "main",
+        "v": 1
+      },
+      "signature": {
+        "verified_against_directory": true,
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "thumbprint_matches": true
+      },
+      "clock": {
+        "included": true,
+        "slot": "20261013T22Z",
+        "index": 15,
+        "leaf_sha256": "e289ff513c5a7edf8c57605089e1c053f17dfa32b182e8b2c5f350b271fa38a4",
+        "leaf_type": "receipt_signature",
+        "status": "open",
+        "root_sha256": null,
+        "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+      },
+      "cache_header": "MISS",
+      "served_body": {
+        "id": "chatcmpl-6210fa3352c6482681190b3a",
+        "object": "chat.completion",
+        "created": 1791929742,
+        "model": "mock",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "[mock:mock] [iwasinnam-005-replay-20261013b] A replay is the same answer. Say so in one line."
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 11,
+          "completion_tokens": 23,
+          "total_tokens": 34
+        }
+      },
+      "stranger_response_sha256": "f704a1550b61a05090a652787093d414f62bac2d16a82c51782151221984135f",
+      "stranger_request_sha256_note": "request_sha256 is over the exact bytes the pipe sent upstream (canonical request); the stranger checks equality across fill and replay, not recomputation."
+    },
+    {
+      "label": "json-replay-HIT",
+      "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQzLCJraW5kIjoiY2FjaGVfaGl0IiwibWV0ZXJfZXZlbnRfaWQiOiJkMDBhZGI0MjhkOTA0Njk5OGRhZmYzYzBjYzRmZTM1MSIsIm1vZGVsIjoibW9jayIsInBpcGVfdXNkIjowLjAwNiwicGxhbmUiOiJydXN0LWVkZ2UiLCJyZWdpb24iOiJ1cy1lYXN0LTEiLCJyZXF1ZXN0X3NoYTI1NiI6IjliNDVlMTM0YmY0MWU4NmQwYmZjY2U1MGQwYTRlZDg4Nzg4YzE2NzZiYjU0NTQzZDg2MTdlMmRhYmY0MDA5NzUiLCJyZXNwb25zZV9zaGEyNTYiOiJmNzA0YTE1NTBiNjFhMDUwOTBhNjUyNzg3MDkzZDQxNGY2MmJhYzJkMTZhODJjNTE3ODIxNTEyMjE5ODQxMzVmIiwicmxfZXBvY2giOiIyMDI2MTAxMyIsInRlbmFudF9zaGEyNTYiOiJlMWY0MzVjNTYyZGUyMjI0IiwidG9rZW5zX3JlcGxheWVkIjozNCwidiI6MX0.ix1Qx1EHnSNMa5qtb5GqgEWA2iXDZISzZAyqzoS2BA1plwTwd0XgBF8PTSEj-K2Ndg2BmuCjQauwnwbF5wYCCA",
+      "jws_header": {
+        "alg": "EdDSA",
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "typ": "ohm-receipt+jws"
+      },
+      "decoded_payload": {
+        "admit": "allow",
+        "iat": 1791929743,
+        "kind": "cache_hit",
+        "meter_event_id": "d00adb428d9046998daff3c0cc4fe351",
+        "model": "mock",
+        "pipe_usd": 0.006,
+        "plane": "rust-edge",
+        "region": "us-east-1",
+        "request_sha256": "9b45e134bf41e86d0bfcce50d0a4ed88788c1676bb54543d8617e2dabf400975",
+        "response_sha256": "f704a1550b61a05090a652787093d414f62bac2d16a82c51782151221984135f",
+        "rl_epoch": "20261013",
+        "tenant_sha256": "e1f435c562de2224",
+        "tokens_replayed": 34,
+        "v": 1
+      },
+      "signature": {
+        "verified_against_directory": true,
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "thumbprint_matches": true
+      },
+      "clock": {
+        "included": true,
+        "slot": "20261013T22Z",
+        "index": 16,
+        "leaf_sha256": "83ea1db6c96246119923b75a8d7fd8d7f468d94f8184610dfce1e73876724d32",
+        "leaf_type": "receipt_signature",
+        "status": "open",
+        "root_sha256": null,
+        "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+      },
+      "cache_header": "HIT",
+      "served_body": {
+        "id": "chatcmpl-6210fa3352c6482681190b3a",
+        "object": "chat.completion",
+        "created": 1791929742,
+        "model": "mock",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "[mock:mock] [iwasinnam-005-replay-20261013b] A replay is the same answer. Say so in one line."
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 11,
+          "completion_tokens": 23,
+          "total_tokens": 34
+        }
+      },
+      "stranger_response_sha256": "f704a1550b61a05090a652787093d414f62bac2d16a82c51782151221984135f",
+      "stranger_request_sha256_note": "request_sha256 is over the exact bytes the pipe sent upstream (canonical request); the stranger checks equality across fill and replay, not recomputation."
+    },
+    {
+      "label": "json-changed-MISS",
+      "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQ1LCJraW5kIjoiY2FjaGVfbWlzcyIsIm1ldGVyX2V2ZW50X2lkIjoiYmFjMmM4NDI5MzE2NGVkODg5ZTFkZjZkMDBkOTAyMzAiLCJtb2RlbCI6Im1vY2siLCJwaXBlX3VzZCI6MC4wMDE1LCJwbGFuZSI6InB5dGhvbiIsInJlZ2lvbiI6InVzLWVhc3QtMSIsInJlcXVlc3Rfc2hhMjU2IjoiMWUwYjY2Y2ZjN2FkZWZmZjQwMGQyYjYzNDQ5ZDA1OTk1MzgxN2NlZTdmNGQzYzg4ZmQ5YmEyMjc4MmY2YjM1MiIsInJlc3BvbnNlX3NoYTI1NiI6IjJjYWQ5MjJlZDVjZjI4NmE1YjdiNmY0YzU3M2NjNmNkZjIwZDIyMjEzMTMyZTNhYTlhM2RkYzA0MzU4NTFhZWYiLCJybF9lcG9jaCI6IjIwMjYxMDEzIiwidGVuYW50X3NoYTI1NiI6ImUxZjQzNWM1NjJkZTIyMjQiLCJ0b2tlbnNfcmVwbGF5ZWQiOjAsInRyZWVfaWQiOiJtYWluIiwidHJlZV9uYW1lIjoibWFpbiIsInYiOjF9.rbm4RqRrZ3RYQaX_o-nHOMPIQ6crBaliHJCzf9iyomP1Q03zTlkbEnIzg6I4pajObXMagclnSqHILy4yD2hoCw",
+      "jws_header": {
+        "alg": "EdDSA",
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "typ": "ohm-receipt+jws"
+      },
+      "decoded_payload": {
+        "admit": "allow",
+        "iat": 1791929745,
+        "kind": "cache_miss",
+        "meter_event_id": "bac2c84293164ed889e1df6d00d90230",
+        "model": "mock",
+        "pipe_usd": 0.0015,
+        "plane": "python",
+        "region": "us-east-1",
+        "request_sha256": "1e0b66cfc7adefff400d2b63449d059953817cee7f4d3c88fd9ba22782f6b352",
+        "response_sha256": "2cad922ed5cf286a5b7b6f4c573cc6cdf20d22213132e3aa9a3ddc0435851aef",
+        "rl_epoch": "20261013",
+        "tenant_sha256": "e1f435c562de2224",
+        "tokens_replayed": 0,
+        "tree_id": "main",
+        "tree_name": "main",
+        "v": 1
+      },
+      "signature": {
+        "verified_against_directory": true,
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "thumbprint_matches": true
+      },
+      "clock": {
+        "included": true,
+        "slot": "20261013T22Z",
+        "index": 17,
+        "leaf_sha256": "17965e8b2c059277a0d6b82e67f0e44d74a6092d176398b32ae1b9981b20862a",
+        "leaf_type": "receipt_signature",
+        "status": "open",
+        "root_sha256": null,
+        "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+      },
+      "cache_header": "MISS",
+      "served_body": {
+        "id": "chatcmpl-6a90c61112224c8bb988746f",
+        "object": "chat.completion",
+        "created": 1791929745,
+        "model": "mock",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "[mock:mock] [iwasinnam-005-replay-20261013b] A changed payload is a different answer. Say so in one line."
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 13,
+          "completion_tokens": 26,
+          "total_tokens": 39
+        }
+      },
+      "stranger_response_sha256": "2cad922ed5cf286a5b7b6f4c573cc6cdf20d22213132e3aa9a3ddc0435851aef",
+      "stranger_request_sha256_note": "request_sha256 is over the exact bytes the pipe sent upstream (canonical request); the stranger checks equality across fill and replay, not recomputation."
+    }
+  ],
+  "streamed_receipts": [
+    {
+      "label": "sse-fill-MISS",
+      "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQ3LCJraW5kIjoiY2FjaGVfbWlzcyIsIm1ldGVyX2V2ZW50X2lkIjoiZjhiOGNjZDg4NzdiNGU5NDkxNjA5NjdlNDJjOWRmNzYiLCJtb2RlbCI6Im1vY2siLCJwaXBlX3VzZCI6MC4wMDE1LCJwbGFuZSI6InB5dGhvbiIsInJlZ2lvbiI6InVzLWVhc3QtMSIsInJlcXVlc3Rfc2hhMjU2IjoiYTYwNjVlMTJiY2NkNzYxMDJlYmQ5ODg3Yjg3M2E0MDFlNzNiNTlmMjk4NDk5NmNhNTYxNThjYjJhODAzZDg3ZSIsInJlc3BvbnNlX3NoYTI1NiI6IjgwZjFiZmQyMjM1NjRhMjM4YjE0NmVlMTJjNTBmODVkZDBhOWUzNGI3MWMzMmE1OGVhNjFmNDgwZjBmNDI5ODMiLCJybF9lcG9jaCI6IjIwMjYxMDEzIiwidGVuYW50X3NoYTI1NiI6ImUxZjQzNWM1NjJkZTIyMjQiLCJ0b2tlbnNfcmVwbGF5ZWQiOjAsInRyZWVfaWQiOiJtYWluIiwidHJlZV9uYW1lIjoibWFpbiIsInYiOjF9.phcKlTK7qBH-puGA2D5Kc96GXdko1xbB4kOQj-BuxWAZFqQtmWQ4k_uRi23-7g0lELsXRavNLlZLycA4exF3AA",
+      "jws_header": {
+        "alg": "EdDSA",
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "typ": "ohm-receipt+jws"
+      },
+      "decoded_payload": {
+        "admit": "allow",
+        "iat": 1791929747,
+        "kind": "cache_miss",
+        "meter_event_id": "f8b8ccd8877b4e949160967e42c9df76",
+        "model": "mock",
+        "pipe_usd": 0.0015,
+        "plane": "python",
+        "region": "us-east-1",
+        "request_sha256": "a6065e12bccd76102ebd9887b873a401e73b59f2984996ca56158cb2a803d87e",
+        "response_sha256": "80f1bfd223564a238b146ee12c50f85dd0a9e34b71c32a58ea61f480f0f42983",
+        "rl_epoch": "20261013",
+        "tenant_sha256": "e1f435c562de2224",
+        "tokens_replayed": 0,
+        "tree_id": "main",
+        "tree_name": "main",
+        "v": 1
+      },
+      "signature": {
+        "verified_against_directory": true,
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "thumbprint_matches": true
+      },
+      "clock": {
+        "included": true,
+        "slot": "20261013T22Z",
+        "index": 18,
+        "leaf_sha256": "1c842115cf5ca984216655ef3a9f86132b7fee5f8976e67b34cb240e3447fc7f",
+        "leaf_type": "receipt_signature",
+        "status": "open",
+        "root_sha256": null,
+        "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+      },
+      "cache_header": "MISS",
+      "sse_lines": [
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"[mock:mock] \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"[iwasinnam-005-replay-20261013b] \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"Streamed: \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"a \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"replay \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"is \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"the \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"same \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"answer, \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"chunk \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"by \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"chunk. \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {}, \"finish_reason\": \"stop\"}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [], \"usage\": {\"prompt_tokens\": 10, \"completion_tokens\": 24, \"total_tokens\": 34}}",
+        "data: {\"object\":\"chat.completion.chunk\",\"choices\":[],\"id\":\"chatcmpl-61736e195f35\",\"model\":\"mock\",\"created\":1791929747,\"metrecept\":{\"receipt\":\"eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQ3LCJraW5kIjoiY2FjaGVfbWlzcyIsIm1ldGVyX2V2ZW50X2lkIjoiZjhiOGNjZDg4NzdiNGU5NDkxNjA5NjdlNDJjOWRmNzYiLCJtb2RlbCI6Im1vY2siLCJwaXBlX3VzZCI6MC4wMDE1LCJwbGFuZSI6InB5dGhvbiIsInJlZ2lvbiI6InVzLWVhc3QtMSIsInJlcXVlc3Rfc2hhMjU2IjoiYTYwNjVlMTJiY2NkNzYxMDJlYmQ5ODg3Yjg3M2E0MDFlNzNiNTlmMjk4NDk5NmNhNTYxNThjYjJhODAzZDg3ZSIsInJlc3BvbnNlX3NoYTI1NiI6IjgwZjFiZmQyMjM1NjRhMjM4YjE0NmVlMTJjNTBmODVkZDBhOWUzNGI3MWMzMmE1OGVhNjFmNDgwZjBmNDI5ODMiLCJybF9lcG9jaCI6IjIwMjYxMDEzIiwidGVuYW50X3NoYTI1NiI6ImUxZjQzNWM1NjJkZTIyMjQiLCJ0b2tlbnNfcmVwbGF5ZWQiOjAsInRyZWVfaWQiOiJtYWluIiwidHJlZV9uYW1lIjoibWFpbiIsInYiOjF9.phcKlTK7qBH-puGA2D5Kc96GXdko1xbB4kOQj-BuxWAZFqQtmWQ4k_uRi23-7g0lELsXRavNLlZLycA4exF3AA\",\"verify\":\"https://metrecept.co.uk/verify#eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQ3LCJraW5kIjoiY2FjaGVfbWlzcyIsIm1ldGVyX2V2ZW50X2lkIjoiZjhiOGNjZDg4NzdiNGU5NDkxNjA5NjdlNDJjOWRmNzYiLCJtb2RlbCI6Im1vY2siLCJwaXBlX3VzZCI6MC4wMDE1LCJwbGFuZSI6InB5dGhvbiIsInJlZ2lvbiI6InVzLWVhc3QtMSIsInJlcXVlc3Rfc2hhMjU2IjoiYTYwNjVlMTJiY2NkNzYxMDJlYmQ5ODg3Yjg3M2E0MDFlNzNiNTlmMjk4NDk5NmNhNTYxNThjYjJhODAzZDg3ZSIsInJlc3BvbnNlX3NoYTI1NiI6IjgwZjFiZmQyMjM1NjRhMjM4YjE0NmVlMTJjNTBmODVkZDBhOWUzNGI3MWMzMmE1OGVhNjFmNDgwZjBmNDI5ODMiLCJybF9lcG9jaCI6IjIwMjYxMDEzIiwidGVuYW50X3NoYTI1NiI6ImUxZjQzNWM1NjJkZTIyMjQiLCJ0b2tlbnNfcmVwbGF5ZWQiOjAsInRyZWVfaWQiOiJtYWluIiwidHJlZV9uYW1lIjoibWFpbiIsInYiOjF9.phcKlTK7qBH-puGA2D5Kc96GXdko1xbB4kOQj-BuxWAZFqQtmWQ4k_uRi23-7g0lELsXRavNLlZLycA4exF3AA\"}}",
+        "data: [DONE]"
+      ],
+      "stranger_assembled_completion": {
+        "id": "chatcmpl-61736e195f35",
+        "object": "chat.completion",
+        "created": 1791929747,
+        "model": "mock",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "[mock:mock] [iwasinnam-005-replay-20261013b] Streamed: a replay is the same answer, chunk by chunk. "
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 10,
+          "completion_tokens": 24,
+          "total_tokens": 34
+        }
+      },
+      "stranger_response_sha256": "80f1bfd223564a238b146ee12c50f85dd0a9e34b71c32a58ea61f480f0f42983",
+      "chunk_count": 15
+    },
+    {
+      "label": "sse-replay-HIT",
+      "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQ5LCJraW5kIjoiY2FjaGVfaGl0IiwibWV0ZXJfZXZlbnRfaWQiOiJmMjdmOTVlYzcyNzE0YTdkOWNkOWU5NWM5NGM2MGNlNCIsIm1vZGVsIjoibW9jayIsInBpcGVfdXNkIjowLjAwNiwicGxhbmUiOiJweXRob24iLCJyZWdpb24iOiJ1cy1lYXN0LTEiLCJyZXF1ZXN0X3NoYTI1NiI6ImE2MDY1ZTEyYmNjZDc2MTAyZWJkOTg4N2I4NzNhNDAxZTczYjU5ZjI5ODQ5OTZjYTU2MTU4Y2IyYTgwM2Q4N2UiLCJyZXNwb25zZV9zaGEyNTYiOiI4MGYxYmZkMjIzNTY0YTIzOGIxNDZlZTEyYzUwZjg1ZGQwYTllMzRiNzFjMzJhNThlYTYxZjQ4MGYwZjQyOTgzIiwicmxfZXBvY2giOiIyMDI2MTAxMyIsInRlbmFudF9zaGEyNTYiOiJlMWY0MzVjNTYyZGUyMjI0IiwidG9rZW5zX3JlcGxheWVkIjozNCwidHJlZV9pZCI6Im1haW4iLCJ0cmVlX25hbWUiOiJtYWluIiwidiI6MX0.MvnkgwlqtoiC4tPrdbICAMK-daUh7WCkZjLUNHQJtq7Bc0ZCZgMXFh-poAyCEo0jGFMOilm6nz7tDjQzNetUDw",
+      "jws_header": {
+        "alg": "EdDSA",
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "typ": "ohm-receipt+jws"
+      },
+      "decoded_payload": {
+        "admit": "allow",
+        "iat": 1791929749,
+        "kind": "cache_hit",
+        "meter_event_id": "f27f95ec72714a7d9cd9e95c94c60ce4",
+        "model": "mock",
+        "pipe_usd": 0.006,
+        "plane": "python",
+        "region": "us-east-1",
+        "request_sha256": "a6065e12bccd76102ebd9887b873a401e73b59f2984996ca56158cb2a803d87e",
+        "response_sha256": "80f1bfd223564a238b146ee12c50f85dd0a9e34b71c32a58ea61f480f0f42983",
+        "rl_epoch": "20261013",
+        "tenant_sha256": "e1f435c562de2224",
+        "tokens_replayed": 34,
+        "tree_id": "main",
+        "tree_name": "main",
+        "v": 1
+      },
+      "signature": {
+        "verified_against_directory": true,
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "thumbprint_matches": true
+      },
+      "clock": {
+        "included": true,
+        "slot": "20261013T22Z",
+        "index": 19,
+        "leaf_sha256": "03cc10a4e46a024a5ff5865465d6067ffa695d7251052c19bba8fe4110386e6e",
+        "leaf_type": "receipt_signature",
+        "status": "open",
+        "root_sha256": null,
+        "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+      },
+      "cache_header": "HIT",
+      "sse_lines": [
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"role\": \"assistant\"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {\"content\": \"[mock:mock] [iwasinnam-005-replay-20261013b] Streamed: a replay is the same answer, chunk by chunk. \"}, \"finish_reason\": null}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [{\"index\": 0, \"delta\": {}, \"finish_reason\": \"stop\"}]}",
+        "data: {\"id\": \"chatcmpl-61736e195f35\", \"object\": \"chat.completion.chunk\", \"created\": 1791929747, \"model\": \"mock\", \"choices\": [], \"usage\": {\"prompt_tokens\": 10, \"completion_tokens\": 24, \"total_tokens\": 34}}",
+        "data: {\"object\":\"chat.completion.chunk\",\"choices\":[],\"id\":\"chatcmpl-61736e195f35\",\"model\":\"mock\",\"created\":1791929747,\"metrecept\":{\"receipt\":\"eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQ5LCJraW5kIjoiY2FjaGVfaGl0IiwibWV0ZXJfZXZlbnRfaWQiOiJmMjdmOTVlYzcyNzE0YTdkOWNkOWU5NWM5NGM2MGNlNCIsIm1vZGVsIjoibW9jayIsInBpcGVfdXNkIjowLjAwNiwicGxhbmUiOiJweXRob24iLCJyZWdpb24iOiJ1cy1lYXN0LTEiLCJyZXF1ZXN0X3NoYTI1NiI6ImE2MDY1ZTEyYmNjZDc2MTAyZWJkOTg4N2I4NzNhNDAxZTczYjU5ZjI5ODQ5OTZjYTU2MTU4Y2IyYTgwM2Q4N2UiLCJyZXNwb25zZV9zaGEyNTYiOiI4MGYxYmZkMjIzNTY0YTIzOGIxNDZlZTEyYzUwZjg1ZGQwYTllMzRiNzFjMzJhNThlYTYxZjQ4MGYwZjQyOTgzIiwicmxfZXBvY2giOiIyMDI2MTAxMyIsInRlbmFudF9zaGEyNTYiOiJlMWY0MzVjNTYyZGUyMjI0IiwidG9rZW5zX3JlcGxheWVkIjozNCwidHJlZV9pZCI6Im1haW4iLCJ0cmVlX25hbWUiOiJtYWluIiwidiI6MX0.MvnkgwlqtoiC4tPrdbICAMK-daUh7WCkZjLUNHQJtq7Bc0ZCZgMXFh-poAyCEo0jGFMOilm6nz7tDjQzNetUDw\",\"verify\":\"https://metrecept.co.uk/verify#eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQ5LCJraW5kIjoiY2FjaGVfaGl0IiwibWV0ZXJfZXZlbnRfaWQiOiJmMjdmOTVlYzcyNzE0YTdkOWNkOWU5NWM5NGM2MGNlNCIsIm1vZGVsIjoibW9jayIsInBpcGVfdXNkIjowLjAwNiwicGxhbmUiOiJweXRob24iLCJyZWdpb24iOiJ1cy1lYXN0LTEiLCJyZXF1ZXN0X3NoYTI1NiI6ImE2MDY1ZTEyYmNjZDc2MTAyZWJkOTg4N2I4NzNhNDAxZTczYjU5ZjI5ODQ5OTZjYTU2MTU4Y2IyYTgwM2Q4N2UiLCJyZXNwb25zZV9zaGEyNTYiOiI4MGYxYmZkMjIzNTY0YTIzOGIxNDZlZTEyYzUwZjg1ZGQwYTllMzRiNzFjMzJhNThlYTYxZjQ4MGYwZjQyOTgzIiwicmxfZXBvY2giOiIyMDI2MTAxMyIsInRlbmFudF9zaGEyNTYiOiJlMWY0MzVjNTYyZGUyMjI0IiwidG9rZW5zX3JlcGxheWVkIjozNCwidHJlZV9pZCI6Im1haW4iLCJ0cmVlX25hbWUiOiJtYWluIiwidiI6MX0.MvnkgwlqtoiC4tPrdbICAMK-daUh7WCkZjLUNHQJtq7Bc0ZCZgMXFh-poAyCEo0jGFMOilm6nz7tDjQzNetUDw\"}}",
+        "data: [DONE]"
+      ],
+      "stranger_assembled_completion": {
+        "id": "chatcmpl-61736e195f35",
+        "object": "chat.completion",
+        "created": 1791929747,
+        "model": "mock",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "[mock:mock] [iwasinnam-005-replay-20261013b] Streamed: a replay is the same answer, chunk by chunk. "
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 10,
+          "completion_tokens": 24,
+          "total_tokens": 34
+        }
+      },
+      "stranger_response_sha256": "80f1bfd223564a238b146ee12c50f85dd0a9e34b71c32a58ea61f480f0f42983",
+      "chunk_count": 5
+    }
+  ],
+  "guards": {
+    "R1_fill_and_replay_share_request_digest": {
+      "fill": "9b45e134bf41e86d0bfcce50d0a4ed88788c1676bb54543d8617e2dabf400975",
+      "replay": "9b45e134bf41e86d0bfcce50d0a4ed88788c1676bb54543d8617e2dabf400975",
+      "pass": true
+    },
+    "R2_fill_and_replay_share_response_digest": {
+      "fill": "f704a1550b61a05090a652787093d414f62bac2d16a82c51782151221984135f",
+      "replay": "f704a1550b61a05090a652787093d414f62bac2d16a82c51782151221984135f",
+      "pass": true
+    },
+    "R3_two_planes": {
+      "fill_plane": "python",
+      "replay_plane": "rust-edge",
+      "pass": true
+    },
+    "R4_stranger_recomputes_json_response_digest": {
+      "fill": true,
+      "replay": true,
+      "pass": true
+    },
+    "R5_changed_payload_has_different_digests": {
+      "request_differs": true,
+      "response_differs": true,
+      "pass": true
+    },
+    "R6_no_N_to_one_merge": {
+      "meter_event_ids": [
+        "62286625d19740998e890f8d6b8662d3",
+        "d00adb428d9046998daff3c0cc4fe351",
+        "bac2c84293164ed889e1df6d00d90230",
+        "f8b8ccd8877b4e949160967e42c9df76",
+        "f27f95ec72714a7d9cd9e95c94c60ce4"
+      ],
+      "pass": true
+    },
+    "R7_streamed_fill_and_replay_share_digests": {
+      "request": true,
+      "response": true,
+      "pass": true
+    },
+    "R8_stranger_assembles_both_streams_to_the_receipt_digest": {
+      "fill": true,
+      "replay": true,
+      "chunk_counts": [
+        15,
+        5
+      ],
+      "pass": true
+    }
+  },
+  "guards_pass": true,
+  "field_semantics": {
+    "request_sha256": "SHA-256 over the exact request the pipe sent upstream. Equal on fill and replay by construction of the cache key.",
+    "response_sha256": "SHA-256 hex of the canonical JSON (sorted keys, no whitespace, UTF-8, non-ASCII unescaped) of the completion AS SERVED: the JSON body for a JSON crossing; for a streamed crossing, the completion the published rule (open-repo/demo/response_digest.py) assembles from the stream.",
+    "plane": "python = control plane (holds the signing key, fills); rust-edge = public entry (serves replays, calls the control plane's gate to meter and mint).",
+    "meter_event_id": "one per crossing; a replay is a distinct metered crossing, summed never merged."
+  },
+  "limits": [
+    {
+      "id": "L1-pipe-rent-not-provider-cost",
+      "rule": "pipe_usd is pipe rent for the crossing (fill and replay rates differ); never a provider invoice."
+    },
+    {
+      "id": "L4-iat-is-a-claim",
+      "rule": "iat is a claim; the hour is proved by clock inclusion recorded on each receipt."
+    },
+    {
+      "id": "L5-cover-not-collapse",
+      "rule": "Repeat crossings on identical bytes are distinct metered events."
+    },
+    {
+      "id": "L9-carriage-is-named",
+      "rule": "response_sha256 names the completion as served. One stored body served once as JSON and once as a stream may honestly carry two digests, because the stream drops provider extras the JSON body keeps. This fixture therefore compares JSON to JSON and stream to stream; it does not claim a JSON fill and a streamed replay share a response digest."
+    },
+    {
+      "id": "L10-mock-model",
+      "rule": "Crossings use model=mock (offline, deterministic) so the fixture carries no provider output and no provider key. The signing path, planes, cache and digests are the production ones."
+    }
+  ],
+  "claim_boundary": {
+    "claims": [
+      "Each JWS verifies against the public directory key named by its kid.",
+      "JSON fill and JSON replay: equal request_sha256 and equal response_sha256, signed by two different planes.",
+      "A stranger recomputes response_sha256 from the served JSON body and from each assembled SSE stream with the published rule and gets the receipts' values.",
+      "Changed payload: different request and response digests, own meter_event_id.",
+      "Streamed fill and streamed replay: equal request and response digests; both streams assemble to one completion."
+    ],
+    "does_not_claim": [
+      "That a JSON carriage and a streamed carriage of one stored body share a response digest (L9).",
+      "Anything about the correctness of the completion."
+    ],
+    "chunking": "chunk counts on this run: fill 15, replay 5. They differ, so this run shows two chunkings assembling to one body by the published rule.",
+    "mutation_expectation": "Change one byte of any served body and the stranger's digest leaves the receipt's (R4/R8 fail); change the request and R1/R5 separate the records; signatures still verify on every mutated-input run because the receipt is honest about what it signed."
+  },
+  "observer_grade_mapping": {
+    "request_sha256 / response_sha256": "settlement-grade (signed, recomputable by a stranger from what they were served)",
+    "pipe_usd": "settlement-grade pipe rent",
+    "iat": "declared; when-proof is the clock inclusion"
+  }
+}

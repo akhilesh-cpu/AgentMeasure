@@ -1,0 +1,389 @@
+{
+  "fixture_scope": "external-production-aggregate-join-request-4",
+  "variant_id": "metrecept-session-join",
+  "external_source": {
+    "contributor": "iwasinnam2 (Ivan Karpusheff, METRECEPT LIMITED)",
+    "origin_thread": "BerriAI/litellm#39057; Roy Tong mail 2026-10-13 'Yes to both. Cut them.'",
+    "provenance": "real receipts minted by the Metrecept production pipe at https://api.metrecept.co.uk on 2026-10-13 (run tag 20261013b); the Python control plane signs, the Rust edge serves replays; every JWS below verified against https://api.metrecept.co.uk/.well-known/http-message-signatures-directory (kid = RFC 7638 thumbprint) by this cutting script before the file was written; gateway at iwasinnam2/ohm@b4d440e",
+    "date_received": "2026-10-13",
+    "stranger_verification_path": "python open-repo/demo/verify_receipt.py <jws> --base https://api.metrecept.co.uk (signature); python open-repo/demo/response_digest.py <body|--sse stream> --receipt <jws> (response digest); python scripts/verify_clock.py --receipt <jws> --base https://api.metrecept.co.uk (hour); repo github.com/iwasinnam2/metrecept-opensource",
+    "cutting_script": "scripts/cut_agentmeasure_vectors.py (iwasinnam2/ohm)"
+  },
+  "scenario": {
+    "description": "One session, three tagged crossings and one untagged one. Tagged: crossing 1 MISS on prompt A (Python control plane fills), crossing 2 HIT on the byte-identical prompt A (Rust edge replays), crossing 3 MISS on prompt B (changed bytes). Untagged: crossing 4, cache_control=no_store, no X-Metrecept-Session header, so it is metered as a cache_bypass with its own meter_event_id and never joins the session. The session aggregate is then read once. Conformance is that the aggregate reconciles over the three tagged members by count and by sum, and that the fourth, metered crossing is absent from it rather than invented into it. This is the 9 Oct 2026 shape: a signed aggregate that verifies on its own is a verified claim about the events the aggregator happened to see; the join to its members is the conformance, not the signature.",
+    "session_header": "X-Metrecept-Session: iwasinnam-004-join-20261013b",
+    "N_tagged": 3,
+    "crossings": [
+      {
+        "n": 1,
+        "label": "tagged-1-MISS",
+        "session_tagged": true,
+        "cache_header": "MISS",
+        "kind": "cache_miss",
+        "plane": "python",
+        "pipe_usd": 0.0015,
+        "meter_event_id": "4650c04de58b4119b152d8179801eef9"
+      },
+      {
+        "n": 2,
+        "label": "tagged-2-HIT",
+        "session_tagged": true,
+        "cache_header": "HIT",
+        "kind": "cache_hit",
+        "plane": "rust-edge",
+        "pipe_usd": 0.006,
+        "meter_event_id": "d167e05dbf5d4acdba0e89a37cb0ef4f"
+      },
+      {
+        "n": 3,
+        "label": "tagged-3-MISS-changed",
+        "session_tagged": true,
+        "cache_header": "MISS",
+        "kind": "cache_miss",
+        "plane": "python",
+        "pipe_usd": 0.0015,
+        "meter_event_id": "24fd718308904219bfebe911e5c09270"
+      },
+      {
+        "n": 4,
+        "label": "untagged-4-BYPASS",
+        "session_tagged": false,
+        "cache_header": "BYPASS",
+        "kind": "cache_bypass",
+        "plane": "python",
+        "pipe_usd": 0.0015,
+        "meter_event_id": "66c7bf87dad8433ea332aaf58878f223"
+      }
+    ],
+    "read": "GET /v1/sessions/iwasinnam-004-join-20261013b (tenant-scoped, read-only over already-billed events)"
+  },
+  "wire_format": {
+    "alg": "Ed25519",
+    "type": "ohm-receipt+jws",
+    "transport": "per-crossing kinds travel detached in the X-Metrecept-Receipt response header (JSON crossing) or as the last SSE data chunk before [DONE] (streamed crossing); the session aggregate travels inline as the `receipt` field of GET /v1/sessions/{id}. The join is count and sum against the detached per-crossing receipts.",
+    "kid": "RFC 7638 thumbprint of the Ed25519 JWK in the public directory"
+  },
+  "crossing_receipts": [
+    {
+      "label": "tagged-1-MISS",
+      "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzM0LCJraW5kIjoiY2FjaGVfbWlzcyIsIm1ldGVyX2V2ZW50X2lkIjoiNDY1MGMwNGRlNThiNDExOWIxNTJkODE3OTgwMWVlZjkiLCJtb2RlbCI6Im1vY2siLCJwaXBlX3VzZCI6MC4wMDE1LCJwbGFuZSI6InB5dGhvbiIsInJlZ2lvbiI6InVzLWVhc3QtMSIsInJlcXVlc3Rfc2hhMjU2IjoiOGRjYzFkNmY5YzUxZjNhNjgyNWZjZjAxZjg5MzVmNDA4MmQ5MTMzNGQyYzlmOTRiNDZmNzgwZTNhZGQwMzc2NCIsInJlc3BvbnNlX3NoYTI1NiI6IjBhNWU4ZWZkZThhMjZmNmIwOTYzMmQzNjQwNmNkMmYyMTg4NTExMjgxOWJkOTVjYWZjZGEwNjI3MzExNWE2NGYiLCJybF9lcG9jaCI6IjIwMjYxMDEzIiwidGVuYW50X3NoYTI1NiI6ImUxZjQzNWM1NjJkZTIyMjQiLCJ0b2tlbnNfcmVwbGF5ZWQiOjAsInRyZWVfaWQiOiJtYWluIiwidHJlZV9uYW1lIjoibWFpbiIsInYiOjF9.2xS4buEHwUY4-hWQu74XfqAJOKd7rpQ78X5_rQcndW7ps8QTcTL-H7PORTneXah_x16EQd1GyR4hSohHsW94DQ",
+      "jws_header": {
+        "alg": "EdDSA",
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "typ": "ohm-receipt+jws"
+      },
+      "decoded_payload": {
+        "admit": "allow",
+        "iat": 1791929734,
+        "kind": "cache_miss",
+        "meter_event_id": "4650c04de58b4119b152d8179801eef9",
+        "model": "mock",
+        "pipe_usd": 0.0015,
+        "plane": "python",
+        "region": "us-east-1",
+        "request_sha256": "8dcc1d6f9c51f3a6825fcf01f8935f4082d91334d2c9f94b46f780e3add03764",
+        "response_sha256": "0a5e8efde8a26f6b09632d36406cd2f21885112819bd95cafcda06273115a64f",
+        "rl_epoch": "20261013",
+        "tenant_sha256": "e1f435c562de2224",
+        "tokens_replayed": 0,
+        "tree_id": "main",
+        "tree_name": "main",
+        "v": 1
+      },
+      "signature": {
+        "verified_against_directory": true,
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "thumbprint_matches": true
+      },
+      "clock": {
+        "included": true,
+        "slot": "20261013T22Z",
+        "index": 10,
+        "leaf_sha256": "9d67dfd1fabdfaca3d153a238c2e350f288e74dbca0e634e672004b8f9f019b4",
+        "leaf_type": "receipt_signature",
+        "status": "open",
+        "root_sha256": null,
+        "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+      },
+      "cache_header": "MISS",
+      "session_tagged": true
+    },
+    {
+      "label": "tagged-2-HIT",
+      "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzM2LCJraW5kIjoiY2FjaGVfaGl0IiwibWV0ZXJfZXZlbnRfaWQiOiJkMTY3ZTA1ZGJmNWQ0YWNkYmEwZTg5YTM3Y2IwZWY0ZiIsIm1vZGVsIjoibW9jayIsInBpcGVfdXNkIjowLjAwNiwicGxhbmUiOiJydXN0LWVkZ2UiLCJyZWdpb24iOiJ1cy1lYXN0LTEiLCJyZXF1ZXN0X3NoYTI1NiI6IjhkY2MxZDZmOWM1MWYzYTY4MjVmY2YwMWY4OTM1ZjQwODJkOTEzMzRkMmM5Zjk0YjQ2Zjc4MGUzYWRkMDM3NjQiLCJyZXNwb25zZV9zaGEyNTYiOiIwYTVlOGVmZGU4YTI2ZjZiMDk2MzJkMzY0MDZjZDJmMjE4ODUxMTI4MTliZDk1Y2FmY2RhMDYyNzMxMTVhNjRmIiwicmxfZXBvY2giOiIyMDI2MTAxMyIsInRlbmFudF9zaGEyNTYiOiJlMWY0MzVjNTYyZGUyMjI0IiwidG9rZW5zX3JlcGxheWVkIjo0OCwidiI6MX0.N4PsJE4w0yuPf70ELvDtgcf1jOtXm45gLGVst1QISeqSnrmPsnbE3dusEWfvDwnIRxmgABEBV6db-wMo046mBQ",
+      "jws_header": {
+        "alg": "EdDSA",
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "typ": "ohm-receipt+jws"
+      },
+      "decoded_payload": {
+        "admit": "allow",
+        "iat": 1791929736,
+        "kind": "cache_hit",
+        "meter_event_id": "d167e05dbf5d4acdba0e89a37cb0ef4f",
+        "model": "mock",
+        "pipe_usd": 0.006,
+        "plane": "rust-edge",
+        "region": "us-east-1",
+        "request_sha256": "8dcc1d6f9c51f3a6825fcf01f8935f4082d91334d2c9f94b46f780e3add03764",
+        "response_sha256": "0a5e8efde8a26f6b09632d36406cd2f21885112819bd95cafcda06273115a64f",
+        "rl_epoch": "20261013",
+        "tenant_sha256": "e1f435c562de2224",
+        "tokens_replayed": 48,
+        "v": 1
+      },
+      "signature": {
+        "verified_against_directory": true,
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "thumbprint_matches": true
+      },
+      "clock": {
+        "included": true,
+        "slot": "20261013T22Z",
+        "index": 11,
+        "leaf_sha256": "44b2bc25d7b0cff08cf70e446cc5ef17a476f7e446792bc732af296367a789c8",
+        "leaf_type": "receipt_signature",
+        "status": "open",
+        "root_sha256": null,
+        "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+      },
+      "cache_header": "HIT",
+      "session_tagged": true
+    },
+    {
+      "label": "tagged-3-MISS-changed",
+      "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzM4LCJraW5kIjoiY2FjaGVfbWlzcyIsIm1ldGVyX2V2ZW50X2lkIjoiMjRmZDcxODMwODkwNDIxOWJmZWJlOTExZTVjMDkyNzAiLCJtb2RlbCI6Im1vY2siLCJwaXBlX3VzZCI6MC4wMDE1LCJwbGFuZSI6InB5dGhvbiIsInJlZ2lvbiI6InVzLWVhc3QtMSIsInJlcXVlc3Rfc2hhMjU2IjoiM2I5ODJlZmNmYjU1ZTJiNzRjYTk4MWViYWMwZGZiYmFlMThkYmFlM2YxNTljMTk1NzRiNWI4MDNlOTI1OTUzYSIsInJlc3BvbnNlX3NoYTI1NiI6IjNlOGNkYjk5NmIzZjM0OWNlYjYzNmI1MTdiYWJmMzY3NGI1OWIxMmFkZmVhYjIwZDFhNjY2MWI4NWVjOGIzMjMiLCJybF9lcG9jaCI6IjIwMjYxMDEzIiwidGVuYW50X3NoYTI1NiI6ImUxZjQzNWM1NjJkZTIyMjQiLCJ0b2tlbnNfcmVwbGF5ZWQiOjAsInRyZWVfaWQiOiJtYWluIiwidHJlZV9uYW1lIjoibWFpbiIsInYiOjF9.zvLQvx-AVVHZdI922Q-YL57Eh6JTO7vEULxMfksQSrFTst3UaOlbSTGc2kJ1rRdU-aydhsew1gJMcTtzkZhgBw",
+      "jws_header": {
+        "alg": "EdDSA",
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "typ": "ohm-receipt+jws"
+      },
+      "decoded_payload": {
+        "admit": "allow",
+        "iat": 1791929738,
+        "kind": "cache_miss",
+        "meter_event_id": "24fd718308904219bfebe911e5c09270",
+        "model": "mock",
+        "pipe_usd": 0.0015,
+        "plane": "python",
+        "region": "us-east-1",
+        "request_sha256": "3b982efcfb55e2b74ca981ebac0dfbbae18dbae3f159c19574b5b803e925953a",
+        "response_sha256": "3e8cdb996b3f349ceb636b517babf3674b59b12adfeab20d1a6661b85ec8b323",
+        "rl_epoch": "20261013",
+        "tenant_sha256": "e1f435c562de2224",
+        "tokens_replayed": 0,
+        "tree_id": "main",
+        "tree_name": "main",
+        "v": 1
+      },
+      "signature": {
+        "verified_against_directory": true,
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "thumbprint_matches": true
+      },
+      "clock": {
+        "included": true,
+        "slot": "20261013T22Z",
+        "index": 12,
+        "leaf_sha256": "6fc01af42017314b185d757c5eb6d4255559b7efc07235d91b6fdb7103ddefaa",
+        "leaf_type": "receipt_signature",
+        "status": "open",
+        "root_sha256": null,
+        "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+      },
+      "cache_header": "MISS",
+      "session_tagged": true
+    },
+    {
+      "label": "untagged-4-BYPASS",
+      "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhZG1pdCI6ImFsbG93IiwiaWF0IjoxNzkxOTI5NzQwLCJraW5kIjoiY2FjaGVfYnlwYXNzIiwibWV0ZXJfZXZlbnRfaWQiOiI2NmM3YmY4N2RhZDg0MzNlYTMzMmFhZjU4ODc4ZjIyMyIsIm1vZGVsIjoibW9jayIsInBpcGVfdXNkIjowLjAwMTUsInBsYW5lIjoicHl0aG9uIiwicmVnaW9uIjoidXMtZWFzdC0xIiwicmVxdWVzdF9zaGEyNTYiOiIyZDY3ZmYzOGU3NThhZDk4MjQ2MTM5ZGM5MzlmZDVhNDU0OTZlYzhlNTMxMjc0ZjJhOGU5ZTBkYzk0YzMwOGRkIiwicmVzcG9uc2Vfc2hhMjU2IjoiNTFlNjAyZTM1YzBkZGNhYzFiNjNjNmE1MGRjNTNlNTgzZGEzMTk5N2UzNjcwMDk3NjEzNGIxNjNiOTM2MzhhYiIsInJsX2Vwb2NoIjoiMjAyNjEwMTMiLCJ0ZW5hbnRfc2hhMjU2IjoiZTFmNDM1YzU2MmRlMjIyNCIsInRva2Vuc19yZXBsYXllZCI6MCwidHJlZV9pZCI6Im1haW4iLCJ0cmVlX25hbWUiOiJtYWluIiwidiI6MX0.XFqu4wRK8vVOPNSr0lQSDHp8dJLCj9QrCtk-uI3ZFjBqzHMZ-zp_g2zraGA0ehfN-HGkRD-Bhs7ksmK1HwfABw",
+      "jws_header": {
+        "alg": "EdDSA",
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "typ": "ohm-receipt+jws"
+      },
+      "decoded_payload": {
+        "admit": "allow",
+        "iat": 1791929740,
+        "kind": "cache_bypass",
+        "meter_event_id": "66c7bf87dad8433ea332aaf58878f223",
+        "model": "mock",
+        "pipe_usd": 0.0015,
+        "plane": "python",
+        "region": "us-east-1",
+        "request_sha256": "2d67ff38e758ad98246139dc939fd5a45496ec8e531274f2a8e9e0dc94c308dd",
+        "response_sha256": "51e602e35c0ddcac1b63c6a50dc53e583da31997e36700976134b163b93638ab",
+        "rl_epoch": "20261013",
+        "tenant_sha256": "e1f435c562de2224",
+        "tokens_replayed": 0,
+        "tree_id": "main",
+        "tree_name": "main",
+        "v": 1
+      },
+      "signature": {
+        "verified_against_directory": true,
+        "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+        "thumbprint_matches": true
+      },
+      "clock": {
+        "included": true,
+        "slot": "20261013T22Z",
+        "index": 13,
+        "leaf_sha256": "e8384cc903930370d77f830a6333c04ba274506b0e91a973fa8e3116fc290bfe",
+        "leaf_type": "receipt_signature",
+        "status": "open",
+        "root_sha256": null,
+        "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+      },
+      "cache_header": "BYPASS",
+      "session_tagged": false
+    }
+  ],
+  "session_receipt": {
+    "label": "session",
+    "raw_jws": "eyJhbGciOiJFZERTQSIsImtpZCI6Ik03c2RVT0YzRXpWc2x2MUZHWEFNemFBMkJnQk1NelNhcVpSWS1TTkcyckkiLCJ0eXAiOiJvaG0tcmVjZWlwdCtqd3MifQ.eyJhcGlfY2FsbHMiOjAsImNhY2hlX2J5cGFzc2VzIjowLCJjYWNoZV9oaXRzIjoxLCJjYWNoZV9taXNzZXMiOjIsImV2ZW50X2NvdW50IjozLCJmZXRjaGVzIjowLCJmaXJzdF90cyI6MTc5MTkyOTczNCwiaWF0IjoxNzkxOTI5NzQxLCJraW5kIjoic2Vzc2lvbiIsImxhc3RfdHMiOjE3OTE5Mjk3MzgsInBpcGVfdXNkIjowLjAwOSwicmVnaW9uIjoidXMtZWFzdC0xIiwic2Vzc2lvbl9zaGEyNTYiOiIyNGVjYmQzNDg5OGFiMmE1OTRhYjk2ZWQ4YjY5MTdiNDI4YzJjODNlMTQ2NTQxYjU1ZDk2MGU0MGM1ZDUyOTQyIiwidiI6MX0.2NShDRKwUN6wpBmqbOD4DJ-Jsfv1w3yKyc5I8sxWW_LvbWh653OzeQ53dUMqDzNfeok--H6Cp-ZsQNbzgHUUCA",
+    "jws_header": {
+      "alg": "EdDSA",
+      "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+      "typ": "ohm-receipt+jws"
+    },
+    "decoded_payload": {
+      "api_calls": 0,
+      "cache_bypasses": 0,
+      "cache_hits": 1,
+      "cache_misses": 2,
+      "event_count": 3,
+      "fetches": 0,
+      "first_ts": 1791929734,
+      "iat": 1791929741,
+      "kind": "session",
+      "last_ts": 1791929738,
+      "pipe_usd": 0.009,
+      "region": "us-east-1",
+      "session_sha256": "24ecbd34898ab2a594ab96ed8b6917b428c2c83e146541b55d960e40c5d52942",
+      "v": 1
+    },
+    "signature": {
+      "verified_against_directory": true,
+      "kid": "M7sdUOF3EzVslv1FGXAMzaA2BgBMMzSaqZRY-SNG2rI",
+      "thumbprint_matches": true
+    },
+    "clock": {
+      "included": true,
+      "slot": "20261013T22Z",
+      "index": 14,
+      "leaf_sha256": "15bfff2d8acb0e4fc9e4f3bcd36f71368e4ff0b5d9f4a70fda8977d3ac1bdaf3",
+      "leaf_type": "receipt_signature",
+      "status": "open",
+      "root_sha256": null,
+      "lookup": "https://api.metrecept.co.uk/v1/public/clock/inclusion?receipt=<jws>"
+    }
+  },
+  "guards": {
+    "G1_event_count_equals_N_tagged": {
+      "expect": 3,
+      "got": 3,
+      "pass": true
+    },
+    "G2_pipe_usd_equals_sum_of_tagged_members": {
+      "expect": 0.009,
+      "got": 0.009,
+      "pass": true
+    },
+    "G3_untagged_metered_crossing_not_invented_into_session": {
+      "untagged_kind": [
+        "cache_bypass"
+      ],
+      "untagged_has_meter_event_id": true,
+      "sum_with_untagged_would_be": 0.0105,
+      "pass": true
+    },
+    "G4_members_are_distinct_money_identities": {
+      "meter_event_ids": [
+        "4650c04de58b4119b152d8179801eef9",
+        "d167e05dbf5d4acdba0e89a37cb0ef4f",
+        "24fd718308904219bfebe911e5c09270",
+        "66c7bf87dad8433ea332aaf58878f223"
+      ],
+      "pass": true
+    },
+    "G5_counts_by_kind_match_members": {
+      "expect": {
+        "cache_hits": 1,
+        "cache_misses": 2
+      },
+      "got": {
+        "cache_hits": 1,
+        "cache_misses": 2
+      },
+      "pass": true
+    },
+    "G6_session_id_never_raw": {
+      "sha256_of_planted_id": "24ecbd34898ab2a594ab96ed8b6917b428c2c83e146541b55d960e40c5d52942",
+      "session_sha256": "24ecbd34898ab2a594ab96ed8b6917b428c2c83e146541b55d960e40c5d52942",
+      "pass": true
+    },
+    "G7_every_jws_verifies_against_public_directory": {
+      "pass": true
+    }
+  },
+  "guards_pass": true,
+  "field_semantics": {
+    "event_count": "number of metered events tagged with this session id. Must equal the number of tagged crossing receipts the run produced.",
+    "pipe_usd": "sum of pipe_usd over the tagged members' receipts. The untagged bypass is metered on the tenant's bill but is not in this number.",
+    "cache_hits / cache_misses": "per-kind counts over the tagged members; must equal the kinds on the member receipts.",
+    "session_sha256": "sha256 of the raw planted id; the raw id never appears. Self-checkable.",
+    "meter_event_id": "one per crossing, the money identity; distinct on every member and on the bypass.",
+    "plane": "which plane signed the crossing: python (fill, bypass) or rust-edge (replay)."
+  },
+  "limits": [
+    {
+      "id": "L1-pipe-rent-not-provider-cost",
+      "rule": "pipe_usd signs what the pipe billed, never a provider invoice amount."
+    },
+    {
+      "id": "L2-counterfactual-not-in-aggregate",
+      "rule": "No avoided-spend figure is in any signed surface here."
+    },
+    {
+      "id": "L4-iat-and-window-are-claims",
+      "rule": "iat/first_ts/last_ts are claims. When-proofs are the clock inclusion recorded on each receipt (slot, index); open slots are the pipe's log until sealed and committed."
+    },
+    {
+      "id": "L5-cover-not-collapse",
+      "rule": "N tagged crossings produce one signed cover; the per-crossing receipts remain the money identities."
+    },
+    {
+      "id": "L6-session-id-never-raw",
+      "rule": "Only session_sha256 appears."
+    },
+    {
+      "id": "L7-join-is-the-conformance",
+      "rule": "The aggregate is evidence only if it reconciles to its members, count and sum. A signed aggregate that passes signature verification alone has not passed this vector."
+    },
+    {
+      "id": "L8-untagged-is-absent-not-invented",
+      "rule": "A metered crossing without the session tag is billed and receipted but never appended to the session. Its absence from the aggregate is correct; inventing it in would be the error."
+    }
+  ],
+  "claim_boundary": {
+    "claims": [
+      "Each JWS verifies against the public directory key named by its kid.",
+      "event_count equals the number of tagged crossing receipts; pipe_usd equals their sum; per-kind counts match their kinds.",
+      "The untagged crossing is metered (meter_event_id present) and is not in the aggregate.",
+      "Each receipt is a leaf of the hour recorded under `clock` (inclusion proof retrievable by anyone; sealed and committed state is as the public clock shows at read time)."
+    ],
+    "does_not_claim": [
+      "That the model output was correct, useful or safe; the receipt records the hop, not the work.",
+      "Provider cost or avoided spend.",
+      "Wall-clock truth of iat beyond the hour the clock seals.",
+      "Anything about crossings the tenant made outside this run."
+    ],
+    "mutation_expectation": "Any member-level mutation (drop a member, duplicate a member, change a member's pipe_usd, insert the untagged bypass into the member set) must fail G1/G2/G3/G4 while the aggregate's own signature still verifies. Signature is not the join."
+  },
+  "observer_grade_mapping": {
+    "signed_aggregate_fields": "settlement-grade only when the join (G1-G5) passes",
+    "member_receipts": "settlement-grade per crossing (signature + digests)",
+    "iat / first_ts / last_ts": "declared timestamps; when-proof is the clock inclusion"
+  }
+}
