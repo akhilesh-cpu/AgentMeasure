@@ -1843,7 +1843,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_recount = sub.add_parser(
         "recount",
         help="Tier 1: apply a vendor's own published billing rules to your "
-             "counts-only export (the line the vendor cannot argue with)")
+             "counts-only export (findings cite rules the vendor published)")
     p_recount.add_argument("--export", metavar="PATH", default=None,
                            help="counts-only CSV export (7 columns, 5 required)")
     p_recount.add_argument("--sample", action="store_true",

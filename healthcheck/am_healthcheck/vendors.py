@@ -1,9 +1,9 @@
 """Vendor billing-rule registry and counts-only recount.
 
 Tier 1 of the settlement statement (COMMERCIAL 5.1 D-3) is the audited party's
-*own published rules*, applied line by line to the buyer's export. That tier is
-the one the vendor cannot argue with: they can dispute the data, which is the
-buyer's, but not their own published rule.
+*own published rules*, applied line by line to the buyer's export. Every
+finding cites a rule the vendor itself published: the data can be disputed — it
+is the buyer's — and each rule citation is checkable by either side.
 
 The rules live in `vendor-rules.json`, which is the SINGLE SOURCE OF TRUTH and
 is also read by the browser-local recount at `website/recount.js`. A parity test

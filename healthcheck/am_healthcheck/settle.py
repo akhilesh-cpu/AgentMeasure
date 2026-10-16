@@ -345,8 +345,9 @@ def settlement_statement(bundle: dict, price_per_unit: float = None,
                  % (tier2, total))
     lines.append("Disputed class (Tier 1 minus Tier 2)                %d" % disputed)
     lines.append("")
-    lines.append("Tier 1 leads the negotiation: the provider cannot argue with")
-    lines.append("its own rules, only with the data, which is yours. Tier 2 is")
+    lines.append("Tier 1 leads the negotiation: every finding cites a rule the")
+    lines.append("provider itself published. The data can be disputed — it is")
+    lines.append("yours — and each rule citation is checkable. Tier 2 is")
     lines.append("renewal leverage, not a dispute line.")
     lines.append("")
 
@@ -560,9 +561,10 @@ def statement_markdown(bundle: dict, effects_path: str,
                % (tier2, total))
     out.append("| Disputed class | Tier 1 minus Tier 2 | **%d** |" % disputed)
     out.append("")
-    out.append("Tier 1 leads the negotiation: the provider cannot argue with its own")
-    out.append("rules, only with the data — which is yours. Tier 2 is renewal leverage,")
-    out.append("not a dispute line (D-3: the two lines are never blended).")
+    out.append("Tier 1 leads the negotiation: every finding cites a rule the provider")
+    out.append("itself published. The data can be disputed — it is yours — and each rule")
+    out.append("citation is checkable. Tier 2 is renewal leverage, not a dispute line")
+    out.append("(D-3: the two lines are never blended).")
     out.append("")
 
     if price_per_unit is not None:
@@ -763,9 +765,10 @@ def statement_html(bundle: dict, effects_path: str,
     h.append("<tr><td>Disputed class</td><td>Tier 1 minus Tier 2</td>"
              "<td><b>%d</b></td></tr>" % disputed)
     h.append("</table>")
-    h.append('<p class="note">Tier 1 leads the negotiation: the provider '
-             "cannot argue with its own rules, only with the data — which "
-             "is yours. Tier 2 is renewal leverage, not a dispute line "
+    h.append('<p class="note">Tier 1 leads the negotiation: every finding '
+             "cites a rule the provider itself published. The data can be "
+             "disputed — it is yours — and each rule citation is checkable. "
+             "Tier 2 is renewal leverage, not a dispute line "
              "(D-3: the two lines are never blended).</p>")
 
     if price_per_unit is not None:
