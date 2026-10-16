@@ -1,0 +1,83 @@
+# Public demo of what a hosted monthly reconcile produces — synthetic data only.
+#
+# The real "Monthly bill reconcile" workflow runs in a private repository with
+# your own export (see RECONCILE.md). This public sibling exists so anyone can
+# see the output shape without committing any data: it recounts the bundled
+# 5-row synthetic sample, a both-directions showcase case, and builds the
+# Dispute & Recovery Pack — the evidence a buyer can put in front of a vendor.
+#
+# Runs monthly (the day after the reconcile window) and on demand.
+
+name: Reconcile demo (synthetic)
+
+on:
+  schedule:
+    - cron: "5 9 4 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reconcile-demo
+  cancel-in-progress: true
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the reviewed source revision
+        run: python -m pip install ./healthcheck
+
+      - name: Recount the bundled synthetic sample (Zendesk rules)
+        run: |
+          {
+            echo "## Monthly reconcile — demo on synthetic data"
+            echo
+            echo "This is the output shape a hosted monthly reconcile produces. The data below is the bundled 5-row synthetic export (the same file the README shows); a real run reads your own committed export in a private repository."
+            echo
+            echo '```'
+            agentmeasure recount --sample
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Recount a both-directions case (Intercom rules)
+        run: |
+          {
+            echo "## Findings run both directions"
+            echo
+            echo "Undercharge is netted before any dollar is claimed — a recount that only ever finds against the vendor would not be a recount."
+            echo
+            echo '```'
+            agentmeasure recount --export examples/showcase/case-b-both-directions-intercom.csv --vendor intercom
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Build the Dispute & Recovery Pack (synthetic)
+        run: |
+          agentmeasure dispute \
+            --export examples/showcase/case-b-both-directions-intercom.csv \
+            --vendor intercom \
+            --out "$RUNNER_TEMP/dispute-pack-demo"
+          {
+            echo "## The evidence pack a buyer brings to the vendor"
+            echo
+            echo '```markdown'
+            sed -n '1,30p' "$RUNNER_TEMP/dispute-pack-demo/dispute-pack.md"
+            echo '```'
+            echo
+            echo "_Synthetic data. The full pack (cover letter + machine-readable appendix) is built locally by the same one command._"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the demo pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: reconcile-demo-synthetic
+          path: ${{ runner.temp }}/dispute-pack-demo/
+          if-no-files-found: error
