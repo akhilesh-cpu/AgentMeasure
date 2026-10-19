@@ -1,0 +1,79 @@
+{
+  "reconciler": "null",
+  "n_instances": 5600,
+  "n_scored": 5150,
+  "n_not_applicable": 450,
+  "class_recall": 0.0,
+  "exact_match_rate": 0.0,
+  "prediction_precision": null,
+  "line_ref_hit_rate_given_hit": null,
+  "mean_confidence_on_hits": null,
+  "schema_errors": 0,
+  "per_class": {
+    "E01_unit_misclassification": {
+      "n": 350,
+      "hit": 0
+    },
+    "E02_retry_attribution": {
+      "n": 350,
+      "hit": 0
+    },
+    "E03_split_threshold_misapplication": {
+      "n": 350,
+      "hit": 0
+    },
+    "E04_cross_period_double_count": {
+      "n": 350,
+      "hit": 0
+    },
+    "E05_component_execution_billing": {
+      "n": 350,
+      "hit": 0
+    },
+    "E06_duplicate_conversation_count": {
+      "n": 350,
+      "hit": 0
+    },
+    "E07_stale_price_table": {
+      "n": 350,
+      "hit": 0
+    },
+    "E08_retroactive_repricing": {
+      "n": 350,
+      "hit": 0
+    },
+    "E09_tier_boundary_error": {
+      "n": 350,
+      "hit": 0
+    },
+    "E10_rounding_error": {
+      "n": 100,
+      "hit": 0
+    },
+    "E11_pass_through_markup": {
+      "n": 350,
+      "hit": 0
+    },
+    "E12_credit_non_application": {
+      "n": 150,
+      "hit": 0
+    },
+    "E13_handoff_window_reclassification": {
+      "n": 350,
+      "hit": 0
+    },
+    "E14_rollover_expiry_error": {
+      "n": 350,
+      "hit": 0
+    },
+    "E15_minimum_commit_error": {
+      "n": 350,
+      "hit": 0
+    },
+    "E16_auto_recharge_error": {
+      "n": 350,
+      "hit": 0
+    }
+  },
+  "note": "call_llm 为占位、reconciler=null 为空预测基线：recall=0 属预期，仅用于打通评测链路与特异性参照。"
+}
