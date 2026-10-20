@@ -1,0 +1,41 @@
+{
+  "rule_engine": {
+    "instance_recall": 0.4561,
+    "instance_recall_detectable_only": 0.6349,
+    "n_detectable_instances": 3700,
+    "line_precision": 0.0058,
+    "direction_acc_given_hit": 0.6024,
+    "n_positive_instances": 5150,
+    "n_detected": 2349,
+    "n_predictions": 404800,
+    "n_false_predictions_on_clean": 32850
+  },
+  "naive_diff": {
+    "instance_recall": 0.4115,
+    "instance_recall_detectable_only": 0.5727,
+    "n_detectable_instances": 3700,
+    "line_precision": 0.0077,
+    "direction_acc_given_hit": 0.7069,
+    "n_positive_instances": 5150,
+    "n_detected": 2119,
+    "n_predictions": 273900,
+    "n_false_predictions_on_clean": 25500
+  },
+  "threshold": {
+    "instance_recall": 0.2103,
+    "instance_recall_detectable_only": 0.2927,
+    "n_detectable_instances": 3700,
+    "line_precision": 0.0133,
+    "direction_acc_given_hit": 0.5875,
+    "n_positive_instances": 5150,
+    "n_detected": 1083,
+    "n_predictions": 102121,
+    "n_false_predictions_on_clean": 10850
+  },
+  "_meta": {
+    "n_instances": 5600,
+    "rule_engine_vendor": "intercom",
+    "rule_engine_cannot_settle_share": 0.0,
+    "llm": "two-step: prompts via --llm-prompts; model call out of package"
+  }
+}
