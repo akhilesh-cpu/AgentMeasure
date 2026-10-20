@@ -1,18 +1,34 @@
 # AgentMeasure
 
-**检查 AI 用量记录，依据证据复算受支持的客服计费导出。**
+**帮助企业核验 AI 服务的费用与交付，为对账、验收和续约提供可复核的依据。**
 
-AgentMeasure 检查 Codex / Claude Code 日志，并对受支持的客服导出应用公开计费规则。
-本地 CLI 不上传数据；只有 PDF 或账单总额无法完成复算，还需要已核对的事件字段。
-按公开价格计算的差异不等于已确认退款。
+从按结果收费的 AI 客服买方切入，把适用收费规则、事件记录与业务要求对应起来。
+当前开源 CLI 支持有限规则下的计费导出复算、差异整理与后续处理记录。
+更广泛的买方核验服务正在逐案验证，不是通用合同解析或自动质量验收平台。
+本地 CLI 不上传数据。
 
 | 你的任务 | 入口 |
 |---|---|
-| 解释重复记录、重试或失败 | 免费 demo/check，可选 $10 人工解读 |
-| 检查一份事件样本的计量规则 | 免费确认适配，再做有边界的 $20 QA |
-| 核对客服计费账期 | 下方免费 recount，独立可行性核对，不包含在 $10/$20 内 |
+| 一项具体的 AI 客服账单疑问 | [描述任务、确认适配](https://roy-tong.github.io/AgentMeasure/first-look.html#contact)，也可运行下方免费复算 |
+| 即将作出验收或续约决定 | [说明决策与证据需求](https://roy-tong.github.io/AgentMeasure/first-look.html)，项目范围逐案验证 |
+| 本地日志异常或一个计量样本 | [现有 $10 / $20 开发者服务](https://roy-tong.github.io/AgentMeasure/services.html)，范围独立 |
+| 贡献规则、反例或适配 | [维护者入口](#维护者与服务提供商入口) |
 
-[官网](https://roy-tong.github.io/AgentMeasure/) · [English](README.md) · [Healthcheck 使用指南](healthcheck/README.md) · [发布说明](https://roy-tong.github.io/AgentMeasure/releases.html)
+[官网](https://roy-tong.github.io/AgentMeasure/) · [English](README.md) · [Healthcheck 指南](healthcheck/README.md) · [发布说明](https://roy-tong.github.io/AgentMeasure/releases.html)
+
+## 两种核验，对应不同动作
+
+- **收费是否符合适用约定？** 有依据的差异可以用于供应商复核，发现差异不等于对方认可或已退款。
+- **交付是否满足业务要求？** 结论可以支持验收、补救或续约；买方更严格的要求不自动构成收费错误。
+
+客服运营提供业务事实，财务或采购负责费用决策。报告区分双向发现、证据缺口、
+供应商接受与实际退款/已使用抵扣；缺失证据保持未知。
+
+适合的账单纠错案件正在探索按实际兑现净额分成；明确的验收或采购任务正在探索
+有限项目费。两者尚非已上线的标准套餐，无统一公开费率，也不保证追回。
+现有 $10/$20 服务不包含企业发票或业务交付核验。
+
+详见[任务与产品边界](docs/product-scope.md)、[商业与开源合作口径](docs/commercial-narrative.md)。
 
 ## 60 秒复算一张账单
 

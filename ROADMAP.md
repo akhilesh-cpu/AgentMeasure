@@ -1,22 +1,39 @@
-> Current task scope and adoption criteria: [product scope](docs/product-scope.md). CLI 0.8.0 adds response evidence inspection; it does not complete session/invoice reconciliation.
-
-> **Current product priorities — 2026-10-15:** local diagnosis and bounded metering QA remain the two fixed-price service experiments ($10/$20). Buyer recount is a free tool with a separate feasibility track; it is not proven buyer PMF. Prioritize real sample receipts, Claude response identity, actionable reports and the payment/delivery path. Runtime budget control and per-client cost allocation need task-specific validation before expansion. Historical platform milestones below are not current delivery promises.
-
 # AgentMeasure Roadmap
 
-## Current focus — 2026-10-14 through October 31
+## Current commercial direction — 2026-10-21
 
-Validate two narrow services: $10 Healthcheck Diagnosis and $20 Metering QA. Keep the local CLI free. Improve onboarding, sample fit, reproducible delivery and evidence of concrete user value before expanding scope.
+Verify AI service charges and delivery for buyers making billing, acceptance
+and renewal decisions. Start with one specific outcome-billed AI support task.
 
-- **Healthcheck:** help Codex / Claude Code developers interpret one anomaly; distinguish aggregate interpretation from diagnosis requiring a redacted excerpt.
-- **Metering QA:** verify supported sample invariants; refuse unsupported input rather than invent session or operation identity.
-- **Conformance / AMS-1 and SDK:** maintain the open technical foundation and fixes needed for real samples. They are not separate new commercial product launches this month.
-- **Buyer reconciliation:** preserve experimental tools and documentation; defer new full-period review offers.
-- **Lab:** retain existing research tooling; defer hosted analytics and new product expansion.
+1. Confirm a real question, authorized usable records, a responsible buyer and
+   a viable action path. Review a real dispute before offering recovery work.
+2. Validate a bounded delivery through customer action and service-fee collection.
+   Recovery-based work also needs vendor acceptance and actual realized benefit.
+3. Test a new billing-period, acceptance or renewal task from the same customer.
+   Expand automation or vendor coverage only when repeated work justifies it.
 
-Validation tracks distinct price acceptance, actual paid users and orders, completed delivery, concrete value confirmation and repeat purchases. Engineering tests, stars and published findings do not substitute for those outcomes. This is an experiment, not a declaration of product-market fit.
+Buyer recovery fees and procurement project fees are exploratory mechanisms,
+not launched packages or published rates. Existing $10 Healthcheck and $20
+Metering QA services retain their published scope; their purchases are not
+evidence of enterprise buyer demand.
 
-[Current services](https://roy-tong.github.io/AgentMeasure/services.html) · [Latest release](https://github.com/roy-tong/AgentMeasure/releases/tag/v0.7.0)
+## Keep and defer
+
+- Keep public rules, supported input adapters, reproducible findings, unknown
+  states and minimal regression cases needed by actual tasks.
+- Maintain developer tools, open-source collaboration and research on their
+  own merits. Provider work needs a concrete economic trigger.
+- Defer a general hosted quality platform, full execution replay, runtime budget
+  enforcement and training-data selection until their own tasks are validated.
+
+Record findings, vendor acceptance, actual refunds/used credits, service-fee
+collection, direct costs and independent new-task repeat purchases separately.
+A useful result with no difference is valid. Lack of qualified buyer conversations
+does not isolate price as the reason for a failed experiment.
+
+[Task scope](docs/product-scope.md) · [Commercial boundaries](docs/commercial-narrative.md) ·
+[Existing developer services](https://roy-tong.github.io/AgentMeasure/services.html) ·
+[Latest releases](https://github.com/roy-tong/AgentMeasure/releases)
 
 <details>
 <summary>Historical roadmap — August/September 2026; not current commitments</summary>

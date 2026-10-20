@@ -1,47 +1,53 @@
-# Choose the task before choosing the service
+# Choose the buyer task and verify the supported scope
 
-AgentMeasure supports three entry points. Their evidence and commercial outcomes
-are tracked separately; a technical contribution or a star is not a purchase.
+Updated 2026-10-21.
 
-| Task | Existing path | Current limit |
+AgentMeasure's commercial focus is evidence for AI service buyers making billing,
+acceptance and renewal decisions. Existing open-source capabilities and paid
+developer diagnostics remain available with their own boundaries.
+
+| Task | Existing capability or next step | Limit |
 |---|---|---|
-| Explain a local duplicate, failure or retry | Free `check` / `response-audit`; optional $10 human interpretation | No guaranteed root cause, session total or refund; summary-only inputs support limited interpretation |
-| Review one event sample against supported metering rules | Free fit check; $20 Metering QA | Core FMT-002 does not verify token/cache semantics, vendor invoices or pricing accuracy |
-| Review a support-billing period | Free `prepare` / `recount` and separate buyer feasibility review | Needs reviewed event fields and applicable rules; published-price arithmetic is not an invoice or confirmed credit |
+| Review a supported billing export | Free prepare/recount, findings and follow-up records | Reviewed event fields and applicable rules required; no universal contract parser or refund guarantee |
+| Discuss a real billing dispute | Bounded fit discussion about data and a viable vendor review path | Buyer service and recovery-fee mechanics are under validation, not a standard package |
+| Prepare for acceptance or renewal | Discuss the decision and explicit business criteria | Scope is exploratory; no general automated delivery verifier |
+| Explain a local log anomaly | Free check/response-audit; optional $10 human interpretation | No guaranteed root cause, session total or refund |
+| Review one metering sample | Free fit check; $20 Metering QA | Core FMT-002 excludes token/cache semantics, vendor invoices and pricing accuracy |
 
-Missing evidence stays unknown. Existing free collaboration remains free.
-Installation problems and reproducible tool bugs are not a reason to charge for
-service. Paid scope is agreed before payment; checkout availability is stated on
-the [service page](https://roy-tong.github.io/AgentMeasure/services.html).
+## Commercial priorities
 
-## What we are validating
+First validate one qualified buyer task through usable input, a supported result,
+customer action and actual service-fee collection. For recovery-based work, also
+verify vendor acceptance and realized benefit. Record all direct effort,
+including unsuccessful cases. An upcoming acceptance or renewal task from the
+same buyer is an adjacent hypothesis, not an automatic upsell.
 
-We prioritize real sample delivery, useful next actions and repeat tasks. Runtime
-budget enforcement, per-client cost allocation and a hosted evaluation platform
-are separate jobs; the present offline inspection tools do not fulfill them.
-They need concrete task evidence before additional product investment.
+Provider work needs a concrete revenue, dispute or procurement trigger. Free
+maintainer adoption does not establish a budget for metering QA. Separate the
+buyer and developer purchase funnels.
 
-Public feedback research is predominantly developer-community convenience data.
-It does not establish market prevalence, buyer willingness to pay or the absence
-of an enterprise market. Synthetic demonstrations prove reproducibility of the
-example, not customer savings. Generic usage dashboards and platform expansion
-are not the current focus.
+## Product boundaries
 
-## How we evaluate distribution
+Reproducible calculations, evidence gaps, supported adapters and minimal regression
+cases support the current work. Runtime spending control, general hosted quality
+monitoring, full environment replay and training-data selection require separate
+task and purchase evidence before expansion.
 
-Useful adoption means a person has a current task, can provide supported input,
-receives a usable result and can state what they did with it. Price acceptance,
-actual payment, delivery, a useful action and a new-task repeat purchase are
-separate steps. Stars, forks and third-party posts are distribution observations.
+Keep findings in both directions. Missing evidence stays unknown. A buyer's
+stricter business requirement is not automatically a billing violation. A
+rule-priced difference is not an invoice correction or realized recovery.
 
-Independent reviewers get reproducible inputs, known limits and the ability to
-criticize or decline. We do not condition service on a positive post or testimonial.
-Cost-saving language is a hypothesis to test, not permission to invent savings
-or claim that finding a difference guarantees a refund.
+## Start with a task
 
-## Why optional paid help?
+For a buyer discussion, describe the vendor, billing period or decision date,
+the question, available record types and who can act. Do not send credentials
+or full raw customer data in the first email. See the
+[buyer task page](https://roy-tong.github.io/AgentMeasure/first-look.html#contact).
 
-The public cases and free explanations stay free. A paid review is agreed human
-work on a remaining decision, not a secret scanner or automatic certification.
-If existing output answers the question, we recommend self-service. See the
-[paid review scope](paid-review-scope.md).
+For the two existing developer services, scope is agreed before payment and
+checkout availability is stated on the
+[service page](https://roy-tong.github.io/AgentMeasure/services.html).
+Installation problems and reproducible tool bugs remain free support.
+
+[Commercial and open-source boundaries](commercial-narrative.md) ·
+[Paid developer review scope](paid-review-scope.md)
