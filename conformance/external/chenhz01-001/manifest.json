@@ -1,0 +1,22 @@
+[
+    {
+        "file": "chenhz01-001.events.jsonl",
+        "sha256": "cd7452800ee770a68ae5670e813029d5b51f9cd5adafec33c7840cbc023ce4a8",
+        "bytes": 53840
+    },
+    {
+        "file": "chenhz01-001.expected.json",
+        "sha256": "d9cc9426655dc9c5ad848ab49bbbd31694933d023cc1ad471cb675b7ebf8c47f",
+        "bytes": 3202
+    },
+    {
+        "file": "MAPPING.md",
+        "sha256": "595982e37795c00af86e011cc6c892fc5f35089bd629be547c7edfa212c49588",
+        "bytes": 5798
+    },
+    {
+        "file": "README.txt",
+        "sha256": "e36c938d7f5e1841403faa34fad58e48b828ad7cdc3a6a89f7634397c0ef6be5",
+        "bytes": 1860
+    }
+]

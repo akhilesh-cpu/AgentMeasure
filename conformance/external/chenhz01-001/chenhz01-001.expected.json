@@ -1,0 +1,72 @@
+{
+ "vector_id": "chenhz01-001",
+ "spec_version": "agentmeasure-0.4",
+ "generated_from": "chenhz01-001.events.jsonl",
+ "claim_boundary": "production-derived, anonymized (see mapping note)",
+ "row_counts": {
+  "total": 74,
+  "selection": 22,
+  "attempt_started": 22,
+  "attempt_completed": 22,
+  "result_consumed": 7,
+  "presentation": 0,
+  "task_outcome": 1
+ },
+ "must_assert": {
+  "attempt_count": 22,
+  "attempt_completed_count": 22,
+  "dangling_attempts": 0,
+  "outcome_counts": {
+   "success": 21,
+   "failure": 1,
+   "retry": 0,
+   "denied": 0,
+   "unknown": 0
+  },
+  "failure_error_types": [
+   "user_interrupt"
+  ],
+  "operation_count": 2,
+  "attempts_per_operation": {
+   "op-req-008": 7,
+   "op-req-009": 15
+  },
+  "result_consumed_count": 7,
+  "task_outcome": {
+   "outcome_class": "assumed_resolved",
+   "outcome_observer_grade": "self_attested",
+   "declared_attempt_count": 22
+  }
+ },
+ "must_report_unprovable": [
+  {
+   "finding": "retry_linkage",
+   "statement": "UNPROVABLE on this surface",
+   "why": "the runtime labels no attempt as a retry; repeated invocations are observable as duplicate executions, but whether a duplicate is a retry of the prior attempt is an interpretation. No row carries retry_of (0/22). A report that prints retry_inflation = 0 has converted an unknown into a zero.",
+   "observed_but_not_claimed": "adjacent duplicate (same tool, same turn) pairs exist in the source window; count available in mapping note"
+  },
+  {
+   "finding": "result_consumption_across_compaction",
+   "statement": "UNPROVABLE for 15 of 22 results",
+   "why": "a context-compaction boundary sits between those tool results and the next model request, so whether the result entered the next request payload cannot be shown from the trace. Those rows are ABSENT from the sample by design — absence here means unknown, not 'not consumed'.",
+   "observed_but_not_claimed": "compaction boundaries: 5 in the source session"
+  },
+  {
+   "finding": "candidate_set",
+   "statement": "UNPROVABLE on this surface",
+   "why": "the trace records the call the model issued, not the tool list presented to it. Zero presentation rows are emitted rather than synthesizing a candidate_set_id. Any candidate-set or choice-position metric on this sample is unfounded."
+  },
+  {
+   "finding": "billable_unit_relationship",
+   "statement": "attempt grain and billable grain differ by ~11x in this window",
+   "why": "22 attempts were executed inside 2 billed model requests. Billing is per request (token-metered), not per attempt. A per-attempt reading of this window overstates the billable unit by an order of magnitude."
+  }
+ ],
+ "must_not_invent": [
+  "no default price or cost figure — none is derivable from this sample",
+  "no zero-for-absence: unprovable fields stay UNPROVABLE, never 0",
+  "no fabricated caller identity — caller.type/strength carry runtime-observed values only",
+  "no outcome upgrade: task outcome stays self_attested/assumed_resolved, not third_party_corroborated/resolved"
+ ],
+ "negative_results_policy": "A report that disagrees with any must_assert value is a finding about my mapping or your measurement — either is welcome; both are more useful than agreement."
+}
