@@ -11,7 +11,7 @@
 |---|---|
 | 一项具体的 AI 客服账单疑问 | [描述任务、确认适配](https://roy-tong.github.io/AgentMeasure/first-look.html#contact)，也可运行下方免费复算 |
 | 即将作出验收或续约决定 | [说明决策与证据需求](https://roy-tong.github.io/AgentMeasure/first-look.html)，项目范围逐案验证 |
-| 本地日志异常或一个计量样本 | [现有 $10 / $20 开发者服务](https://roy-tong.github.io/AgentMeasure/services.html)，范围独立 |
+| 本地日志异常或一个计量样本 | [免费测量任务](https://roy-tong.github.io/AgentMeasure/services.html)：带脱敏样本来跑 |
 | 贡献规则、反例或适配 | [维护者入口](#维护者与服务提供商入口) |
 
 [官网](https://roy-tong.github.io/AgentMeasure/) · [English](README.md) · [Healthcheck 指南](healthcheck/README.md) · [发布说明](https://roy-tong.github.io/AgentMeasure/releases.html)
@@ -24,9 +24,8 @@
 客服运营提供业务事实，财务或采购负责费用决策。报告区分双向发现、证据缺口、
 供应商接受与实际退款/已使用抵扣；缺失证据保持未知。
 
-适合的账单纠错案件正在探索按实际兑现净额分成；明确的验收或采购任务正在探索
-有限项目费。两者尚非已上线的标准套餐，无统一公开费率，也不保证追回。
-现有 $10/$20 服务不包含企业发票或业务交付核验。
+自 2026-10-21 起项目全面免费开源——付费诊断与商业收费探索均已停止。
+免费测量任务不包含企业发票或业务交付核验。
 
 详见[任务与产品边界](docs/product-scope.md)、[商业与开源合作口径](docs/commercial-narrative.md)。
 
@@ -96,17 +95,22 @@ externally managed 错误，按[虚拟环境步骤](https://roy-tong.github.io/A
 `agentmeasure check --runtime claude`。最近七天没有日志可试 `--all`，或指定
 `--dir` 与 `--runtime`。输入缺失不代表检查通过。
 
-## 一次解决一个问题
+## 免费测量任务
 
-| 选择 | 价格 | 交付范围 |
-|---|---|---|
-| 开源自助 | 免费 | 本地 Healthcheck、conformance、SDK 与公开规则 |
-| Healthcheck 诊断 | **$10** | 一台机器的一个异常：摘要解释、证据边界和下一步排查 |
-| Metering QA | **$20** | 一个事件样本、一版规则、一个计量问题：支持范围内的检查与复跑方法 |
+工具本身免费、本地运行。如果你希望有人在你自己的数据上跑一次测量检查，同样免费：
+带上 20–100 行脱敏样本（或公开导出），我们出测量检查——干净样本起通常 48 小时内交付。
+结论一律写成可核验的主张；你的面看不见的地方，报告写 UNPROVABLE，不猜。
 
-[查看输入要求、退款条款并通过邮件申请](https://roy-tong.github.io/AgentMeasure/services.html)。无需订阅或销售会议。24 小时内首次回复；实际付款、适配通过且输入齐备后，24 小时内交付。超出容量在付款前另约时间。回复 confirmed 只排队，不开工。银行卡支付页面正在配置；申请、支付意愿与实际付款分别记录。
+我们的请求（完全自愿）：允许把脱敏 fixture 以你的署名入仓，边界由你声明
+（synthetic 或 production 你说了算，逐字保留；不含任何可识别客户的信息，哈希或删除）。
+如果这次检查对你有用，给仓库一个 star 能帮更多人找到它——完全自愿，不设任何前提。
 
-**$10 的边界：** 聚合摘要支持解释与通用排查。具体定位需要用户自愿提供手工脱敏的错误片段，不保证确定根因。**$20 的边界：** 付款前免费预检格式。核心 FMT-002 检查操作/尝试口径与输入成本的算术守恒，不核验 token/cache 语义、厂商账单或价表准确性。
+- 入口：[issue #6](https://github.com/roy-tong/AgentMeasure/issues/6)（公开线程，下一位读者能看到你的那次运行），或邮件 tongroy18@gmail.com
+- 指南：[docs/provider-onboarding.md](docs/provider-onboarding.md)——三条进入路径、五个步骤、什么算一次成功运行
+
+原有的 $10/$20 付费诊断已于 2026-10-21 下线；项目现在完全免费开源。
+
+本地准备摘要：
 
 ```bash
 agentmeasure check --json report.json
@@ -114,9 +118,9 @@ agentmeasure share report.json --out summary.json
 agentmeasure validate summary.json
 ```
 
-`--out` 会立即写入本地文件。检查文件后再决定是否发送，不会自动上传。“未发现问题”和“证据不足”均可能成为交付结论。
-
-申请按钮只打开邮件草稿，不会自动附加文件或提交申请。没有本地邮件客户端时，可以[复制或下载邮件模板](https://roy-tong.github.io/AgentMeasure/services.html#after-apply)，在网页邮箱发送。只要求摘要时，不要附上完整 report.json、HTML 报告或原始日志。工具缺陷可免费在 [Issues](https://github.com/roy-tong/AgentMeasure/issues/new) 提交脱敏复现，无需购买诊断。
+`--out` 会立即写入本地文件，发送前自行检查，不会自动上传。"未发现问题"与"证据不足"
+都是有效结论。工具缺陷可免费在 [Issues](https://github.com/roy-tong/AgentMeasure/issues/new)
+提交脱敏复现。
 
 ## 维护者与服务提供商入口
 
@@ -150,6 +154,6 @@ agentmeasure validate summary.json
 
 `agentmeasure response-audit first.jsonl fork.jsonl --json responses.json` 按响应标识对照重复用量快照、冲突与缺字段。只读，不改日志，不选取first/last/max，不计算会话或账单总额。见[使用说明](docs/response-audit.md)。
 
-## 开源为什么还能收费？
+## 为什么免费？
 
-不需要付费也可以自己运行、修改代码、阅读公开病例和排查说明。可选付费服务承接的是一个事前约定的未决问题：说明免费基线已回答什么、这单还要核验什么、需要哪些证据以及如何复查。若只能重复免费输出或通用建议，就建议免费自助。现有$10/$20均为人工交付，不承诺专有病例库、认证效力或必然省钱。见[交付范围](docs/paid-review-scope.md)。
+免费不止是自助：你带样本，我们人工跑检查，同样不收费——项目在做的是开放计量行为语料，一次带边界声明的真实运行就是最好的贡献。工具、公开病例、排查说明与测量检查全部免费；原付费选项已于 2026-10-21 下线。

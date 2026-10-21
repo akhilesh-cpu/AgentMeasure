@@ -15,7 +15,7 @@ Local CLI commands do not upload data.
 |---|---|
 | A specific AI support billing question | [Describe the task and check fit](https://roy-tong.github.io/AgentMeasure/first-look.html#contact), or run the free recount below |
 | An upcoming acceptance or renewal decision | [Discuss the decision and evidence needed](https://roy-tong.github.io/AgentMeasure/first-look.html); project scope is exploratory |
-| A local log anomaly or one metering sample | [Existing $10 / $20 developer services](https://roy-tong.github.io/AgentMeasure/services.html), with separate scope |
+| A local log anomaly or one metering sample | [Free measurement runs](https://roy-tong.github.io/AgentMeasure/services.html) — bring a sanitized sample, we run the check |
 | Contribute a rule, counterexample or adapter | [Maintainer resources](#for-tool-maintainers-and-providers) |
 
 [Website](https://roy-tong.github.io/AgentMeasure/) · [中文](README.zh-CN.md) · [Healthcheck guide](healthcheck/README.md) · [Release notes](https://roy-tong.github.io/AgentMeasure/releases.html)
@@ -32,11 +32,9 @@ Support operations supply the business facts; finance or procurement owns the
 spend decision. Missing evidence stays unknown. We separate findings in both
 directions, evidence gaps, vendor acceptance and actual refunds or used credits.
 
-For suitable billing-correction cases, we are exploring fees tied to actual
-realized net recovery. For a concrete acceptance or procurement task, we are
-exploring a scoped project fee. Neither is a launched standard package or a
-published rate, and no recovery is guaranteed. The existing $10/$20 services
-below do not cover enterprise invoice or delivery reviews.
+Since 2026-10-21 the project is entirely free and open source — the paid
+diagnostics and the commercial fee explorations have been retired. Free
+measurement runs do not cover enterprise invoice or delivery reviews.
 
 Read the [buyer scope](docs/product-scope.md) and
 [commercial and open-source boundaries](docs/commercial-narrative.md).
@@ -129,25 +127,24 @@ snapshots, conflicts and missing fields. It does not rewrite logs, choose a
 winning snapshot or compute a session/invoice total. See the
 [response-audit guide](docs/response-audit.md).
 
-## Get help with one question
+## Free measurement runs
 
-| Option | Price | What you get |
-|---|---|---|
-| Run the open-source tools | Free | Local Healthcheck, conformance checks, SDK and published rules |
-| Healthcheck Diagnosis | **$10** | One anomaly on one machine: interpretation of your sanitized summary, evidence limits and next checks |
-| Metering QA | **$20** | One event sample, one ruleset and one metering question: supported checks, findings and a rerun command |
+The tools are free and local. If you want a human-run check on your own data,
+that is free too: bring 20–100 sanitized rows (or a public export) and we run a
+measurement check, usually within 48 hours of a clean sample. Findings are
+stated as checkable claims; where your surface cannot prove something, the
+report says UNPROVABLE instead of guessing.
 
-[See scope, input requirements and apply by email](https://roy-tong.github.io/AgentMeasure/services.html).
-No subscription or sales call. First response within 24 hours. Delivery within
-24 hours after payment, fit approval and complete input; queue changes are agreed
-before payment. A confirmation reserves a place; it does not start paid work.
-Card checkout is being set up; applications and price acceptance are separate from payment.
+What we ask — never required: permission to publish the fixture under your
+handle with the claim boundary you state (nothing customer-identifying; hash or
+drop identifiers), and if the check was useful, a star on the repo — never a
+condition.
 
-**$10:** counts alone support interpretation and general triage. Specific
-troubleshooting needs an optional manually redacted error excerpt; a root cause
-is not guaranteed. **$20:** fit is checked free before payment. Core FMT-002
-checks operation/attempt accounting and sample cost conservation; it does not
-verify token/cache semantics, vendor invoices or pricing accuracy.
+- Start in [issue #6](https://github.com/roy-tong/AgentMeasure/issues/6) (public, so the next reader learns from your run), or email tongroy18@gmail.com
+- Guide: [docs/provider-onboarding.md](docs/provider-onboarding.md) — three entry paths, five steps, and what counts as a successful run
+
+The previously offered $10/$20 paid diagnostics were removed on 2026-10-21; the
+project is now entirely free and open source.
 
 To prepare a summary locally:
 
@@ -158,13 +155,10 @@ agentmeasure validate summary.json
 ```
 
 `--out` writes immediately on your machine. Inspect the file before you choose to
-send it. Nothing is automatically uploaded. Refund terms and evidence limits are
-on the service page; “no finding” and “not enough evidence” are valid outcomes.
-
-No local mail app? [Download an application template or copy the email](https://roy-tong.github.io/AgentMeasure/services.html#after-apply).
-Attachments are manual. Do not send the full report.json, HTML report or raw logs
-when only a summary is requested. Tool bugs can be reported free in
-[Issues](https://github.com/roy-tong/AgentMeasure/issues/new), with a redacted reproduction.
+send it. Nothing is automatically uploaded. "No finding" and "not enough
+evidence" are valid outcomes. Tool bugs can be reported in
+[Issues](https://github.com/roy-tong/AgentMeasure/issues/new), with a redacted
+reproduction.
 
 ## For tool maintainers and providers
 
