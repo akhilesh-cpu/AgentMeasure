@@ -106,7 +106,8 @@ externally managed 错误，按[虚拟环境步骤](https://roy-tong.github.io/A
 如果这次检查对你有用，给仓库一个 star 能帮更多人找到它——完全自愿，不设任何前提。
 
 - 入口：[issue #6](https://github.com/roy-tong/AgentMeasure/issues/6)（公开线程，下一位读者能看到你的那次运行），或邮件 tongroy18@gmail.com
-- 指南：[docs/provider-onboarding.md](docs/provider-onboarding.md)——三条进入路径、五个步骤、什么算一次成功运行
+- 指南：[docs/provider-onboarding.md]
+- 自己跑同样的检查：[docs/review-method/](docs/review-method/README.md)——免费任务背后的收单判定、映射、命令与报告模板全公开(docs/provider-onboarding.md)——三条进入路径、五个步骤、什么算一次成功运行
 
 原有的 $10/$20 付费诊断已于 2026-10-21 下线；项目现在完全免费开源。
 

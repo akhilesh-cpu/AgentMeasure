@@ -1,3 +1,5 @@
+> **2026-10-21**: the paid review is retired; its method is now fully open in [docs/review-method/](review-method/README.md). This file is kept for the record.
+
 # What an optional paid review adds
 
 You can run, inspect and modify AgentMeasure yourself. The public cases,

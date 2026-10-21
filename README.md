@@ -141,7 +141,8 @@ drop identifiers), and if the check was useful, a star on the repo — never a
 condition.
 
 - Start in [issue #6](https://github.com/roy-tong/AgentMeasure/issues/6) (public, so the next reader learns from your run), or email tongroy18@gmail.com
-- Guide: [docs/provider-onboarding.md](docs/provider-onboarding.md) — three entry paths, five steps, and what counts as a successful run
+- Guide: [docs/provider-onboarding.md]
+- Run the same review yourself: [docs/review-method/](docs/review-method/README.md) — intake checks, mapping, commands and report templates behind every free run(docs/provider-onboarding.md) — three entry paths, five steps, and what counts as a successful run
 
 The previously offered $10/$20 paid diagnostics were removed on 2026-10-21; the
 project is now entirely free and open source.
