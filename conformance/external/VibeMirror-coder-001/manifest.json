@@ -1,0 +1,27 @@
+[
+    {
+        "file": "VibeMirror-coder-001.events.jsonl",
+        "sha256": "798b2df3eb4ad88bc72a88b99ddcf8b0c9270ebe0a587555bbc3307130bfc26c",
+        "bytes": 54372
+    },
+    {
+        "file": "VibeMirror-coder-001.expected.json",
+        "sha256": "e28d4afcbd3b75be0dd87494cbdb6001597209dad7826617cf442262898d4873",
+        "bytes": 5741
+    },
+    {
+        "file": "VibeMirror-coder-001.provider-native.jsonl",
+        "sha256": "a43d1a6976c6f595a44c8891c61f16ac1608860ec1c48fb9bf980a61d9ed0425",
+        "bytes": 7911
+    },
+    {
+        "file": "MAPPING.md",
+        "sha256": "b381ed32e41085637714ab533b7b623d4f2f8cf686673aba613c2f1ef77d8ba8",
+        "bytes": 6938
+    },
+    {
+        "file": "README.txt",
+        "sha256": "e97ca00a80ccc6ab76b4326d287d8980534f0e7a7bae2643fbeeb76f19ea1ae0",
+        "bytes": 2667
+    }
+]

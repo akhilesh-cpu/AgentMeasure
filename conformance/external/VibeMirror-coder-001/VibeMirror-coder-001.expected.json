@@ -1,0 +1,104 @@
+{
+  "vector_id": "VibeMirror-coder-001",
+  "spec_version": "agentmeasure-0.4",
+  "generated_from": "vibemirror-coder-001.jsonl",
+  "native_sidecar": "vibemirror-coder-001.provider-native.jsonl",
+  "claim_boundary": "synthetic, provider-side, Base x402",
+  "pair_window_seconds": 120,
+  "advisory_window_seconds": 120,
+  "must_assert": {
+    "row_counts": {
+      "total": 56,
+      "presentation": 15,
+      "selection": 15,
+      "attempt_started": 13,
+      "attempt_completed": 13,
+      "result_consumed": 0,
+      "task_outcome": 0
+    },
+    "observation_id_unique": true,
+    "attempts": 13,
+    "attempt_started": 13,
+    "attempt_completed": 13,
+    "dangling_attempts": 0,
+    "outcome_counts": {
+      "success": 11,
+      "failure": 1,
+      "retry": 0,
+      "denied": 0,
+      "unknown": 1
+    },
+    "validated_settlements": 13,
+    "unpaid_challenges": 2,
+    "presentation_without_selection": 2,
+    "attempts_from_unpaid_challenges": 0,
+    "billable_unit": "validated x402 call",
+    "billable_units": 13,
+    "revenue_usdc": {
+      "mcp_tool:humanmirror.safe_preflight": 0.004,
+      "mcp_tool:humanmirror.action.release": 0.018,
+      "total": 0.022
+    },
+    "operation_ids_present": 0,
+    "retry_of_present": 0,
+    "resolved_operations": 0,
+    "operation_resolution_coverage": 0.0,
+    "advisory_decisions": 4,
+    "advisory_selections_observed": 2,
+    "same_buyer_same_tool_settlement_pairs": 2,
+    "pairs_where_second_is_double_charge": 0
+  },
+  "must_report_unprovable": [
+    {
+      "finding": "settlement_grouping",
+      "statement": "UNPROVABLE on this surface",
+      "why": "two validated settlements from the same payer for the same tool inside the declared window are reported as 'indistinguishable from two intended calls on this surface' - grouping UNPROVABLE - not as a double charge. The provider observes payer, tool, amount and time, and no buyer-side operation id, so the two readings cannot be separated.",
+      "observed_but_not_claimed": "2 same-payer same-tool settlement pairs inside the 120s window (one with a failed first attempt, one with two successes)"
+    },
+    {
+      "finding": "retry_linkage",
+      "statement": "UNPROVABLE on this surface",
+      "why": "the gateway sees a failed call followed by a later settled call, and nothing that says the later call was a retry of the earlier one. No row carries retry_of (0/13). A report that prints retry_inflation = 0 has converted an unknown into a zero.",
+      "observed_but_not_claimed": "one failed-then-settled sequence for the same payer and tool"
+    },
+    {
+      "finding": "operation_resolution",
+      "statement": "UNPROVABLE on this surface",
+      "why": "no operation identifier is observable at the provider boundary, so no row carries operation_id (0/13) and every attempt resolves to operation_resolution = unknown. Operation Count for this sample is not 0 operations, it is unresolved grouping.",
+      "observed_but_not_claimed": "payer + tool + time proximity only"
+    },
+    {
+      "finding": "advisory_selection_rate",
+      "statement": "UNPROVABLE for 2 of 4 advisory decisions",
+      "why": "2 advisory decisions have no observed selection because no subsequent action by the same payer arrived inside the window. Silence is ambiguous - a deliberate hold, a departure, or a slow caller are indistinguishable here. The observed selections (2) are a lower bound, not a rate: 2/4 must not be published as a selection rate.",
+      "observed_but_not_claimed": "4 advisory decisions, 2 with an observed selection"
+    },
+    {
+      "finding": "decision_authority",
+      "statement": "UNPROVABLE on this surface",
+      "why": "the provider sees an opaque MCP client and a payer wallet, not a chooser. Whether the choice was made by a model, a workflow, a policy engine or a human is not observable, so decision_authority is unknown on every selection row and caller.type is unknown on every row.",
+      "observed_but_not_claimed": "payer identity only (hashed)"
+    },
+    {
+      "finding": "advice_effect_and_agent_action",
+      "statement": "UNPROVABLE on this surface",
+      "why": "the gateway returns an advisory and, separately, observes whether a later action request arrives. It does not observe that the agent read the advice, nor that the action was influenced by it. No effect_confirmed and no task_outcome row is emitted: a returned report does not establish agent action.",
+      "observed_but_not_claimed": "advice codes and later request ids in the provider-native log"
+    },
+    {
+      "finding": "result_consumption",
+      "statement": "UNOBSERVABLE on this surface",
+      "why": "the provider never sees the caller's next request, so whether a result was consumed is not observable at all. No result_consumed row is emitted - absent, not zero.",
+      "observed_but_not_claimed": "none"
+    }
+  ],
+  "must_not_invent": [
+    "no default price: every amount comes from the provider-native log, the two prices are synthetic and constant per tool in this fixture",
+    "no zero for absence: unresolved grouping stays UNPROVABLE, never 0",
+    "no fabricated identity: caller.type / decision_authority stay unknown, only a hashed payer key is carried",
+    "no outcome upgrade: a returned report never becomes resolved, effect_confirmed or task_outcome",
+    "no double-charge claim: a repeated settlement is reported as grouping UNPROVABLE, never as an overcharge",
+    "no settlement invented for an unpaid challenge: an unpaid challenge carries a presentation and nothing else"
+  ],
+  "negative_results_policy": "A report that disagrees with any must_assert value is a finding about my mapping or your measurement - either is welcome; both are more useful than agreement."
+}
