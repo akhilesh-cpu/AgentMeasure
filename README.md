@@ -1,19 +1,45 @@
 # AgentMeasure
 
-**Check AI usage records. Re-count supported support-billing exports with evidence.**
+**Verify AI service charges and delivery with evidence your team can check.**
 
-AgentMeasure checks Codex / Claude Code logs and applies published billing
-rules to supported AI support exports. Local CLI commands do not upload data.
-A PDF or invoice total alone is insufficient: recount needs reviewed event
-fields, and price-based differences are not verified refunds.
+AgentMeasure helps AI service buyers connect applicable billing rules with
+event records and business requirements. Start with a specific AI support bill
+or an upcoming acceptance or renewal decision.
+
+Today, the open-source CLI re-counts supported billing exports, organizes
+findings and records follow-up outcomes. Broader buyer review services are
+being validated case by case; this is not a universal contract or quality checker.
+Local CLI commands do not upload data.
 
 | Your task | Start here |
 |---|---|
-| Explain a local duplicate, retry or failure | `agentmeasure demo`, then `agentmeasure check`; optional $10 interpretation |
-| Check event accounting against one supported ruleset | Free input fit check, then bounded $20 Metering QA |
-| Review a support-billing period | Free `recount` below; separate buyer feasibility review, not included in $10/$20 |
+| A specific AI support billing question | [Describe the task and check fit](https://roy-tong.github.io/AgentMeasure/first-look.html#contact), or run the free recount below |
+| An upcoming acceptance or renewal decision | [Discuss the decision and evidence needed](https://roy-tong.github.io/AgentMeasure/first-look.html); project scope is exploratory |
+| A local log anomaly or one metering sample | [Existing $10 / $20 developer services](https://roy-tong.github.io/AgentMeasure/services.html), with separate scope |
+| Contribute a rule, counterexample or adapter | [Maintainer resources](#for-tool-maintainers-and-providers) |
 
 [Website](https://roy-tong.github.io/AgentMeasure/) · [中文](README.zh-CN.md) · [Healthcheck guide](healthcheck/README.md) · [Release notes](https://roy-tong.github.io/AgentMeasure/releases.html)
+
+## Two questions, different next steps
+
+- **Does the charge follow the applicable agreement?** A supported difference
+  can inform a vendor review. A finding is not an accepted claim or a refund.
+- **Does delivery meet your business requirements?** This can inform acceptance,
+  remediation or renewal. A stricter buyer requirement does not by itself make
+  an existing charge incorrect.
+
+Support operations supply the business facts; finance or procurement owns the
+spend decision. Missing evidence stays unknown. We separate findings in both
+directions, evidence gaps, vendor acceptance and actual refunds or used credits.
+
+For suitable billing-correction cases, we are exploring fees tied to actual
+realized net recovery. For a concrete acceptance or procurement task, we are
+exploring a scoped project fee. Neither is a launched standard package or a
+published rate, and no recovery is guaranteed. The existing $10/$20 services
+below do not cover enterprise invoice or delivery reviews.
+
+Read the [buyer scope](docs/product-scope.md) and
+[commercial and open-source boundaries](docs/commercial-narrative.md).
 
 ## Re-count a bill in 60 seconds
 
