@@ -134,6 +134,9 @@ jobs:
       - name: "Evidence case: unknown model pricing (no silent fallback)"
         run: |
           python3 conformance/evidence/unknown-model-pricing/run_case.py
+      - name: "Evidence case: selfhosted reconcile (client vs server surface, absent != zero)"
+        run: |
+          python3 conformance/evidence/selfhosted-openai-compatible-reconcile/run_case.py
       - name: "Conformance Pack selftest (caller-input contract)"
         run: |
           python3 conformance/pack/agentmeasure selftest
