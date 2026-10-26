@@ -31,8 +31,14 @@
               "exclusion_declared": false
             },
             "child_attempts": [
-              { "attempt_id": "att-c1", "cost": 0.02 },
-              { "attempt_id": "att-c2", "cost": 0.21 }
+              {
+                "attempt_id": "att-c1",
+                "cost": 0.02
+              },
+              {
+                "attempt_id": "att-c2",
+                "cost": 0.21
+              }
             ]
           },
           "expect": {
@@ -55,8 +61,14 @@
               "aggregation_label": "aggregated"
             },
             "child_attempts": [
-              { "attempt_id": "att-c1", "cost": 0.02 },
-              { "attempt_id": "att-c2", "cost": 0.21 }
+              {
+                "attempt_id": "att-c1",
+                "cost": 0.02
+              },
+              {
+                "attempt_id": "att-c2",
+                "cost": 0.21
+              }
             ]
           },
           "expect": {
@@ -78,7 +90,10 @@
               "exclusion_reason": "sub-agent cost is tracked in the child harness only"
             },
             "child_attempts": [
-              { "attempt_id": "att-c1", "cost": 0.23 }
+              {
+                "attempt_id": "att-c1",
+                "cost": 0.23
+              }
             ]
           },
           "expect": {
@@ -92,7 +107,7 @@
     {
       "id": "DELEGATION-005",
       "name": "Over-count — Inherited Cumulative Counter",
-      "description": "A child's first cumulative snapshot MUST NOT equal the parent's final cumulative value. That signature means the child inherited the parent's counter, so the parent's spend is billed twice.",
+      "description": "A child's first cumulative snapshot MUST NOT equal the parent's final cumulative value. That signature means the child inherited the parent's counter, so the parent's spend is billed twice. (2026-10-26: 005a billed_total now carries the double count — 258644 — so the bill delta, not only the snapshot signature, pins the failure; per atharnouman's cross-walk question)",
       "principle": "Forked subagent rollouts inherit the parent's counter. The inflation grows with fan-out and reads as ordinary volume on the invoice.",
       "source_evidence": [
         "steipete/CodexBar#3524 — forked subagent rollouts counted at their final cumulative total_token_usage, inflating fan-out days 30-150x; $138k-170k estimate against a true ~$6k",
@@ -104,20 +119,23 @@
           "description": "Child first snapshot equals parent final cumulative -> FAIL",
           "input": {
             "task_id": "t-30",
-            "parent": { "harness": "parent", "final_cumulative_tokens": 128572 },
+            "parent": {
+              "harness": "parent",
+              "final_cumulative_tokens": 128572
+            },
             "child": {
               "harness": "child",
               "first_snapshot_cumulative_tokens": 128572,
               "own_usage_tokens": 1500,
               "final_cumulative_tokens": 130072
             },
-            "billed_total_tokens": 130072
+            "billed_total_tokens": 258644
           },
           "expect": {
             "inheritance_detected": true,
             "double_counted_tokens": 128572,
             "verdict": "FAIL",
-            "failure_reason": "the child's first snapshot equals the parent's final cumulative value; the parent's 128572 is counted again inside the child's total"
+            "failure_reason": "the child's first snapshot equals the parent's final cumulative value; the bill itself carries the double count: 258644 billed vs 130072 true (parent 128572 + child own 1500), delta 128572 counted twice"
           }
         },
         {
@@ -125,7 +143,10 @@
           "description": "Child starts from its own zero -> PASS",
           "input": {
             "task_id": "t-31",
-            "parent": { "harness": "parent", "final_cumulative_tokens": 128572 },
+            "parent": {
+              "harness": "parent",
+              "final_cumulative_tokens": 128572
+            },
             "child": {
               "harness": "child",
               "first_snapshot_cumulative_tokens": 0,
@@ -175,9 +196,19 @@
           "input": {
             "task_id": "t-40",
             "turn_id": "turn-1",
-            "serving_record": { "agent": "agent-a", "model": "sonnet" },
-            "handoff": { "before": "agent-a", "after": "agent-b", "handoff_after_turn_closed": false },
-            "billing_record": { "agent": "agent-b", "model": "opus" }
+            "serving_record": {
+              "agent": "agent-a",
+              "model": "sonnet"
+            },
+            "handoff": {
+              "before": "agent-a",
+              "after": "agent-b",
+              "handoff_after_turn_closed": false
+            },
+            "billing_record": {
+              "agent": "agent-b",
+              "model": "opus"
+            }
           },
           "expect": {
             "served_by": "agent-a",
@@ -193,9 +224,18 @@
           "input": {
             "task_id": "t-41",
             "turn_id": "turn-2",
-            "serving_record": { "agent": "agent-a", "model": "sonnet" },
-            "handoff": { "after": "agent-b", "handoff_after_turn_closed": true },
-            "billing_record": { "agent": "agent-a", "model": "sonnet" }
+            "serving_record": {
+              "agent": "agent-a",
+              "model": "sonnet"
+            },
+            "handoff": {
+              "after": "agent-b",
+              "handoff_after_turn_closed": true
+            },
+            "billing_record": {
+              "agent": "agent-a",
+              "model": "sonnet"
+            }
           },
           "expect": {
             "attribution_matches": true,
@@ -209,9 +249,17 @@
           "input": {
             "task_id": "t-42",
             "spans": [
-              { "span_id": "s1", "agent": "root", "parent_span_id": null },
-              { "span_id": "s2", "agent": "subagent-1", "parent_span_id": null,
-                "expected_parent": "root" }
+              {
+                "span_id": "s1",
+                "agent": "root",
+                "parent_span_id": null
+              },
+              {
+                "span_id": "s2",
+                "agent": "subagent-1",
+                "parent_span_id": null,
+                "expected_parent": "root"
+              }
             ]
           },
           "expect": {

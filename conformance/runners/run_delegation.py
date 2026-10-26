@@ -185,10 +185,11 @@ def _check_delegation_005(vector: dict) -> bool:
     if cid == "del-005a-inherited-counter":
         parent_final = inp["parent"]["final_cumulative_tokens"]
         child_first = inp["child"]["first_snapshot_cumulative_tokens"]
+        true_total = parent_final + inp["child"]["own_usage_tokens"]
         inherited = child_first == parent_final
         return (inherited
                 and exp["inheritance_detected"] is True
-                and inp["billed_total_tokens"] >= parent_final + inp["child"]["own_usage_tokens"]
+                and inp["billed_total_tokens"] - true_total == exp["double_counted_tokens"]
                 and exp["verdict"] == FAIL)
 
     if cid == "del-005b-own-counter":
@@ -276,6 +277,28 @@ def _check_delegation_007(vector: dict) -> bool:
     return False
 
 
+
+
+def _check_delegation_008(vector: dict) -> bool:
+    """Roll-up: N children must be summed against the parent budget."""
+    inp = vector["input"]
+    exp = vector["expect"]
+    cid = vector["id"]
+    agg = round(sum(c["child_spend"] for c in inp["children"]), 6)
+    over = round(max(0.0, agg - inp["parent_budget"]), 6)
+
+    if cid == "del-008a-aggregate-overspend":
+        within = all(c["child_spend"] <= c["budget_slice"] for c in inp["children"])
+        return (within and agg == exp["aggregate_spend"] and over == exp["overspend"]
+                and exp["verdict"] == FAIL)
+
+    if cid == "del-008b-aggregate-within":
+        return (agg == exp["aggregate_spend"] and over == exp["overspend"]
+                and exp["verdict"] == PASS)
+
+    return False
+
+
 FAMILY_RUNNERS = {
     "DELEGATION-001": _check_delegation_001,
     "DELEGATION-002": _check_delegation_002,
@@ -284,6 +307,7 @@ FAMILY_RUNNERS = {
     "DELEGATION-005": _check_delegation_005,
     "DELEGATION-006": _check_delegation_006,
     "DELEGATION-007": _check_delegation_007,
+    "DELEGATION-008": _check_delegation_008,
 }
 
 

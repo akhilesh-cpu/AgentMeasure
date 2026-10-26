@@ -1,0 +1,87 @@
+{
+  "spec_version": "agentmeasure-0.4",
+  "family": "delegation",
+  "description": "Roll-up: N children billed under one parent budget must be summed against that budget for enforcement; a per-child check alone passes a set that is over budget in aggregate. Added 2026-10-26 after atharnouman's cross-walk found the gap (007b tests one child_spend).",
+  "taxonomy": [
+    "roll-up",
+    "aggregate-enforcement",
+    "fan-out"
+  ],
+  "vectors": [
+    {
+      "id": "DELEGATION-008",
+      "name": "Roll-up — N children against one parent budget",
+      "description": "When N children bill under one parent budget, enforcement must sum every child's spend against the parent budget; per-child respect with aggregate overspend must FAIL.",
+      "principle": "Per-child enforcement without an aggregate roll-up lets fan-out overspend a budget that every child individually respects.",
+      "source_evidence": [
+        "a2aproject/A2A#2121 — budget propagation and roll-up across sibling delegations (cross-walk question 2)",
+        "steipete/CodexBar#3524 — fan-out inflation through inherited counters"
+      ],
+      "vectors": [
+        {
+          "id": "del-008a-aggregate-overspend",
+          "description": "Every child within its slice, the sum over the parent budget -> FAIL",
+          "input": {
+            "task_id": "t-60",
+            "parent_budget": 1000.0,
+            "budget_slices_sum": 1050.0,
+            "children": [
+              {
+                "child_id": "c-1",
+                "budget_slice": 350.0,
+                "child_spend": 340.0
+              },
+              {
+                "child_id": "c-2",
+                "budget_slice": 350.0,
+                "child_spend": 345.0
+              },
+              {
+                "child_id": "c-3",
+                "budget_slice": 350.0,
+                "child_spend": 330.0
+              }
+            ]
+          },
+          "expect": {
+            "aggregate_spend": 1015.0,
+            "overspend": 15.0,
+            "verdict": "FAIL",
+            "failure_reason": "every child respects its slice; the sum of children exceeds the parent budget, which no per-child check sees. The allocation itself is over-subscribed (slices sum 1050 > 1000), so full slice use would always overspend — the roll-up catches the spend; the allocation gap mirrors LIP-3 section 6's issuer-side gap"
+          }
+        },
+        {
+          "id": "del-008b-aggregate-within",
+          "description": "Sum of children within the parent budget -> PASS",
+          "input": {
+            "task_id": "t-61",
+            "parent_budget": 1000.0,
+            "budget_slices_sum": 1050.0,
+            "children": [
+              {
+                "child_id": "c-1",
+                "budget_slice": 350.0,
+                "child_spend": 300.0
+              },
+              {
+                "child_id": "c-2",
+                "budget_slice": 350.0,
+                "child_spend": 305.0
+              },
+              {
+                "child_id": "c-3",
+                "budget_slice": 350.0,
+                "child_spend": 310.0
+              }
+            ]
+          },
+          "expect": {
+            "aggregate_spend": 915.0,
+            "overspend": 0.0,
+            "verdict": "PASS"
+          }
+        }
+      ]
+    }
+  ]
+}
