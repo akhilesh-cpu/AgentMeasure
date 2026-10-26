@@ -78,7 +78,8 @@
           "expect": {
             "aggregate_spend": 915.0,
             "overspend": 0.0,
-            "verdict": "PASS"
+            "verdict": "PASS",
+            "note": "PASS is a roll-up verdict only: it reads the cost reported up. Slice rules over the same allocation fail at issuance (350 x 3 = 1050 > 1000) — the over-subscription 008a shows late, 008b has not shown yet. Only the issuer closes the allocation gap (LIP-3 sec 6; atharnouman's split-verdict reading, 2026-10-26)."
           }
         }
       ]
