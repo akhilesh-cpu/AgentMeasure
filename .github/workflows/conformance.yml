@@ -137,6 +137,9 @@ jobs:
       - name: "Evidence case: selfhosted reconcile (client vs server surface, absent != zero)"
         run: |
           python3 conformance/evidence/selfhosted-openai-compatible-reconcile/run_case.py
+      - name: "Pricing explicit-zero vectors (fallback never applies to explicit 0.0)"
+        run: |
+          python3 conformance/runners/run_pricing_zero.py
       - name: "Conformance Pack selftest (caller-input contract)"
         run: |
           python3 conformance/pack/agentmeasure selftest
